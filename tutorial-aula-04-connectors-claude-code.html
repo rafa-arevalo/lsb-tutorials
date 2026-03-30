@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — Do plano ao produto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #F5F3EE;
+  --white: #ffffff;
+  --accent: #C8A84B;
+  --accent2: #B09040;
+  --accent-light: #F8F2E0;
+  --accent-lighter: #FBF8F0;
+  --accent-border: #DEC878;
+  --accent-text: #8B6F28;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+  --green-text: #065F46;
+  --orange: #EA580C;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --text4: #CBCAC7;
+  --border: #E5E1D8;
+  --border2: #D8D4CB;
+  --surface2: #F5F3EE;
+  --shadow-xs: 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-sm: 0 1px 3px rgba(26,26,24,0.06), 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(26,26,24,0.07), 0 2px 4px -2px rgba(26,26,24,0.05);
+}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ========== STEPPER ========== */
+.stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
+.stepper-header::-webkit-scrollbar{height:0}
+.stepper-node{display:flex;align-items:center;gap:5px;padding:0 4px;cursor:pointer;position:relative;white-space:nowrap;transition:color 0.2s}
+.stepper-node .sn-label{font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;padding:6px 0;position:relative;transition:color 0.2s}
+.stepper-node.future .sn-label{color:var(--text4)}
+.stepper-node.completed .sn-label{color:var(--text)}
+.stepper-node.active .sn-label{color:var(--accent)}
+.stepper-node.active .sn-label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0}
+.stepper-node .sn-check{display:none;font-size:0.6rem;color:var(--green)}
+.stepper-node.completed .sn-check{display:inline}
+.stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
+
+/* ========== LAYOUT ========== */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+
+/* ========== SIDEBAR ========== */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.sidebar-header p{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-top:2px}
+.nav-group{padding:12px 0 4px}
+.nav-group-title{padding:2px 16px 6px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 16px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:450;border-left:2px solid transparent;margin:0}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-lighter);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni-num{font-size:0.62rem;font-weight:600;color:var(--text3);min-width:17px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-num{color:var(--accent)}
+.nav-item .ni-check{margin-left:auto;font-size:0.62rem;color:var(--green);opacity:0;transition:opacity 0.2s;flex-shrink:0}
+.nav-item.completed .ni-check{opacity:1}
+.sidebar-progress{padding:14px 16px;border-top:1px solid var(--border);margin-top:auto}
+.sp-label{font-size:0.62rem;color:var(--text3);font-weight:500;margin-bottom:6px}
+.sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
+
+/* ========== MAIN ========== */
+.main{flex:1;padding:20px 36px 40px;max-width:700px}
+.section{display:none;animation:fadeIn 0.25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
+.sec-title .snum{color:var(--accent)}
+.sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+/* Overview card */
+.overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+.oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
+.oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
+
+/* Intro text */
+.intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.intro-text strong{color:var(--text);font-weight:600}
+
+/* Subsection heading */
+.subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
+
+/* Feature cards */
+.feature-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.feature-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px 14px;box-shadow:var(--shadow-xs)}
+.fc-title{font-size:0.8rem;font-weight:700;color:var(--text);margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.fc-badge{font-size:0.58rem;background:var(--accent-light);color:var(--accent-text);padding:2px 7px;border-radius:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.fc-body{font-size:0.76rem;color:var(--text2);line-height:1.55}
+
+/* Instructions */
+.instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
+.inst:hover{box-shadow:var(--shadow-sm)}
+.inst-num{font-size:0.56rem;font-weight:700;color:#fff;background:var(--accent);min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
+.inst-text strong{font-weight:600}
+.inst-text em{color:var(--text2);font-style:italic}
+.inst-text code{font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.68rem;background:#F3F2EE;padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+
+/* Copy block */
+.copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
+.copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* Callout boxes */
+.tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
+.tip-box strong{font-weight:600}
+.warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
+.warning-box strong{font-weight:600}
+
+/* Content table */
+.content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
+.content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.content-table tr:last-child td{border-bottom:none}
+.content-table tr:hover td{background:var(--surface2)}
+.content-table td strong{font-weight:600}
+.content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
+
+/* Recap table (final section) */
+.recap-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.recap-table th{text-align:left;padding:9px 10px;background:var(--text);color:var(--white);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em}
+.recap-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.recap-table tr:last-child td{border-bottom:none}
+.recap-table tr:nth-child(even) td{background:var(--surface2)}
+.recap-table td:first-child{font-weight:700;white-space:nowrap}
+.recap-table td strong{font-weight:600}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
+.check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
+.check-item strong{font-weight:600}
+
+/* Closing banner */
+.closing-banner{background:var(--text);border-radius:10px;padding:18px 20px;margin-top:20px}
+.closing-banner p{font-size:0.8rem;color:rgba(255,255,255,0.75);line-height:1.65}
+.closing-banner strong{color:var(--accent);font-weight:700}
+
+/* Nav buttons */
+.nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
+.nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
+
+/* ========== RIGHT SIDEBAR ========== */
+.right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.rs-section-title:first-child{margin-top:0}
+.rs-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.rs-table td{padding:5px 6px;font-size:0.68rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--text2)}
+.rs-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap;padding-right:8px}
+.rs-table tr:last-child td{border-bottom:none}
+.rs-link{display:block;font-size:0.7rem;color:var(--accent);text-decoration:none;padding:4px 0;font-weight:500}
+.rs-link:hover{text-decoration:underline}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1024px){.right-sidebar{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- STEPPER -->
+<div class="stepper-header">
+  <div class="stepper-node active" onclick="showSection('sec-home')" id="sn-home">
+    <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+    <span class="sn-check">✓</span><span class="sn-label">Connectors</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+    <span class="sn-check">✓</span><span class="sn-label">Cowork</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
+    <span class="sn-check">✓</span><span class="sn-label">Claude Code</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
+    <span class="sn-check">✓</span><span class="sn-label">Fluxo Completo</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
+    <span class="sn-check">✓</span><span class="sn-label">Demo</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
+    <span class="sn-check">✓</span><span class="sn-label">Prática</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
+    <span class="sn-check">✓</span><span class="sn-label">Entregável</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Do plano ao produto</h2>
+    <p>A04 · Link School of Business</p>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Introdução</div>
+      <div class="nav-item active" onclick="showSection('sec-home')" data-section="sec-home">
+        <span class="ni-num">00</span>Visão Geral<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Teoria</div>
+      <div class="nav-item" onclick="showSection('sec-step1')" data-section="sec-step1">
+        <span class="ni-num">01</span>Connectors<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
+        <span class="ni-num">02</span>Cowork<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
+        <span class="ni-num">03</span>Claude Code<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Fluxo Completo<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Prática</div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>Demonstração ao Vivo<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>Atividade Prática<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
+        <span class="ni-num">07</span>Entregável<span class="ni-check">✓</span>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-progress">
+    <div class="sp-label">Progresso — <span id="pct">0</span>%</div>
+    <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 00 VISÃO GERAL -->
+  <div class="section active" id="sec-home">
+    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
+    <div class="sec-desc">Cowork, Connectors e Claude Code · AI for Business</div>
+
+    <div class="overview-card">
+      <div class="oc-title">Sobre esta aula</div>
+      <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
+      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
+      <div class="oc-row"><span class="oc-label">Temas</span><span class="oc-value">Cowork · Connectors · Claude Code</span></div>
+      <div class="oc-row"><span class="oc-label">Projeto</span><span class="oc-value">Micro-SaaS — protótipo funcional e automações</span></div>
+    </div>
+
+    <p class="intro-text">Nas três primeiras aulas você construiu a base: aprendeu a fazer bons prompts, criou um Project persistente para o seu Micro-SaaS, gerou análises de entrevistas e definiu sua proposta de valor. Agora é hora de colocar tudo isso em movimento.</p>
+    <p class="intro-text">Esta é a aula mais prática do curso — e também a que mais vai mudar a forma como você vê o que é possível fazer com IA. Você vai aprender a conectar o Claude às ferramentas que já usa no dia a dia via <strong>Connectors</strong>, a delegar tarefas autônomas com o <strong>Cowork</strong>, e a dar os primeiros passos com o <strong>Claude Code</strong> para gerar o scaffold inicial do seu Micro-SaaS em linguagem natural, sem precisar escrever uma linha de código do zero.</p>
+    <p class="intro-text">O objetivo não é que você saia desta aula com um produto pronto. É que você saia sabendo exatamente como o Claude pode acelerar cada etapa da construção — e com o primeiro pedaço do seu Micro-SaaS já funcionando.</p>
+
+    <div class="subsec">Objetivos de aprendizagem</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Conectar o Claude a ferramentas externas como <strong>Gmail, Google Drive e Notion</strong> via Connectors</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Usar o <strong>Cowork</strong> para delegar tarefas autônomas que envolvem arquivos locais</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Entender o fluxo de trabalho do <strong>Claude Code</strong> — como instalar, configurar e usar no terminal</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Descrever em linguagem natural a funcionalidade principal do seu Micro-SaaS e gerar o <strong>scaffold inicial</strong></span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text">Montar um <strong>plano concreto</strong> de como usar o Claude nas próximas etapas do semestre</span></div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 01 CONNECTORS -->
+  <div class="section" id="sec-step1">
+    <div class="sec-title"><span class="snum">01.</span> Connectors</div>
+    <div class="sec-desc">O Claude conectado às suas ferramentas</div>
+
+    <p class="intro-text">Os Connectors são integrações que permitem ao Claude acessar e interagir com ferramentas externas em tempo real. Ao invés de copiar e colar informações entre sistemas, você autoriza o Claude a ler e agir diretamente nessas plataformas.</p>
+
+    <div class="subsec">Ferramentas disponíveis</div>
+    <table class="content-table">
+      <thead>
+        <tr><th>Ferramenta</th><th>O que o Claude consegue fazer</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Gmail</strong></td><td>Ler e-mails, resumir threads, identificar pendências, rascunhar respostas</td></tr>
+        <tr><td><strong>Google Drive</strong></td><td>Buscar documentos, resumir conteúdo, extrair informações de arquivos</td></tr>
+        <tr><td><strong>Google Calendar</strong></td><td>Consultar agenda, listar reuniões, identificar conflitos de horário</td></tr>
+        <tr><td><strong>Notion</strong></td><td>Buscar páginas, resumir notas, criar e atualizar conteúdo</td></tr>
+        <tr><td><strong>Slack</strong></td><td>Ler mensagens, resumir canais, encontrar informações em histórico</td></tr>
+      </tbody>
+    </table>
+
+    <div class="subsec">Como conectar</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Acesse <strong>Configurações → Connectors</strong></span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Selecione a ferramenta e autorize o acesso</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Defina o escopo — você controla o que o Claude pode ou não ver</span></div>
+    </div>
+
+    <div class="subsec">Aplicação no Micro-SaaS</div>
+    <p class="intro-text">Conectar o Google Drive permite ao Claude acessar diretamente transcrições de entrevistas, pesquisas e planilhas do projeto — sem precisar copiar o conteúdo para o chat toda vez. Conectar o Notion permite que ele atualize seu board de tarefas enquanto você conversa.</p>
+
+    <div class="warning-box">⚠️ <strong>Atenção:</strong> os Connectors têm acesso real às suas contas. Revise cuidadosamente quais permissões você concede e nunca autorize escopos mais amplos do que o necessário para a tarefa.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 02 COWORK -->
+  <div class="section" id="sec-step2">
+    <div class="sec-title"><span class="snum">02.</span> Cowork</div>
+    <div class="sec-desc">O Claude que trabalha enquanto você não está olhando</div>
+
+    <p class="intro-text">O Cowork é um produto separado da interface de chat — ele roda no desktop e permite que o Claude acesse arquivos locais do seu computador, execute tarefas em múltiplos passos de forma autônoma e entregue resultados diretamente na sua pasta de trabalho.</p>
+
+    <div class="subsec">Chat vs. Cowork</div>
+    <table class="content-table">
+      <thead>
+        <tr><th>Chat</th><th>Cowork</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Você conversa, o Claude responde</td><td>Você delega uma tarefa, o Claude executa</td></tr>
+        <tr><td>Contexto limitado à conversa</td><td>Acesso real a arquivos e pastas do seu computador</td></tr>
+        <tr><td>Resultado entregue no chat</td><td>Resultado entregue como arquivo na sua pasta</td></tr>
+        <tr><td>Ideal para pensar junto</td><td>Ideal para processar, organizar e produzir</td></tr>
+      </tbody>
+    </table>
+
+    <div class="subsec">Casos de uso práticos</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Processar todas as transcrições de entrevistas de uma pasta e <strong>gerar um relatório consolidado</strong></span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Organizar arquivos do projeto por categoria e renomear com <strong>padrão consistente</strong></span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Ler uma planilha de dados e gerar um <strong>resumo executivo em PDF</strong></span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Criar um <strong>relatório de status semanal</strong> com base nos arquivos modificados recentemente</span></div>
+    </div>
+
+    <div class="subsec">Como funciona</div>
+    <p class="intro-text">Você concede ao Cowork acesso a uma <strong>pasta específica</strong> do seu computador — nunca ao sistema inteiro. Dentro dessa pasta, o Claude lê os arquivos, executa o fluxo de trabalho descrito e salva os resultados. Você define o escopo, ele executa.</p>
+
+    <div class="tip-box">💡 <strong>Dica:</strong> crie uma pasta dedicada ao seu projeto Micro-SaaS no computador antes de usar o Cowork. Mantenha nela: transcrições de entrevistas, pesquisas, documentos do projeto e arquivos de código. Isso limita o acesso ao que é relevante e mantém tudo organizado.</div>
+
+    <div class="warning-box">⚠️ <strong>Preview:</strong> o Cowork está em preview — algumas funcionalidades ainda são instáveis. Comece com tarefas de leitura e geração antes de testar tarefas que modificam ou reorganizam arquivos existentes.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 03 CLAUDE CODE -->
+  <div class="section" id="sec-step3">
+    <div class="sec-title"><span class="snum">03.</span> Claude Code</div>
+    <div class="sec-desc">Construindo o Micro-SaaS em linguagem natural</div>
+
+    <p class="intro-text">O Claude Code é uma ferramenta de linha de comando que transforma o Claude num agente de desenvolvimento. Você descreve o que quer construir em linguagem natural — no terminal — e o Claude lê o código existente, escreve novos arquivos, executa comandos e gerencia o repositório.</p>
+
+    <div class="subsec">O que o Claude Code consegue fazer</div>
+    <div class="feature-list">
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Scaffold</span>Estrutura inicial do projeto</div>
+        <div class="fc-body">Cria a estrutura de pastas, arquivos de configuração e a rota principal a partir de uma descrição em linguagem natural.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Código</span>Escreve em qualquer linguagem</div>
+        <div class="fc-body">Python, JavaScript, TypeScript, SQL e outros. Lê o código existente antes de escrever, mantendo consistência com o que já foi criado.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Debug</span>Corrige bugs e explica</div>
+        <div class="fc-body">Corrige bugs a partir de uma descrição do problema e explica em linguagem simples o que cada parte do código faz.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Testes</span>Cria testes automatizados</div>
+        <div class="fc-body">Escreve testes para o código existente e documenta funções e módulos.</div>
+      </div>
+    </div>
+
+    <div class="subsec">Conceito essencial — CLAUDE.md</div>
+    <p class="intro-text">O <strong>CLAUDE.md</strong> é o arquivo de instruções do projeto para o Claude Code — equivalente às "instruções do projeto" que você escreveu no Project da Aula 2, mas para o ambiente de desenvolvimento. Fica na raiz do repositório e define: o que o projeto faz, como está estruturado, quais convenções de código seguir e quais comandos rodar para testar.</p>
+
+    <div class="subsec">Instalação</div>
+    <p class="intro-text">O Claude Code requer Node.js instalado. Para instalar e iniciar:</p>
+    <div class="copy-block"><span class="label">Terminal — Instalação</span><button class="copy-btn" onclick="copyText(this,'npm install -g @anthropic-ai/claude-code')">Copiar</button>npm install -g @anthropic-ai/claude-code</div>
+    <div class="copy-block"><span class="label">Terminal — Iniciar sessão</span><button class="copy-btn" onclick="copyText(this,'claude')">Copiar</button>claude</div>
+
+    <div class="subsec">Fluxo básico de uso</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Abra o terminal e navegue até a pasta do projeto</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Execute <code>claude</code> para iniciar a sessão</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Descreva o que você quer construir em linguagem natural</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">O Claude lê os arquivos existentes, escreve o código e explica o que fez</span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text">Você testa, avalia e pede ajustes na mesma sessão</span></div>
+    </div>
+
+    <div class="tip-box">💡 <strong>Dica:</strong> você não precisa saber programar para usar o Claude Code — mas quanto mais você entender do código que ele gera, mais precisos serão os seus pedidos. Use a Aula 1 como base: itere, peça explicações, faça perguntas.</div>
+
+    <div class="warning-box">⚠️ <strong>Plano necessário:</strong> o Claude Code requer plano Pro ou Max. No plano gratuito, use o Chat com Artifacts de código como alternativa — menos integrado ao ambiente de desenvolvimento, mas funciona para criar e revisar código.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 04 FLUXO COMPLETO -->
+  <div class="section" id="sec-step4">
+    <div class="sec-title"><span class="snum">04.</span> O Fluxo Completo</div>
+    <div class="sec-desc">Como tudo se conecta no seu Micro-SaaS</div>
+
+    <p class="intro-text">Com todas as ferramentas que você aprendeu ao longo do curso, o fluxo de construção do seu Micro-SaaS com o Claude fica assim:</p>
+
+    <div class="copy-block"><span class="label">Fluxo completo do curso</span>Aula 1 — Chat + Web Search
+    └── Hipótese de problema documentada
+
+Aula 2 — Projects + Deep Research
+    └── Roteiro de entrevistas + pesquisa de contexto
+
+Aula 3 — Artifacts + Skills
+    └── Análise de entrevistas + proposta de valor definida
+
+Aula 4 — Connectors + Cowork + Claude Code
+    └── Scaffold do MVP + automações + integrações ativas</div>
+
+    <p class="intro-text" style="margin-top:14px">A partir de agora, o Claude não é mais só uma ferramenta de pesquisa e escrita — ele é parte do time de desenvolvimento do seu projeto.</p>
+
+    <div class="subsec">O que cada ferramenta resolve</div>
+    <table class="content-table">
+      <thead>
+        <tr><th>Ferramenta</th><th>Para que serve</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Chat + Projects</strong></td><td>Pensar, pesquisar, decidir e manter contexto persistente</td></tr>
+        <tr><td><strong>Memory + Skills</strong></td><td>Aprender com você e padronizar tarefas recorrentes</td></tr>
+        <tr><td><strong>Artifacts</strong></td><td>Transformar conversas em entregáveis exportáveis</td></tr>
+        <tr><td><strong>Connectors</strong></td><td>Integrar com as ferramentas que você já usa</td></tr>
+        <tr><td><strong>Cowork</strong></td><td>Delegar tarefas autônomas com arquivos locais</td></tr>
+        <tr><td><strong>Claude Code</strong></td><td>Construir e iterar sobre o código do produto</td></tr>
+      </tbody>
+    </table>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 05 DEMO -->
+  <div class="section" id="sec-step5">
+    <div class="sec-title"><span class="snum">05.</span> Demonstração ao Vivo</div>
+    <div class="sec-desc">Acompanhe a tela e observe os resultados</div>
+
+    <p class="intro-text">O professor vai demonstrar ao vivo os quatro cenários desta aula. Acompanhe e observe como cada ferramenta funciona na prática.</p>
+
+    <div class="instructions">
+      <div class="inst">
+        <span class="inst-num">1</span>
+        <span class="inst-text"><strong>Conectando o Google Drive.</strong> Conexão ao vivo em <em>Configurações → Connectors</em>, autorização de acesso e pedido ao Claude para localizar e resumir um documento do projeto. O Claude acessa o arquivo diretamente, sem upload manual.</span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">2</span>
+        <span class="inst-text"><strong>Cowork processando arquivos.</strong> Abertura do Cowork, concessão de acesso a uma pasta com transcrições de entrevistas e instrução para processar todos os arquivos e gerar um relatório consolidado. Arquivo criado diretamente na pasta, sem intervenção manual.</span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">3</span>
+        <span class="inst-text"><strong>Claude Code gerando o scaffold.</strong> Terminal aberto, pasta vazia, <code>claude</code> executado. Funcionalidade principal do Micro-SaaS descrita em linguagem natural. Estrutura do projeto gerada em tempo real — cada arquivo explicado.</span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">4</span>
+        <span class="inst-text"><strong>Iterando sobre o código.</strong> A partir do scaffold, pedidos progressivos: rota de cadastro, modelo de banco de dados, explicação em linguagem simples. O Claude lê o código existente antes de escrever, mantendo consistência.</span>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 06 ATIVIDADE -->
+  <div class="section" id="sec-step6">
+    <div class="sec-title"><span class="snum">06.</span> Atividade Prática</div>
+    <div class="sec-desc">Sua vez. Cada passo leva de 5 a 10 minutos.</div>
+
+    <div class="subsec">Passo 1 — Conecte pelo menos uma ferramenta</div>
+    <p class="intro-text">Acesse <strong>Configurações → Connectors</strong> e conecte a ferramenta mais útil para o seu fluxo. Sugestão: comece com Google Drive ou Notion, onde você já tem documentos do projeto. Depois teste:</p>
+    <div class="copy-block"><span class="label">Prompt — Testar Connector</span><button class="copy-btn" onclick="copyText(this,'Busque no meu [Google Drive / Notion] um documento relacionado\nao meu projeto de Micro-SaaS e me dê um resumo do conteúdo\ne quais são os próximos passos indicados nele.')">Copiar</button>Busque no meu [Google Drive / Notion] um documento relacionado
+ao meu projeto de Micro-SaaS e me dê um resumo do conteúdo
+e quais são os próximos passos indicados nele.</div>
+
+    <div class="subsec">Passo 2 — Defina a automação do Cowork</div>
+    <p class="intro-text">Escreva a instrução de automação que você vai querer rodar toda semana ao longo do semestre:</p>
+    <div class="copy-block"><span class="label">Template — Automação semanal (Cowork)</span><button class="copy-btn" onclick="copyText(this,'Toda semana, acesse a pasta [nome da pasta] e:\n\n1. Leia todos os arquivos novos ou modificados desde a última execução\n2. Identifique: o que foi feito, o que está em andamento e o que está bloqueado\n3. Gere um relatório de status em Markdown com:\n   - Resumo executivo (3 linhas)\n   - Lista de avanços da semana\n   - Próximos passos priorizados\n   - Dúvidas ou bloqueios identificados\n4. Salve o relatório como "status_[data].md" na pasta /relatorios')">Copiar</button>Toda semana, acesse a pasta [nome da pasta] e:
+
+1. Leia todos os arquivos novos ou modificados desde a última execução
+2. Identifique: o que foi feito, o que está em andamento e o que está bloqueado
+3. Gere um relatório de status em Markdown com:
+   - Resumo executivo (3 linhas)
+   - Lista de avanços da semana
+   - Próximos passos priorizados
+   - Dúvidas ou bloqueios identificados
+4. Salve o relatório como "status_[data].md" na pasta /relatorios</div>
+
+    <div class="subsec">Passo 3 — Gere o scaffold do seu Micro-SaaS</div>
+    <p class="intro-text">Abra o terminal, crie uma pasta para o projeto e execute <code>claude</code>. Se não tiver o Claude Code disponível, use o Chat e peça um Artifact de código.</p>
+    <div class="copy-block"><span class="label">Prompt — Scaffold do Micro-SaaS</span><button class="copy-btn" onclick="copyText(this,'Preciso criar o scaffold inicial de um Micro-SaaS com as seguintes características:\n\nProblema que resolve: [descreva o problema]\nUsuário principal: [perfil do usuário]\nFuncionalidade core: [descreva a funcionalidade principal]\nStack preferida: [ex: Python + FastAPI, ou Node.js + Express]\n\nCrie a estrutura inicial do projeto com:\n- Estrutura de pastas organizada\n- Arquivo principal com a rota mais importante funcionando\n- README com instruções de instalação e execução\n- Arquivo CLAUDE.md com as convenções do projeto')">Copiar</button>Preciso criar o scaffold inicial de um Micro-SaaS com as seguintes características:
+
+Problema que resolve: [descreva o problema]
+Usuário principal: [perfil do usuário]
+Funcionalidade core: [descreva a funcionalidade principal]
+Stack preferida: [ex: Python + FastAPI, ou Node.js + Express]
+
+Crie a estrutura inicial do projeto com:
+- Estrutura de pastas organizada
+- Arquivo principal com a rota mais importante funcionando
+- README com instruções de instalação e execução
+- Arquivo CLAUDE.md com as convenções do projeto</div>
+
+    <div class="subsec">Passo 4 — Primeira iteração de desenvolvimento</div>
+    <p class="intro-text">Com o scaffold gerado, faça pelo menos dois pedidos adicionais:</p>
+    <div class="copy-block"><span class="label">Iteração 1 — Nova rota</span><button class="copy-btn" onclick="copyText(this,'Adicione uma rota para [funcionalidade secundária do seu Micro-SaaS].\nMantenha consistência com o código já existente.')">Copiar</button>Adicione uma rota para [funcionalidade secundária do seu Micro-SaaS].
+Mantenha consistência com o código já existente.</div>
+    <div class="copy-block"><span class="label">Iteração 2 — Modelo de dados</span><button class="copy-btn" onclick="copyText(this,'Crie um modelo de banco de dados simples para armazenar [entidade principal].\nUse [SQLite / PostgreSQL / MongoDB] e explique as decisões tomadas.')">Copiar</button>Crie um modelo de banco de dados simples para armazenar [entidade principal].
+Use [SQLite / PostgreSQL / MongoDB] e explique as decisões tomadas.</div>
+    <div class="copy-block"><span class="label">Iteração 3 — Entender o projeto</span><button class="copy-btn" onclick="copyText(this,'Explique em linguagem simples como está estruturado o projeto que você criou.\nPara cada arquivo, descreva o que ele faz e por que está ali.')">Copiar</button>Explique em linguagem simples como está estruturado o projeto que você criou.
+Para cada arquivo, descreva o que ele faz e por que está ali.</div>
+
+    <div class="subsec">Passo 5 — Seu plano para o resto do semestre</div>
+    <p class="intro-text">Abra uma conversa no seu Project do Micro-SaaS e use o prompt abaixo para criar um plano concreto das próximas semanas:</p>
+    <div class="copy-block"><span class="label">Prompt — Plano do semestre</span><button class="copy-btn" onclick="copyText(this,'Com base em tudo que discutimos neste projeto, crie um plano de uso do Claude\npara as próximas 8 semanas do semestre.\n\nPara cada semana, indique:\n- Em qual etapa do Micro-SaaS estarei (validação / priorização / construção / lançamento)\n- Quais ferramentas do Claude vou usar (Chat, Projects, Deep Research, Artifacts, Skills, Connectors, Cowork, Claude Code)\n- Qual o principal entregável da semana\n- Um prompt sugerido para começar a semana\n\nFormate como uma tabela Artifact.')">Copiar</button>Com base em tudo que discutimos neste projeto, crie um plano de uso do Claude
+para as próximas 8 semanas do semestre.
+
+Para cada semana, indique:
+- Em qual etapa do Micro-SaaS estarei (validação / priorização / construção / lançamento)
+- Quais ferramentas do Claude vou usar (Chat, Projects, Deep Research, Artifacts, Skills, Connectors, Cowork, Claude Code)
+- Qual o principal entregável da semana
+- Um prompt sugerido para começar a semana
+
+Formate como uma tabela Artifact.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 07 ENTREGÁVEL -->
+  <div class="section" id="sec-step7">
+    <div class="sec-title"><span class="snum">07.</span> Entregável</div>
+    <div class="sec-desc">O que você deve ter ao final desta aula</div>
+
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Pelo menos 1 Connector ativo</strong> integrado ao seu fluxo de trabalho</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Instrução de automação do Cowork</strong> escrita e pronta para usar</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Scaffold do Micro-SaaS</strong> gerado com estrutura de pastas, rota principal e README</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Pelo menos 2 iterações de desenvolvimento</strong> sobre o scaffold inicial</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Plano de uso do Claude</strong> para as próximas 8 semanas do semestre como Artifact</span></div>
+    </div>
+
+    <div class="subsec" style="margin-top:24px">Recapitulando o curso</div>
+    <p class="intro-text">Ao longo das 4 aulas, você saiu do zero e chegou a um sistema de trabalho completo com o Claude:</p>
+
+    <table class="recap-table">
+      <thead>
+        <tr><th>Aula</th><th>O que você aprendeu</th><th>Entregável do projeto</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Aula 1</td>
+          <td>Chat, prompts estruturados e Web Search</td>
+          <td>Hipótese de problema + referências de mercado</td>
+        </tr>
+        <tr>
+          <td>Aula 2</td>
+          <td>Memory, Projects e Deep Research</td>
+          <td>Project configurado + roteiro de entrevistas</td>
+        </tr>
+        <tr>
+          <td>Aula 3</td>
+          <td>Artifacts, Skills e File Creation</td>
+          <td>Análise de entrevistas + proposta de valor</td>
+        </tr>
+        <tr>
+          <td>Aula 4</td>
+          <td>Connectors, Cowork e Claude Code</td>
+          <td>Scaffold do MVP + plano do semestre</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="closing-banner">
+      <p>O Claude não substitui o seu raciocínio, a sua criatividade nem as suas decisões. Ele acelera a execução, estrutura o pensamento e reduz o tempo entre a ideia e o entregável. O quanto você vai tirar disso depende de uma coisa só: <strong>a qualidade das perguntas que você faz</strong>.</p>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+      <button class="nav-btn primary" onclick="goHome()">↩ Início</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- RIGHT SIDEBAR -->
+<div class="right-sidebar">
+  <div class="rs-section-title">Connectors disponíveis</div>
+  <table class="rs-table">
+    <tr><td>Gmail</td><td>E-mails e threads</td></tr>
+    <tr><td>Drive</td><td>Docs e arquivos</td></tr>
+    <tr><td>Calendar</td><td>Agenda e reuniões</td></tr>
+    <tr><td>Notion</td><td>Páginas e notas</td></tr>
+    <tr><td>Slack</td><td>Mensagens e canais</td></tr>
+  </table>
+
+  <div class="rs-section-title">Claude Code</div>
+  <table class="rs-table">
+    <tr><td>Instalar</td><td><code style="font-size:0.62rem">npm install -g</code></td></tr>
+    <tr><td>Iniciar</td><td><code style="font-size:0.62rem">claude</code></td></tr>
+    <tr><td>Config</td><td>CLAUDE.md</td></tr>
+    <tr><td>Plano</td><td>Pro ou Max</td></tr>
+  </table>
+
+  <div class="rs-section-title">Ferramentas do curso</div>
+  <table class="rs-table">
+    <tr><td>A01</td><td>Chat · Web Search</td></tr>
+    <tr><td>A02</td><td>Projects · Memory · Deep Research</td></tr>
+    <tr><td>A03</td><td>Artifacts · Skills</td></tr>
+    <tr><td>A04</td><td>Connectors · Cowork · Claude Code</td></tr>
+  </table>
+
+  <div class="rs-section-title">Links Úteis</div>
+  <a class="rs-link" href="https://claude.ai" target="_blank">→ Claude.ai</a>
+  <a class="rs-link" href="https://claude.ai/projects" target="_blank">→ Claude Projects</a>
+</div>
+
+</div><!-- /layout -->
+
+<script>
+const stepToFlow = {
+  'sec-home':'home','sec-step1':'step1','sec-step2':'step2','sec-step3':'step3',
+  'sec-step4':'step4','sec-step5':'step5','sec-step6':'step6','sec-step7':'step7'
+}
+const flowOrder = ['home','step1','step2','step3','step4','step5','step6','step7']
+const visited = new Set(['sec-home'])
+const completedFlows = new Set()
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.section === id)
+    if (visited.has(n.dataset.section)) n.classList.add('completed')
+  })
+  visited.add(id)
+  const flow = stepToFlow[id]
+  if (flow) {
+    const idx = flowOrder.indexOf(flow)
+    if (idx > 0) completedFlows.add(flowOrder[idx-1])
+  }
+  updateStepper(flow)
+  updateProgress()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function updateStepper(activeFlow) {
+  document.querySelectorAll('.stepper-node').forEach(n => {
+    const f = n.id.replace('sn-','')
+    const idx = flowOrder.indexOf(f)
+    const activeIdx = flowOrder.indexOf(activeFlow)
+    n.classList.remove('active','completed','future')
+    if (f === activeFlow) n.classList.add('active')
+    else if (completedFlows.has(f) || idx < activeIdx) n.classList.add('completed')
+    else n.classList.add('future')
+  })
+}
+
+function updateProgress() {
+  const pct = Math.round((visited.size / document.querySelectorAll('.section').length) * 100)
+  document.getElementById('pct').textContent = pct
+  document.getElementById('sp-fill').style.width = pct + '%'
+}
+
+function goHome() { showSection('sec-home') }
+
+function copyText(btn, text) {
+  navigator.clipboard?.writeText(text).then(() => {
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  }).catch(() => {
+    const ta = document.createElement('textarea')
+    ta.value = text; document.body.appendChild(ta)
+    ta.select(); document.execCommand('copy')
+    document.body.removeChild(ta)
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  })
+}
+
+updateStepper('home')
+updateProgress()
+</script>
+</body>
+</html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — Do insight ao entregável</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #F5F3EE;
+  --white: #ffffff;
+  --accent: #C8A84B;
+  --accent2: #B09040;
+  --accent-light: #F8F2E0;
+  --accent-lighter: #FBF8F0;
+  --accent-border: #DEC878;
+  --accent-text: #8B6F28;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+  --green-text: #065F46;
+  --orange: #EA580C;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --text4: #CBCAC7;
+  --border: #E5E1D8;
+  --border2: #D8D4CB;
+  --surface2: #F5F3EE;
+  --shadow-xs: 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-sm: 0 1px 3px rgba(26,26,24,0.06), 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(26,26,24,0.07), 0 2px 4px -2px rgba(26,26,24,0.05);
+}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ========== STEPPER ========== */
+.stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
+.stepper-header::-webkit-scrollbar{height:0}
+.stepper-node{display:flex;align-items:center;gap:5px;padding:0 4px;cursor:pointer;position:relative;white-space:nowrap;transition:color 0.2s}
+.stepper-node .sn-label{font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;padding:6px 0;position:relative;transition:color 0.2s}
+.stepper-node.future .sn-label{color:var(--text4)}
+.stepper-node.completed .sn-label{color:var(--text)}
+.stepper-node.active .sn-label{color:var(--accent)}
+.stepper-node.active .sn-label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0}
+.stepper-node .sn-check{display:none;font-size:0.6rem;color:var(--green)}
+.stepper-node.completed .sn-check{display:inline}
+.stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
+
+/* ========== LAYOUT ========== */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+
+/* ========== SIDEBAR ========== */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.sidebar-header p{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-top:2px}
+.nav-group{padding:12px 0 4px}
+.nav-group-title{padding:2px 16px 6px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 16px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:450;border-left:2px solid transparent;margin:0}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-lighter);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni-num{font-size:0.62rem;font-weight:600;color:var(--text3);min-width:17px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-num{color:var(--accent)}
+.nav-item .ni-check{margin-left:auto;font-size:0.62rem;color:var(--green);opacity:0;transition:opacity 0.2s;flex-shrink:0}
+.nav-item.completed .ni-check{opacity:1}
+.sidebar-progress{padding:14px 16px;border-top:1px solid var(--border);margin-top:auto}
+.sp-label{font-size:0.62rem;color:var(--text3);font-weight:500;margin-bottom:6px}
+.sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
+
+/* ========== MAIN ========== */
+.main{flex:1;padding:20px 36px 40px;max-width:700px}
+.section{display:none;animation:fadeIn 0.25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
+.sec-title .snum{color:var(--accent)}
+.sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+/* Overview card */
+.overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+.oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
+.oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
+
+/* Intro text */
+.intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.intro-text strong{color:var(--text);font-weight:600}
+
+/* Subsection heading */
+.subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
+
+/* Feature cards */
+.feature-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.feature-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px 14px;box-shadow:var(--shadow-xs)}
+.fc-title{font-size:0.8rem;font-weight:700;color:var(--text);margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.fc-badge{font-size:0.58rem;background:var(--accent-light);color:var(--accent-text);padding:2px 7px;border-radius:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.fc-body{font-size:0.76rem;color:var(--text2);line-height:1.55}
+
+/* Instructions */
+.instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
+.inst:hover{box-shadow:var(--shadow-sm)}
+.inst-num{font-size:0.56rem;font-weight:700;color:#fff;background:var(--accent);min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
+.inst-text strong{font-weight:600}
+.inst-text em{color:var(--text2);font-style:italic}
+
+/* Copy block */
+.copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
+.copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* Callout boxes */
+.tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
+.tip-box strong{font-weight:600}
+.warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
+.warning-box strong{font-weight:600}
+
+/* Content table */
+.content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
+.content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.content-table tr:last-child td{border-bottom:none}
+.content-table tr:hover td{background:var(--surface2)}
+.content-table td strong{font-weight:600}
+.content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
+
+/* Export pills */
+.pill-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:0.7rem;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+.pill-pdf{background:#FEF2F2;color:#991B1B;border-color:#FECACA}
+.pill-docx{background:#EFF6FF;color:#1E40AF;border-color:#BFDBFE}
+.pill-xlsx{background:var(--green-bg);color:var(--green-text);border-color:var(--green-border)}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
+.check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
+.check-item strong{font-weight:600}
+
+/* Next teaser */
+.next-teaser{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.next-teaser strong{font-weight:700}
+
+/* Nav buttons */
+.nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
+.nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
+
+/* ========== RIGHT SIDEBAR ========== */
+.right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.rs-section-title:first-child{margin-top:0}
+.rs-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.rs-table td{padding:5px 6px;font-size:0.68rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--text2)}
+.rs-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap;padding-right:8px}
+.rs-table tr:last-child td{border-bottom:none}
+.rs-link{display:block;font-size:0.7rem;color:var(--accent);text-decoration:none;padding:4px 0;font-weight:500}
+.rs-link:hover{text-decoration:underline}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1024px){.right-sidebar{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- STEPPER -->
+<div class="stepper-header">
+  <div class="stepper-node active" onclick="showSection('sec-home')" id="sn-home">
+    <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+    <span class="sn-check">✓</span><span class="sn-label">Artifacts</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+    <span class="sn-check">✓</span><span class="sn-label">Tipos</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
+    <span class="sn-check">✓</span><span class="sn-label">Iteração</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
+    <span class="sn-check">✓</span><span class="sn-label">Skills</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
+    <span class="sn-check">✓</span><span class="sn-label">Exportar</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
+    <span class="sn-check">✓</span><span class="sn-label">Demo</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
+    <span class="sn-check">✓</span><span class="sn-label">Prática</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step8')" id="sn-step8">
+    <span class="sn-check">✓</span><span class="sn-label">Entregável</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Do insight ao entregável</h2>
+    <p>A03 · Link School of Business</p>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Introdução</div>
+      <div class="nav-item active" onclick="showSection('sec-home')" data-section="sec-home">
+        <span class="ni-num">00</span>Visão Geral<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Teoria</div>
+      <div class="nav-item" onclick="showSection('sec-step1')" data-section="sec-step1">
+        <span class="ni-num">01</span>O que são Artifacts<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
+        <span class="ni-num">02</span>Tipos de Artifact<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
+        <span class="ni-num">03</span>Como iterar<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Skills<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>Exportar Artifacts<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Prática</div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>Demonstração ao Vivo<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
+        <span class="ni-num">07</span>Atividade Prática<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step8')" data-section="sec-step8">
+        <span class="ni-num">08</span>Entregável<span class="ni-check">✓</span>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-progress">
+    <div class="sp-label">Progresso — <span id="pct">0</span>%</div>
+    <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 00 VISÃO GERAL -->
+  <div class="section active" id="sec-home">
+    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
+    <div class="sec-desc">Artifacts e Skills · AI for Business</div>
+
+    <div class="overview-card">
+      <div class="oc-title">Sobre esta aula</div>
+      <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
+      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
+      <div class="oc-row"><span class="oc-label">Temas</span><span class="oc-value">Artifacts · Skills · File Creation</span></div>
+      <div class="oc-row"><span class="oc-label">Projeto</span><span class="oc-value">Micro-SaaS — análise de entrevistas e proposta de valor</span></div>
+    </div>
+
+    <p class="intro-text">Nas duas primeiras aulas você aprendeu a conversar bem com o Claude e a criar uma estrutura de trabalho persistente para o seu projeto. Mas até agora, tudo ficou dentro do chat — texto numa janela de conversa.</p>
+    <p class="intro-text">Essa aula muda isso. Você vai aprender a transformar conversas em <strong>entregáveis reais</strong>: documentos, tabelas, gráficos, checklists e até mini-aplicativos interativos que você pode exportar, compartilhar e reutilizar. Esses são os <strong>Artifacts</strong>.</p>
+    <p class="intro-text">Além disso, vai criar suas primeiras <strong>Skills</strong> — fluxos de trabalho reutilizáveis que ensinam ao Claude como você quer que ele processe um tipo específico de tarefa. Uma vez criada, a Skill funciona automaticamente sempre que você precisar dela, sem precisar reescrever o mesmo prompt toda vez.</p>
+
+    <div class="subsec">Objetivos de aprendizagem</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que são Artifacts e como diferenciá-los de uma resposta comum de texto</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Gerar diferentes tipos de Artifact — <strong>tabelas, gráficos, documentos e componentes interativos</strong></span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Iterar sobre um Artifact dentro da conversa sem perder o histórico</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Criar uma <strong>Skill personalizada</strong> que padronize uma tarefa recorrente do seu projeto</span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text">Exportar Artifacts como arquivos <strong>PDF ou DOCX</strong> para compartilhar fora do Claude</span></div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 01 O QUE SÃO ARTIFACTS -->
+  <div class="section" id="sec-step1">
+    <div class="sec-title"><span class="snum">01.</span> O que são Artifacts</div>
+    <div class="sec-desc">E quando pedir um</div>
+
+    <p class="intro-text">Um Artifact é qualquer output que o Claude gera como um <strong>arquivo renderizável e independente</strong> — não apenas texto numa bolha de resposta. Ele aparece numa área própria ao lado da conversa, onde você pode visualizar, editar, copiar e exportar.</p>
+
+    <div class="subsec">Resposta comum vs. Artifact</div>
+    <table class="content-table">
+      <thead>
+        <tr><th>Resposta comum</th><th>Artifact</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Texto corrido na conversa</td><td>Arquivo renderizado numa área separada</td></tr>
+        <tr><td>Desaparece quando você rola a tela</td><td>Fica fixo e acessível durante toda a conversa</td></tr>
+        <tr><td>Difícil de compartilhar diretamente</td><td>Pode ser exportado como PDF, DOCX ou copiado</td></tr>
+        <tr><td>Ótimo para explicações e análises</td><td>Ótimo para documentos, tabelas, apps e visualizações</td></tr>
+      </tbody>
+    </table>
+
+    <div class="subsec">Quando pedir um Artifact</div>
+    <p class="intro-text">Sempre que o resultado da sua conversa for algo que você vai querer <strong>usar fora do Claude</strong> — enviar para alguém, apresentar, imprimir, iterar visualmente ou reutilizar mais tarde.</p>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 02 TIPOS DE ARTIFACT -->
+  <div class="section" id="sec-step2">
+    <div class="sec-title"><span class="snum">02.</span> Tipos de Artifact</div>
+    <div class="sec-desc">O que você pode criar</div>
+
+    <p class="intro-text">O Claude consegue gerar Artifacts em vários formatos. Os mais úteis para o seu projeto:</p>
+
+    <div class="feature-list">
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Tabelas</span>Tabelas e matrizes</div>
+        <div class="fc-body">Organizam dados comparativos de forma clara. Perfeito para analisar dores de entrevistas, comparar concorrentes ou priorizar funcionalidades.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Markdown</span>Documentos Markdown</div>
+        <div class="fc-body">Textos estruturados com títulos, listas, destaques e formatação. Úteis para relatórios, resumos executivos, roteiros e briefings.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Interativo</span>Componentes interativos (HTML/React)</div>
+        <div class="fc-body">Mini-aplicativos que funcionam direto no navegador — calculadoras, formulários, dashboards simples, checklists clicáveis. Não exigem nenhum conhecimento de programação para solicitar.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Gráficos</span>Gráficos e visualizações</div>
+        <div class="fc-body">Gráficos de barra, pizza, dispersão e outros a partir de dados que você fornece ou que o Claude gera. Ideais para apresentações e relatórios.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Código</span>Blocos de código</div>
+        <div class="fc-body">Código em qualquer linguagem, formatado e pronto para usar. Relevante para a Aula 4, quando você vai começar a construir o seu Micro-SaaS.</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 03 ITERAÇÃO -->
+  <div class="section" id="sec-step3">
+    <div class="sec-title"><span class="snum">03.</span> Como iterar sobre um Artifact</div>
+    <div class="sec-desc">Refinamento progressivo sem perder o que foi feito</div>
+
+    <p class="intro-text">A grande vantagem dos Artifacts é que você pode refiná-los progressivamente dentro da mesma conversa — sem perder o que já foi feito.</p>
+
+    <div class="subsec">O fluxo natural de refinamento</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Peça o Artifact com um prompt descritivo</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">O Claude gera a versão inicial</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Você avalia e pede ajustes diretamente na conversa</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">O Claude atualiza o Artifact preservando o que estava bom</span></div>
+    </div>
+
+    <div class="subsec">Instruções de iteração para Artifacts</div>
+    <div class="copy-block"><span class="label">Exemplos prontos para usar</span><button class="copy-btn" onclick="copyText(this,'Adicione uma coluna de prioridade (alta, média, baixa) na tabela.\nMude o gráfico de barras para um gráfico de dispersão com impacto no eixo Y e frequência no eixo X.\nTransforme essa tabela num documento de uma página com introdução e conclusão.\nAdicione uma seção de recomendações ao relatório.\nDeixe o checklist interativo — quero poder marcar os itens como concluídos.')">Copiar</button>Adicione uma coluna de prioridade (alta, média, baixa) na tabela.
+Mude o gráfico de barras para um gráfico de dispersão com impacto no eixo Y e frequência no eixo X.
+Transforme essa tabela num documento de uma página com introdução e conclusão.
+Adicione uma seção de recomendações ao relatório.
+Deixe o checklist interativo — quero poder marcar os itens como concluídos.</div>
+
+    <div class="tip-box">💡 <strong>Dica:</strong> você não precisa descrever o Artifact perfeito de cara. Comece com o mínimo necessário e vá refinando. Três rodadas de ajuste costumam produzir um resultado muito melhor do que um prompt longo e detalhado logo de início.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 04 SKILLS -->
+  <div class="section" id="sec-step4">
+    <div class="sec-title"><span class="snum">04.</span> Skills</div>
+    <div class="sec-desc">Ensinando o Claude a trabalhar do seu jeito</div>
+
+    <p class="intro-text">Uma Skill é um conjunto de instruções salvas que define como o Claude deve executar um tipo específico de tarefa. Pense nela como um <strong>template inteligente</strong> que o Claude aplica automaticamente sempre que você sinaliza que quer aquele tipo de output.</p>
+
+    <div class="subsec">Por que criar Skills</div>
+    <p class="intro-text">Sem uma Skill, você precisa reescrever o mesmo prompt detalhado toda vez que quiser a mesma estrutura. Com uma Skill, você escreve uma vez — e o Claude repete o padrão sempre que você precisar.</p>
+
+    <div class="subsec">Exemplos de Skills úteis para o seu projeto</div>
+    <div class="feature-list">
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Skill 1</span>Análise de entrevista de cliente</div>
+        <div class="fc-body">Sempre que você colar notas de uma entrevista, o Claude estrutura automaticamente em: dores identificadas, frequência, impacto percebido e citação direta do entrevistado.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Skill 2</span>Resumo de artigo acadêmico</div>
+        <div class="fc-body">Sempre que você colar um texto longo, o Claude entrega: problema pesquisado, metodologia, principais achados e implicações práticas.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-title"><span class="fc-badge">Skill 3</span>Feedback de pitch</div>
+        <div class="fc-body">Sempre que você descrever sua proposta de valor, o Claude avalia: clareza, diferenciação, evidências de problema e próximos passos sugeridos.</div>
+      </div>
+    </div>
+
+    <div class="subsec">Como criar uma Skill</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Acesse <strong>Configurações → Skills → Nova Skill</strong></span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Escreva um <strong>nome</strong> e uma <strong>descrição</strong> de quando a Skill deve ser usada</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Escreva as <strong>instruções detalhadas</strong> de como o Claude deve executar a tarefa</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">A partir daí, o Claude <strong>identifica automaticamente</strong> quando ativar essa Skill</span></div>
+    </div>
+
+    <div class="tip-box">💡 <strong>Dica:</strong> boas Skills têm um gatilho claro ("sempre que eu colar notas de entrevista...") e um output definido ("estruture em quatro seções..."). Quanto mais específica, mais consistente o resultado.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 05 FILE CREATION -->
+  <div class="section" id="sec-step5">
+    <div class="sec-title"><span class="snum">05.</span> Exportar Artifacts</div>
+    <div class="sec-desc">Levando seus entregáveis para o mundo real</div>
+
+    <p class="intro-text">Além de visualizar os Artifacts no Claude, você pode exportá-los como arquivos que funcionam fora da plataforma.</p>
+
+    <div class="pill-row">
+      <span class="pill pill-pdf">PDF — relatórios e documentos formais</span>
+      <span class="pill pill-docx">DOCX — editar e compartilhar com outros</span>
+      <span class="pill pill-xlsx">CSV/XLSX — tabelas para Excel ou Sheets</span>
+    </div>
+
+    <div class="subsec">Como exportar</div>
+    <p class="intro-text">Basta pedir diretamente na conversa, referenciando o Artifact que você quer exportar:</p>
+
+    <div class="copy-block"><span class="label">Exemplos de pedidos de exportação</span><button class="copy-btn" onclick="copyText(this, 'Exporte esse Artifact como PDF.\nGere esse documento em formato Word.\nExporte essa tabela como CSV para abrir no Excel.')">Copiar</button>Exporte esse Artifact como PDF.
+Gere esse documento em formato Word.
+Exporte essa tabela como CSV para abrir no Excel.</div>
+
+    <div class="tip-box">💡 <strong>Dica:</strong> para exportações mais caprichadas, especifique título, subtítulo e data: <em>"Exporte como PDF com título 'Análise de Entrevistas — [projeto]' e a data de hoje no cabeçalho."</em></div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 06 DEMO -->
+  <div class="section" id="sec-step6">
+    <div class="sec-title"><span class="snum">06.</span> Demonstração ao Vivo</div>
+    <div class="sec-desc">Acompanhe a tela e observe os resultados</div>
+
+    <p class="intro-text">O professor vai demonstrar ao vivo os quatro cenários desta aula. Acompanhe e observe como cada recurso funciona na prática.</p>
+
+    <div class="instructions">
+      <div class="inst">
+        <span class="inst-num">1</span>
+        <span class="inst-text"><strong>Análise de entrevista como Artifact.</strong> Transcrição fictícia de entrevista com usuário → Artifact de tabela com dores, frequência e impacto. Como o Artifact aparece em área separada e como editá-lo com instruções adicionais.</span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">2</span>
+        <span class="inst-text"><strong>Matriz de priorização interativa.</strong> A partir da tabela de dores, um Artifact de matriz (eixo impacto × eixo frequência) como componente interativo, com as dores plotadas como pontos. Ajustes de visualização com instruções simples.</span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">3</span>
+        <span class="inst-text"><strong>Comparação de propostas de valor.</strong> Com base nas dores, 3 propostas de valor distintas comparadas num Artifact de tabela com critérios: clareza, diferenciação, viabilidade técnica e alinhamento com as dores.</span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">4</span>
+        <span class="inst-text"><strong>Exportação e Skill.</strong> Exportação do Artifact como PDF ao vivo. Criação da Skill "análise de entrevista de cliente" e demonstração de como, numa nova conversa, colar notas brutas já ativa o output estruturado automaticamente.</span>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 07 ATIVIDADE -->
+  <div class="section" id="sec-step7">
+    <div class="sec-title"><span class="snum">07.</span> Atividade Prática</div>
+    <div class="sec-desc">Sua vez. Cada passo leva de 5 a 10 minutos.</div>
+
+    <div class="subsec">Passo 1 — Artifact de análise de entrevistas</div>
+    <p class="intro-text">Cole as notas ou a transcrição de uma ou duas entrevistas que você já realizou. Se ainda não fez entrevistas, peça ao Claude para simular respostas de um usuário do seu segmento com base no relatório do Deep Research da Aula 2.</p>
+    <div class="copy-block"><span class="label">Prompt — Análise de entrevistas</span><button class="copy-btn" onclick="copyText(this,'Analise as notas de entrevista abaixo e gere um Artifact\nno formato de tabela com as seguintes colunas:\n\n- Dor identificada\n- Frequência (quantas vezes foi mencionada ou sugerida)\n- Impacto percebido pelo entrevistado (alto / médio / baixo)\n- Citação direta (trecho exato da fala do entrevistado)\n\n[cole suas notas aqui]')">Copiar</button>Analise as notas de entrevista abaixo e gere um Artifact
+no formato de tabela com as seguintes colunas:
+
+- Dor identificada
+- Frequência (quantas vezes foi mencionada ou sugerida)
+- Impacto percebido pelo entrevistado (alto / médio / baixo)
+- Citação direta (trecho exato da fala do entrevistado)
+
+[cole suas notas aqui]</div>
+
+    <div class="subsec">Passo 2 — Matriz de priorização</div>
+    <p class="intro-text">Com a tabela de dores gerada, crie um Artifact visual de priorização:</p>
+    <div class="copy-block"><span class="label">Prompt — Matriz de priorização</span><button class="copy-btn" onclick="copyText(this,'Com base nessa tabela de dores, gere um Artifact de matriz de priorização\ncom impacto no eixo Y e frequência no eixo X.\nPlote cada dor como um ponto identificado pelo nome.\nDestaque as dores no quadrante de alto impacto e alta frequência.')">Copiar</button>Com base nessa tabela de dores, gere um Artifact de matriz de priorização
+com impacto no eixo Y e frequência no eixo X.
+Plote cada dor como um ponto identificado pelo nome.
+Destaque as dores no quadrante de alto impacto e alta frequência.</div>
+    <p class="intro-text" style="margin-top:10px">Depois de gerado, itere:</p>
+    <div class="copy-block"><span class="label">Iterações para refinar a matriz</span><button class="copy-btn" onclick="copyText(this,'Aumente o tamanho dos pontos proporcionalmente ao impacto.\nAdicione uma legenda explicando os quadrantes.\nMude as cores para distinguir dores validadas de dores apenas mencionadas.')">Copiar</button>Aumente o tamanho dos pontos proporcionalmente ao impacto.
+Adicione uma legenda explicando os quadrantes.
+Mude as cores para distinguir dores validadas de dores apenas mencionadas.</div>
+
+    <div class="subsec">Passo 3 — Comparação de propostas de valor</div>
+    <p class="intro-text">Com base nas dores priorizadas, peça ao Claude para sugerir e comparar propostas de valor:</p>
+    <div class="copy-block"><span class="label">Prompt — Comparação de propostas</span><button class="copy-btn" onclick="copyText(this,'Com base nas dores identificadas nas entrevistas,\nsugira 3 propostas de valor distintas para o meu Micro-SaaS.\n\nPara cada uma, gere um Artifact de tabela comparativa com os critérios:\n- Clareza para o usuário\n- Diferenciação em relação a concorrentes\n- Viabilidade técnica para um estudante\n- Alinhamento com as dores de maior impacto\n\nUse uma escala de 1 a 5 para cada critério e adicione uma linha de pontuação total.')">Copiar</button>Com base nas dores identificadas nas entrevistas,
+sugira 3 propostas de valor distintas para o meu Micro-SaaS.
+
+Para cada uma, gere um Artifact de tabela comparativa com os critérios:
+- Clareza para o usuário
+- Diferenciação em relação a concorrentes
+- Viabilidade técnica para um estudante
+- Alinhamento com as dores de maior impacto
+
+Use uma escala de 1 a 5 para cada critério e adicione uma linha de pontuação total.</div>
+
+    <div class="subsec">Passo 4 — Crie sua primeira Skill</div>
+    <p class="intro-text">Acesse <strong>Configurações → Skills → Nova Skill</strong> e crie a Skill abaixo — você vai reutilizá-la ao longo do semestre:</p>
+    <div class="copy-block"><span class="label">Instruções da Skill — Análise de entrevista de cliente</span><button class="copy-btn" onclick="copyText(this,'Nome: Análise de entrevista de cliente\nDescrição: Use quando eu colar notas ou transcrição de uma entrevista com usuário\n\nInstruções:\nSempre que eu colar notas ou transcrição de uma entrevista,\nestruture a análise em um Artifact com quatro seções:\n\n1. Dores identificadas — lista das dores mencionadas, com frequência e impacto (alto/médio/baixo)\n2. Comportamento atual — como o entrevistado resolve o problema hoje\n3. Citações relevantes — trechos diretos que evidenciam as dores principais\n4. Hipóteses levantadas — o que essa entrevista sugere sobre o problema central do projeto')">Copiar</button>Nome: Análise de entrevista de cliente
+Descrição: Use quando eu colar notas ou transcrição de uma entrevista com usuário
+
+Instruções:
+Sempre que eu colar notas ou transcrição de uma entrevista,
+estruture a análise em um Artifact com quatro seções:
+
+1. Dores identificadas — lista das dores mencionadas, com frequência e impacto (alto/médio/baixo)
+2. Comportamento atual — como o entrevistado resolve o problema hoje
+3. Citações relevantes — trechos diretos que evidenciam as dores principais
+4. Hipóteses levantadas — o que essa entrevista sugere sobre o problema central do projeto</div>
+
+    <div class="subsec">Passo 5 — Exporte seu Artifact principal</div>
+    <p class="intro-text">Escolha o Artifact mais importante que você gerou hoje — provavelmente a tabela de análise ou a matriz de priorização — e exporte como PDF:</p>
+    <div class="copy-block"><span class="label">Prompt — Exportar como PDF</span><button class="copy-btn" onclick="copyText(this,'Exporte essa análise como um documento PDF formatado,\ncom título "Análise de Entrevistas — [nome do seu projeto]"\ne a data de hoje no cabeçalho.')">Copiar</button>Exporte essa análise como um documento PDF formatado,
+com título "Análise de Entrevistas — [nome do seu projeto]"
+e a data de hoje no cabeçalho.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step8')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 08 ENTREGÁVEL -->
+  <div class="section" id="sec-step8">
+    <div class="sec-title"><span class="snum">08.</span> Entregável</div>
+    <div class="sec-desc">O que você deve ter ao final desta aula</div>
+
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Artifact de análise de entrevistas</strong> com tabela de dores, frequência, impacto e citações</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Matriz de priorização</strong> com as dores plotadas por impacto e frequência</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Comparativo de propostas de valor</strong> com pontuação por critérios</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Skill de análise de entrevista</strong> criada e pronta para reutilizar</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>PDF exportado</strong> com a análise documentada</span></div>
+    </div>
+
+    <div class="tip-box">💡 Esses entregáveis são a base para a decisão mais importante do seu Micro-SaaS: qual proposta de valor você vai priorizar. Na próxima aula, você vai aprender a usar o Claude Code para começar a construir.</div>
+
+    <div class="next-teaser">
+      <strong>Próxima aula:</strong> Aula 4 — Cowork, Connectors e Claude Code: do plano ao produto — como automatizar fluxos e construir o primeiro protótipo funcional do seu Micro-SaaS.
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
+      <button class="nav-btn primary" onclick="goHome()">↩ Início</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- RIGHT SIDEBAR -->
+<div class="right-sidebar">
+  <div class="rs-section-title">Tipos de Artifact</div>
+  <table class="rs-table">
+    <tr><td>Tabelas</td><td>Dados comparativos</td></tr>
+    <tr><td>Markdown</td><td>Docs e relatórios</td></tr>
+    <tr><td>Interativo</td><td>Apps e dashboards</td></tr>
+    <tr><td>Gráficos</td><td>Visualizações</td></tr>
+    <tr><td>Código</td><td>Qualquer linguagem</td></tr>
+  </table>
+
+  <div class="rs-section-title">Exportar como</div>
+  <table class="rs-table">
+    <tr><td>PDF</td><td>Documentos formais</td></tr>
+    <tr><td>DOCX</td><td>Editar e compartilhar</td></tr>
+    <tr><td>CSV</td><td>Excel / Sheets</td></tr>
+  </table>
+
+  <div class="rs-section-title">Skills — estrutura</div>
+  <table class="rs-table">
+    <tr><td>Nome</td><td>Identificador</td></tr>
+    <tr><td>Descrição</td><td>Quando ativar</td></tr>
+    <tr><td>Instruções</td><td>Como executar</td></tr>
+  </table>
+
+  <div class="rs-section-title">Entregáveis</div>
+  <table class="rs-table">
+    <tr><td>✅</td><td>Tabela de dores</td></tr>
+    <tr><td>✅</td><td>Matriz priorização</td></tr>
+    <tr><td>✅</td><td>Propostas de valor</td></tr>
+    <tr><td>✅</td><td>Skill criada</td></tr>
+    <tr><td>✅</td><td>PDF exportado</td></tr>
+  </table>
+</div>
+
+</div><!-- /layout -->
+
+<script>
+const stepToFlow = {
+  'sec-home':'home','sec-step1':'step1','sec-step2':'step2','sec-step3':'step3',
+  'sec-step4':'step4','sec-step5':'step5','sec-step6':'step6','sec-step7':'step7','sec-step8':'step8'
+}
+const flowOrder = ['home','step1','step2','step3','step4','step5','step6','step7','step8']
+const visited = new Set(['sec-home'])
+const completedFlows = new Set()
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.section === id)
+    if (visited.has(n.dataset.section)) n.classList.add('completed')
+  })
+  visited.add(id)
+  const flow = stepToFlow[id]
+  if (flow) {
+    const idx = flowOrder.indexOf(flow)
+    if (idx > 0) completedFlows.add(flowOrder[idx-1])
+  }
+  updateStepper(flow)
+  updateProgress()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function updateStepper(activeFlow) {
+  document.querySelectorAll('.stepper-node').forEach(n => {
+    const f = n.id.replace('sn-','')
+    const idx = flowOrder.indexOf(f)
+    const activeIdx = flowOrder.indexOf(activeFlow)
+    n.classList.remove('active','completed','future')
+    if (f === activeFlow) n.classList.add('active')
+    else if (completedFlows.has(f) || idx < activeIdx) n.classList.add('completed')
+    else n.classList.add('future')
+  })
+}
+
+function updateProgress() {
+  const pct = Math.round((visited.size / document.querySelectorAll('.section').length) * 100)
+  document.getElementById('pct').textContent = pct
+  document.getElementById('sp-fill').style.width = pct + '%'
+}
+
+function goHome() { showSection('sec-home') }
+
+function copyText(btn, text) {
+  navigator.clipboard?.writeText(text).then(() => {
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  }).catch(() => {
+    const ta = document.createElement('textarea')
+    ta.value = text; document.body.appendChild(ta)
+    ta.select(); document.execCommand('copy')
+    document.body.removeChild(ta)
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  })
+}
+
+updateStepper('home')
+updateProgress()
+</script>
+</body>
+</html>

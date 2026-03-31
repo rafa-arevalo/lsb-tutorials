@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — O Claude que trabalha no seu estilo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #F5F3EE;
+  --white: #ffffff;
+  --accent: #C8A84B;
+  --accent2: #B09040;
+  --accent-light: #F8F2E0;
+  --accent-lighter: #FBF8F0;
+  --accent-border: #DEC878;
+  --accent-text: #8B6F28;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+  --green-text: #065F46;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --orange-border: #FED7AA;
+  --orange-text: #9A3412;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --text4: #CBCAC7;
+  --border: #E5E1D8;
+  --border2: #D8D4CB;
+  --surface2: #F5F3EE;
+  --shadow-xs: 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-sm: 0 1px 3px rgba(26,26,24,0.06), 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(26,26,24,0.07), 0 2px 4px -2px rgba(26,26,24,0.05);
+}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ===== STEPPER ===== */
+.stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
+.stepper-header::-webkit-scrollbar{height:0}
+.back-btn{display:flex;align-items:center;gap:5px;padding:0 12px 0 0;text-decoration:none;color:var(--text3);font-size:0.72rem;font-weight:600;white-space:nowrap;border-right:1px solid var(--border);margin-right:12px;flex-shrink:0;transition:color 0.15s}
+.back-btn:hover{color:var(--accent)}
+.back-btn .back-arrow{font-size:0.8rem;line-height:1}
+.stepper-node{display:flex;align-items:center;gap:5px;padding:0 4px;cursor:pointer;position:relative;white-space:nowrap;transition:color 0.2s}
+.stepper-node .sn-label{font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;padding:6px 0;position:relative;transition:color 0.2s}
+.stepper-node.future .sn-label{color:var(--text4)}
+.stepper-node.completed .sn-label{color:var(--text)}
+.stepper-node.active .sn-label{color:var(--accent)}
+.stepper-node.active .sn-label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0}
+.stepper-node .sn-check{display:none;font-size:0.6rem;color:var(--green)}
+.stepper-node.completed .sn-check{display:inline}
+.stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.sidebar-header p{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-top:2px}
+.nav-group{padding:12px 0 4px}
+.nav-group-title{padding:2px 16px 6px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 16px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:450;border-left:2px solid transparent;margin:0}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-lighter);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni-num{font-size:0.62rem;font-weight:600;color:var(--text3);min-width:17px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-num{color:var(--accent)}
+.nav-item .ni-check{margin-left:auto;font-size:0.62rem;color:var(--green);opacity:0;transition:opacity 0.2s;flex-shrink:0}
+.nav-item.completed .ni-check{opacity:1}
+.sidebar-progress{padding:14px 16px;border-top:1px solid var(--border);margin-top:auto}
+.sp-label{font-size:0.62rem;color:var(--text3);font-weight:500;margin-bottom:6px}
+.sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:20px 36px 40px;max-width:700px}
+.section{display:none;animation:fadeIn 0.25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
+.sec-title .snum{color:var(--accent)}
+.sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+.overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+.oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
+.oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
+
+.intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.intro-text strong{color:var(--text);font-weight:600}
+.subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
+
+.instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
+.inst:hover{box-shadow:var(--shadow-sm)}
+.inst-num{font-size:0.56rem;font-weight:700;color:#fff;background:var(--accent);min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
+.inst-text strong{font-weight:600}
+.inst-text em{color:var(--text2);font-style:italic}
+.inst-text code{font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.68rem;background:#F3F2EE;padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+
+.content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
+.content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.content-table tr:last-child td{border-bottom:none}
+.content-table tr:hover td{background:var(--surface2)}
+.content-table td strong{font-weight:600}
+.content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
+
+/* Compare grid */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 16px}
+.compare-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px 14px;box-shadow:var(--shadow-xs)}
+.compare-card-title{font-size:0.72rem;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.compare-card-title span{display:inline-block;font-size:0.58rem;font-weight:600;background:var(--accent-light);color:var(--accent-text);padding:2px 7px;border-radius:4px;margin-right:6px;vertical-align:middle}
+.compare-card ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.compare-card li{font-size:0.72rem;color:var(--text2);line-height:1.45;padding-left:12px;position:relative}
+.compare-card li::before{content:'·';position:absolute;left:2px;color:var(--accent)}
+
+/* Demo blocks */
+.demo-block{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.demo-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.demo-num{font-size:0.62rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0}
+.demo-title{font-size:0.82rem;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.demo-time{font-size:0.65rem;color:var(--text3);margin-left:auto;flex-shrink:0;font-weight:500}
+.demo-step{font-size:0.76rem;font-weight:700;color:var(--text);margin:12px 0 5px}
+
+/* Skill card — visually shows the anatomy */
+.skill-card{background:var(--white);border:1px solid var(--accent-border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.skill-card-field{margin-bottom:12px}
+.skill-card-field:last-child{margin-bottom:0}
+.skill-field-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-text);margin-bottom:4px}
+.skill-field-value{font-size:0.75rem;color:var(--text);line-height:1.5;font-family:'SF Mono','JetBrains Mono',monospace;background:#F3F2EE;border:1px solid var(--border);border-radius:5px;padding:8px 10px;white-space:pre-wrap;word-break:break-word}
+
+/* Prep block */
+.prep-block{background:#F8F6F2;border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.prep-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.prep-badge{font-size:0.6rem;font-weight:700;color:#fff;background:var(--text3);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em}
+.prep-title{font-size:0.8rem;font-weight:700;color:var(--text)}
+.prep-file{margin-bottom:14px}
+.prep-file:last-child{margin-bottom:0}
+.prep-file-name{font-size:0.68rem;font-weight:700;color:var(--text2);margin-bottom:4px;font-family:'SF Mono','JetBrains Mono',monospace}
+
+/* Quote block */
+.quote-block{background:var(--white);border-left:3px solid var(--accent-border);padding:10px 14px;margin:8px 0;border-radius:0 6px 6px 0;font-size:0.76rem;color:var(--text2);line-height:1.6;font-style:italic}
+.quote-block strong{font-style:normal;font-weight:600;color:var(--text);font-size:0.72rem;display:block;margin-bottom:4px}
+
+/* Copy block */
+.copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
+.copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* Callout boxes */
+.tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
+.tip-box strong{font-weight:600}
+.warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
+.warning-box strong{font-weight:600}
+.speaker-box{background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--orange-text);line-height:1.5}
+.speaker-box strong{font-weight:600}
+.note-box{background:var(--accent-lighter);border:1px solid var(--accent-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.note-box strong{font-weight:600}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
+.check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
+.check-item strong{font-weight:600}
+
+.next-teaser{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.next-teaser strong{font-weight:700}
+
+/* Nav buttons */
+.nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
+.nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
+
+/* ===== RIGHT SIDEBAR ===== */
+.right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.rs-section-title:first-child{margin-top:0}
+.rs-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.rs-table td{padding:5px 6px;font-size:0.68rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--text2)}
+.rs-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap;padding-right:8px}
+.rs-table tr:last-child td{border-bottom:none}
+.rs-link{display:block;font-size:0.7rem;color:var(--accent);text-decoration:none;padding:4px 0;font-weight:500}
+.rs-link:hover{text-decoration:underline}
+
+@media(max-width:1024px){.right-sidebar{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- STEPPER -->
+<div class="stepper-header">
+  <a class="back-btn" href="index.html"><span class="back-arrow">←</span>Índice</a>
+  <div class="stepper-node active" onclick="showSection('sec-home')" id="sn-home">
+    <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+    <span class="sn-check">✓</span><span class="sn-label">O que é Skill</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+    <span class="sn-check">✓</span><span class="sn-label">Anatomia</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
+    <span class="sn-check">✓</span><span class="sn-label">Dados da Demo</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 1</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 2</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 3</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 4</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step8')" id="sn-step8">
+    <span class="sn-check">✓</span><span class="sn-label">Prática</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>O Claude que trabalha no seu estilo</h2>
+    <p>A06 · Link School of Business</p>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Introdução</div>
+      <div class="nav-item active" onclick="showSection('sec-home')" data-section="sec-home">
+        <span class="ni-num">00</span>Visão Geral<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Teoria</div>
+      <div class="nav-item" onclick="showSection('sec-step1')" data-section="sec-step1">
+        <span class="ni-num">01</span>O que é uma Skill<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
+        <span class="ni-num">02</span>Anatomia e criação<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
+        <span class="ni-num">03</span>Dados da Demo<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Demonstrações</div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Demo 1 — Criar Skill ao vivo<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>Demo 2 — Com vs. sem Skill<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>Demo 3 — Claude cria a Skill<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
+        <span class="ni-num">07</span>Demo 4 — Testar e ajustar<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Prática</div>
+      <div class="nav-item" onclick="showSection('sec-step8')" data-section="sec-step8">
+        <span class="ni-num">08</span>Prática + Entregável<span class="ni-check">✓</span>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-progress">
+    <div class="sp-label">Progresso — <span id="pct">0</span>%</div>
+    <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 00 VISÃO GERAL -->
+  <div class="section active" id="sec-home">
+    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
+    <div class="sec-desc">Skills · AI for Business</div>
+    <div class="overview-card">
+      <div class="oc-title">Sobre esta aula</div>
+      <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
+      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
+      <div class="oc-row"><span class="oc-label">Tema</span><span class="oc-value">Skills</span></div>
+      <div class="oc-row"><span class="oc-label">Contexto</span><span class="oc-value">Padronização de fluxos recorrentes do Micro-SaaS</span></div>
+    </div>
+    <p class="intro-text">Você já percebeu que certas tarefas do projeto se repetem toda semana: analisar entrevistas, avaliar propostas de valor, documentar o progresso. Para cada uma você reescreveu um prompt longo — e vai continuar reescrevendo até o final do semestre.</p>
+    <p class="intro-text">As <strong>Skills</strong> eliminam esse retrabalho. Uma Skill é um conjunto de instruções salvas que ensina ao Claude como executar uma tarefa específica. <strong>Você escreve uma vez. O Claude reproduz o padrão toda vez</strong>, sem variações indesejadas.</p>
+    <div class="subsec">Objetivos de aprendizagem</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que é uma Skill e <strong>quando faz sentido criar uma</strong></span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Escrever instruções com <strong>gatilho claro e output definido</strong></span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Criar pelo menos <strong>3 Skills</strong> aplicadas ao projeto Micro-SaaS</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Testar, identificar problemas e <strong>ajustar uma Skill</strong></span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text">Pedir ao Claude para <strong>criar ou melhorar uma Skill</strong> a partir de um prompt existente</span></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 01 O QUE É UMA SKILL -->
+  <div class="section" id="sec-step1">
+    <div class="sec-title"><span class="snum">01.</span> O que é uma Skill</div>
+    <div class="sec-desc">A diferença entre prompt e fluxo padronizado</div>
+    <table class="content-table">
+      <thead>
+        <tr><th>Sem Skill</th><th>Com Skill</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Reescreve o mesmo prompt toda vez</td><td><strong>Escreve uma vez, reutiliza sempre</strong></td></tr>
+        <tr><td>Resultados inconsistentes</td><td><strong>Output padronizado toda vez</strong></td></tr>
+        <tr><td>Prompt se perde no histórico</td><td><strong>Skill salva em Configurações</strong></td></tr>
+        <tr><td>Para tarefas pontuais</td><td><strong>Para tarefas recorrentes</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="tip-box"><strong>💡 Regra prática:</strong> se você já usou o mesmo prompt mais de duas vezes, vale transformá-lo numa Skill.</div>
+    <p class="intro-text" style="margin-top:14px">Skills não substituem bons prompts — elas <strong>preservam</strong> bons prompts e os tornam disponíveis em qualquer conversa, a qualquer momento, sem precisar lembrar como você escreveu da última vez.</p>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 02 ANATOMIA E CRIAÇÃO -->
+  <div class="section" id="sec-step2">
+    <div class="sec-title"><span class="snum">02.</span> Anatomia e como criar</div>
+    <div class="sec-desc">Os três campos que definem uma Skill</div>
+    <p class="intro-text">Toda Skill tem três componentes. A qualidade de cada um determina se a Skill vai funcionar ou não.</p>
+
+    <div class="subsec">1. Nome</div>
+    <p class="intro-text">Claro e descritivo. Você vai precisar reconhecer para o que serve olhando só o nome.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="compare-card-title"><span>Fraco</span></div>
+        <ul><li>"Análise"</li><li>"Avaliação"</li></ul>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
+        <ul><li>"Análise de entrevista de cliente — OdontoFlow"</li><li>"Avaliação de proposta de valor"</li></ul>
+      </div>
+    </div>
+
+    <div class="subsec">2. Gatilho (Descrição)</div>
+    <p class="intro-text">Define <strong>quando</strong> ativar. Começa com "Use quando...".</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="compare-card-title"><span>Fraco</span></div>
+        <ul><li>"Use quando eu pedir uma análise."</li></ul>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
+        <ul><li>"Use quando eu colar notas ou transcrição de uma entrevista com dentista."</li></ul>
+      </div>
+    </div>
+
+    <div class="subsec">3. Instruções de output</div>
+    <p class="intro-text">O que produzir, em quais seções, com qual formato.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="compare-card-title"><span>Fraco</span></div>
+        <ul><li>"Analise e dê um resumo."</li></ul>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
+        <ul><li>"Estruture em 4 seções: dores identificadas, comportamento atual, citações diretas, hipóteses levantadas."</li></ul>
+      </div>
+    </div>
+
+    <div class="subsec">Como criar</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">A</span><span class="inst-text"><strong>Pelo painel:</strong> <code>Configurações → Skills → Nova Skill</code></span></div>
+      <div class="inst"><span class="inst-num">B</span><span class="inst-text"><strong>Pedindo ao Claude:</strong> cole um prompt que já funciona e peça para transformar em Skill — a Demo 3 mostra isso ao vivo</span></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 03 DADOS DA DEMO -->
+  <div class="section" id="sec-step3">
+    <div class="sec-title"><span class="snum">03.</span> Dados da demonstração</div>
+    <div class="sec-desc">Materiais reutilizados da Aula 5 — prontos para copiar</div>
+    <div class="note-box"><strong>📋 Nota para o professor:</strong> esses materiais são os mesmos da Aula 5. A turma já os conhece — o objetivo é mostrar que a Skill transforma o mesmo input num output mais consistente do que uma conversa sem Skill.</div>
+
+    <div class="prep-block">
+      <div class="prep-header">
+        <span class="prep-badge">Prep</span>
+        <span class="prep-title">3 materiais para testar as Skills ao vivo</span>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">Material 1 — Transcrição (para testar Skill 1)</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '--- TRANSCRIÇÃO — DR. MARCOS OLIVEIRA ---\n\n\"Meu maior problema é que a gente trabalha muito e não tem tempo de ficar \nligando pra paciente. A recepcionista manda WhatsApp quando lembra, mas é \nmuita coisa pra fazer. Semana passada mesmo, eu olhei a agenda e tinha 4 \nburacos que poderiam ter sido preenchidos se a gente tivesse acionado \npacientes que estão sumidos há mais de 6 meses.\"\n\n\"Já tentei uma vez usar uma planilha de Excel pra controlar quem precisava \nvoltar. Funcionou por 3 semanas. Aí minha recepcionista tirou férias, a \nsubstituta não sabia usar e perdemos o controle.\"\n\n\"O que me faz perder mais sono é a fidelização. Você faz um trabalho excelente, \no paciente sai satisfeito, e aí some. Vai pra outra clínica porque aquela \nficou na cabeça dele.\"')">Copiar</button>--- TRANSCRIÇÃO — DR. MARCOS OLIVEIRA ---
+
+"Meu maior problema é que a gente trabalha muito e não tem tempo de ficar
+ligando pra paciente. A recepcionista manda WhatsApp quando lembra, mas é
+muita coisa pra fazer. Semana passada mesmo, eu olhei a agenda e tinha 4
+buracos que poderiam ter sido preenchidos se a gente tivesse acionado
+pacientes que estão sumidos há mais de 6 meses."
+
+"Já tentei uma vez usar uma planilha de Excel pra controlar quem precisava
+voltar. Funcionou por 3 semanas. Aí minha recepcionista tirou férias, a
+substituta não sabia usar e perdemos o controle."
+
+"O que me faz perder mais sono é a fidelização. Você faz um trabalho excelente,
+o paciente sai satisfeito, e aí some. Vai pra outra clínica porque aquela
+ficou na cabeça dele."</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">Material 2 — Proposta de valor (para testar Skill 2)</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'OdontoFlow é um software simples de follow-up automático para clínicas \nodontológicas. Ele envia mensagens personalizadas de reengajamento para \npacientes que estão há mais de 90 dias sem consulta, usando WhatsApp e \nintegrando com a agenda da clínica. Setup em menos de 1 hora, sem equipe de TI.')">Copiar</button>OdontoFlow é um software simples de follow-up automático para clínicas
+odontológicas. Ele envia mensagens personalizadas de reengajamento para
+pacientes que estão há mais de 90 dias sem consulta, usando WhatsApp e
+integrando com a agenda da clínica. Setup em menos de 1 hora, sem equipe de TI.</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">Material 3 — Atualização semanal (para testar Skill de relatório)</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Essa semana concluí 3 entrevistas — Dr. Marcos, Dra. Carla e Dr. Paulo. \nValidei que a dor de falta de follow-up é real para os 3. Criei a matriz \nde priorização na Aula 5. Ainda preciso entrevistar mais 2 dentistas para \natingir as 5 entrevistas planejadas. Estou bloqueado para marcar as entrevistas \nrestantes porque os contatos ainda não responderam.')">Copiar</button>Essa semana concluí 3 entrevistas — Dr. Marcos, Dra. Carla e Dr. Paulo.
+Validei que a dor de falta de follow-up é real para os 3. Criei a matriz
+de priorização na Aula 5. Ainda preciso entrevistar mais 2 dentistas para
+atingir as 5 entrevistas planejadas. Estou bloqueado para marcar as entrevistas
+restantes porque os contatos ainda não responderam.</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 04 DEMO 1 -->
+  <div class="section" id="sec-step4">
+    <div class="sec-title"><span class="snum">04.</span> Demo 1 — Criando a Skill ao vivo</div>
+    <div class="sec-desc">Skill de análise de entrevista — do zero ao teste em 12 minutos</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 1</span>
+        <span class="demo-title">Criar e testar a Skill de análise de entrevista</span>
+        <span class="demo-time">12 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Acesse o painel de Skills</div>
+      <p class="intro-text" style="margin-bottom:6px">Navegue até <strong>Configurações → Skills → Nova Skill</strong>. Preencha os três campos:</p>
+
+      <div class="skill-card">
+        <div class="skill-card-field">
+          <div class="skill-field-label">Nome</div>
+          <div class="skill-field-value" style="font-family:'Inter',system-ui,sans-serif;font-size:0.76rem">Análise de entrevista de cliente — OdontoFlow</div>
+        </div>
+        <div class="skill-card-field">
+          <div class="skill-field-label">Descrição (Gatilho)</div>
+          <div class="skill-field-value">Use quando eu colar notas ou transcrição de uma entrevista com
+dono de clínica odontológica para o projeto OdontoFlow.</div>
+        </div>
+        <div class="skill-card-field">
+          <div class="skill-field-label">Instruções</div>
+          <div class="skill-field-value">Ao receber notas ou transcrição de entrevista, gere um Artifact
+estruturado com as seguintes seções:
+
+1. DORES IDENTIFICADAS
+   - Nome da dor (em negrito)
+   - Frequência: 1 vez, repetidamente ou com ênfase
+   - Impacto: alto / médio / baixo
+   - Evidência: o que no texto indica esse impacto
+
+2. COMPORTAMENTO ATUAL
+   - Como resolve (ou tenta) o problema hoje
+   - Ferramentas, processos ou gambiarras mencionadas
+   - Por que a solução atual falha ou é insuficiente
+
+3. CITAÇÕES DIRETAS
+   - Mínimo 3, máximo 5 trechos exatos
+   - Selecione os que melhor evidenciam as dores principais
+
+4. HIPÓTESES PARA O PROJETO
+   - O que confirma sobre o problema central do OdontoFlow
+   - O que contradiz ou nuança a hipótese atual
+   - Uma pergunta que essa entrevista levanta
+
+Finalize com: "Essa entrevista [confirma/contradiz/nuança] a hipótese
+principal porque [razão em 1 frase]."</div>
+        </div>
+      </div>
+      <div class="copy-block" style="margin-top:8px"><button class="copy-btn" onclick="copyText(this, 'Ao receber notas ou transcrição de entrevista, gere um Artifact \nestruturado com as seguintes seções:\n\n1. DORES IDENTIFICADAS\n   - Nome da dor (em negrito)\n   - Frequência: 1 vez, repetidamente ou com ênfase\n   - Impacto: alto / médio / baixo\n   - Evidência: o que no texto indica esse impacto\n\n2. COMPORTAMENTO ATUAL\n   - Como resolve (ou tenta) o problema hoje\n   - Ferramentas, processos ou gambiarras mencionadas\n   - Por que a solução atual falha ou é insuficiente\n\n3. CITAÇÕES DIRETAS\n   - Mínimo 3, máximo 5 trechos exatos\n   - Selecione os que melhor evidenciam as dores principais\n\n4. HIPÓTESES PARA O PROJETO\n   - O que confirma sobre o problema central do OdontoFlow\n   - O que contradiz ou nuança a hipótese atual\n   - Uma pergunta que essa entrevista levanta\n\nFinalize com: \"Essa entrevista [confirma/contradiz/nuança] a hipótese\nprincipal porque [razão em 1 frase].\"')">Copiar instruções</button><span class="label">instruções completas — colar no campo da Skill</span>Ao receber notas ou transcrição de entrevista, gere um Artifact
+estruturado com as seguintes seções:
+
+1. DORES IDENTIFICADAS
+   - Nome da dor (em negrito)
+   - Frequência: 1 vez, repetidamente ou com ênfase
+   - Impacto: alto / médio / baixo
+   - Evidência: o que no texto indica esse impacto
+
+2. COMPORTAMENTO ATUAL
+   - Como resolve (ou tenta) o problema hoje
+   - Ferramentas, processos ou gambiarras mencionadas
+   - Por que a solução atual falha ou é insuficiente
+
+3. CITAÇÕES DIRETAS
+   - Mínimo 3, máximo 5 trechos exatos
+   - Selecione os que melhor evidenciam as dores principais
+
+4. HIPÓTESES PARA O PROJETO
+   - O que confirma sobre o problema central do OdontoFlow
+   - O que contradiz ou nuança a hipótese atual
+   - Uma pergunta que essa entrevista levanta
+
+Finalize com: "Essa entrevista [confirma/contradiz/nuança] a hipótese
+principal porque [razão em 1 frase]."</div>
+
+      <div class="demo-step">Passo 2 — Teste imediatamente</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa dentro do Project. Envie <strong>apenas a transcrição do Dr. Marcos</strong> — sem nenhuma instrução adicional (disponível na seção "Dados da Demo").</p>
+
+      <div class="speaker-box" style="margin-top:4px"><strong>🎙️ Fala para a turma:</strong> <em>"Não dei nenhuma instrução — só colei a transcrição. O Claude reconheceu o gatilho da Skill e aplicou a estrutura automaticamente. Compare com a Aula 5: precisaríamos de um prompt longo toda vez."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 05 DEMO 2 -->
+  <div class="section" id="sec-step5">
+    <div class="sec-title"><span class="snum">05.</span> Demo 2 — Com Skill vs. sem Skill</div>
+    <div class="sec-desc">Tornando visível a diferença de consistência</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 2</span>
+        <span class="demo-title">Comparação direta — mesmo input, resultados diferentes</span>
+        <span class="demo-time">8 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Sem Skill (conversa comum)</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma conversa <strong>fora do Project</strong>, sem nenhuma Skill configurada. Envie a mesma transcrição do Dr. Marcos sem nenhuma instrução.</p>
+      <p class="intro-text" style="margin-bottom:6px">A resposta será texto corrido, sem as 4 seções e provavelmente sem Artifact.</p>
+
+      <div class="demo-step">Passo 2 — Com Skill (dentro do Project)</div>
+      <p class="intro-text" style="margin-bottom:6px">Volte para uma conversa dentro do Project com a Skill ativada. Envie o mesmo input.</p>
+      <p class="intro-text" style="margin-bottom:6px">Mostre os dois resultados lado a lado.</p>
+
+      <div class="speaker-box" style="margin-top:4px"><strong>🎙️ Fala para a turma:</strong> <em>"Mesma transcrição, dois resultados completamente diferentes. A Skill garante que toda análise de entrevista — independente de quando você fizer ou em qual conversa — vai seguir o mesmo padrão. Isso é especialmente útil quando você tem 5, 8, 10 entrevistas para analisar."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 06 DEMO 3 -->
+  <div class="section" id="sec-step6">
+    <div class="sec-title"><span class="snum">06.</span> Demo 3 — Claude cria a Skill</div>
+    <div class="sec-desc">Transformar um prompt existente em Skill em 2 minutos</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 3</span>
+        <span class="demo-title">De prompt recorrente a Skill estruturada</span>
+        <span class="demo-time">8 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Peça ao Claude para criar a Skill</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma conversa dentro do Project. Envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Tenho usado este prompt repetidamente para avaliar a proposta de valor \ndo OdontoFlow:\n\n"Avalie esta proposta de valor considerando: \n(1) clareza para o usuário de 1 a 5, \n(2) diferenciação em relação a OdontoSoft e iClinic de 1 a 5, \n(3) alinhamento com a dor de follow-up manual de 1 a 5, \n(4) viabilidade para um estudante construir em 3 meses de 1 a 5.\nDê nota, justificativa de 1 linha para cada critério, \ne reescreva a proposta incorporando as melhorias sugeridas."\n\nTransforme esse prompt em uma Skill estruturada com:\n- Nome claro e descritivo\n- Gatilho específico de quando deve ser ativada\n- Instruções de output com seções definidas\n\nFormate pronto para colar no painel de Skills do Claude.')">Copiar</button>Tenho usado este prompt repetidamente para avaliar a proposta de valor
+do OdontoFlow:
+
+"Avalie esta proposta de valor considerando:
+(1) clareza para o usuário de 1 a 5,
+(2) diferenciação em relação a OdontoSoft e iClinic de 1 a 5,
+(3) alinhamento com a dor de follow-up manual de 1 a 5,
+(4) viabilidade para um estudante construir em 3 meses de 1 a 5.
+Dê nota, justificativa de 1 linha para cada critério,
+e reescreva a proposta incorporando as melhorias sugeridas."
+
+Transforme esse prompt em uma Skill estruturada com:
+- Nome claro e descritivo
+- Gatilho específico de quando deve ser ativada
+- Instruções de output com seções definidas
+
+Formate pronto para colar no painel de Skills do Claude.</div>
+
+      <div class="demo-step">Passo 2 — Cole no painel e teste</div>
+      <p class="intro-text" style="margin-bottom:6px">Copie o resultado gerado → cole em <strong>Configurações → Skills → Nova Skill</strong>. Depois teste enviando a proposta de valor do OdontoFlow (disponível na seção "Dados da Demo").</p>
+
+      <div class="speaker-box" style="margin-top:4px"><strong>🎙️ Fala para a turma:</strong> <em>"Transformei um prompt que já usava em uma Skill em menos de 2 minutos. Daqui pra frente, toda vez que reformular a proposta de valor — o que vai acontecer várias vezes ao longo do semestre — recebo a avaliação com a mesma estrutura."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 07 DEMO 4 -->
+  <div class="section" id="sec-step7">
+    <div class="sec-title"><span class="snum">07.</span> Demo 4 — Testar e ajustar uma Skill</div>
+    <div class="sec-desc">A primeira versão raramente é perfeita — o ciclo de melhoria</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 4</span>
+        <span class="demo-title">Ciclo: criar → testar → identificar → corrigir</span>
+        <span class="demo-time">7 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Criar a Skill de relatório semanal (antes da aula)</div>
+      <p class="intro-text" style="margin-bottom:6px">Crie essa Skill antes da aula ou ao vivo, colando as instruções abaixo:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Nome: Relatório semanal — OdontoFlow\n\nGatilho:\nUse quando eu descrever o que aconteceu durante a semana no projeto.\n\nInstruções:\nGere um Artifact de relatório com:\n- Resumo executivo (3 linhas)\n- O que foi feito\n- Decisões tomadas\n- Próximos passos priorizados\n- Bloqueios')">Copiar</button><span class="label">instruções da Skill de relatório semanal</span>Nome: Relatório semanal — OdontoFlow
+
+Gatilho:
+Use quando eu descrever o que aconteceu durante a semana no projeto.
+
+Instruções:
+Gere um Artifact de relatório com:
+- Resumo executivo (3 linhas)
+- O que foi feito
+- Decisões tomadas
+- Próximos passos priorizados
+- Bloqueios</div>
+
+      <div class="demo-step">Passo 2 — Teste com a atualização semanal</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma conversa no Project e envie o Material 3 da seção "Dados da Demo" (atualização semanal sintética) sem nenhuma instrução adicional.</p>
+
+      <div class="demo-step">Passo 3 — Identifique um problema no output</div>
+      <p class="intro-text" style="margin-bottom:6px">Por exemplo: os próximos passos foram listados sem prazo nem dependências. Use o prompt abaixo para corrigir:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'A Skill de relatório semanal gerou esse output:\n[cole o output]\n\nO problema: os próximos passos não têm prazo nem indicação de dependências.\nReescreva as instruções da Skill para que os próximos passos sempre incluam:\n(1) descrição da tarefa, (2) prazo estimado e (3) dependências (se existirem).\nMantenha o restante da estrutura.')">Copiar</button>A Skill de relatório semanal gerou esse output:
+[cole o output]
+
+O problema: os próximos passos não têm prazo nem indicação de dependências.
+Reescreva as instruções da Skill para que os próximos passos sempre incluam:
+(1) descrição da tarefa, (2) prazo estimado e (3) dependências (se existirem).
+Mantenha o restante da estrutura.</div>
+
+      <div class="demo-step">Passo 4 — Cole as instruções atualizadas e teste novamente</div>
+      <p class="intro-text">Substitua as instruções da Skill no painel e envie o mesmo input. A saída deve incluir prazo e dependências nos próximos passos.</p>
+
+      <div class="speaker-box" style="margin-top:4px"><strong>🎙️ Fala para a turma:</strong> <em>"O ciclo é: criar → testar → identificar o problema → corrigir com ajuda do Claude → testar de novo. Skills raramente ficam perfeitas na primeira versão — mas melhoram rápido."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step8')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 08 PRÁTICA + ENTREGÁVEL -->
+  <div class="section" id="sec-step8">
+    <div class="sec-title"><span class="snum">08.</span> Prática + Entregável</div>
+    <div class="sec-desc">Crie as 3 Skills do seu projeto agora</div>
+
+    <div class="subsec">Skill 1 — Análise de entrevista</div>
+    <p class="intro-text" style="margin-bottom:6px">Acesse <strong>Configurações → Skills → Nova Skill</strong>. Cole e adapte para o seu projeto:</p>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Nome: Análise de entrevista de cliente — [nome do projeto]\n\nGatilho:\nUse quando eu colar notas ou transcrição de uma entrevista \ncom usuário potencial do meu Micro-SaaS.\n\nInstruções:\nGere um Artifact com 4 seções:\n\n1. DORES IDENTIFICADAS\n   - Nome da dor, frequência, impacto (alto/médio/baixo), evidência\n\n2. COMPORTAMENTO ATUAL\n   - Como resolve hoje, ferramentas usadas, por que falha\n\n3. CITAÇÕES DIRETAS\n   - 3 a 5 trechos exatos que evidenciam as dores principais\n\n4. HIPÓTESES PARA O PROJETO\n   - O que confirma, contradiz ou nuança a hipótese central\n   - Uma pergunta que vale investigar nas próximas entrevistas\n\nFinalize com: \"Essa entrevista [confirma/contradiz/nuança] a hipótese\nprincipal porque [razão].\"')">Copiar</button><span class="label">Skill 1 — análise de entrevista (adaptar para seu projeto)</span>Nome: Análise de entrevista de cliente — [nome do projeto]
+
+Gatilho:
+Use quando eu colar notas ou transcrição de uma entrevista
+com usuário potencial do meu Micro-SaaS.
+
+Instruções:
+Gere um Artifact com 4 seções:
+
+1. DORES IDENTIFICADAS
+   - Nome da dor, frequência, impacto (alto/médio/baixo), evidência
+
+2. COMPORTAMENTO ATUAL
+   - Como resolve hoje, ferramentas usadas, por que falha
+
+3. CITAÇÕES DIRETAS
+   - 3 a 5 trechos exatos que evidenciam as dores principais
+
+4. HIPÓTESES PARA O PROJETO
+   - O que confirma, contradiz ou nuança a hipótese central
+   - Uma pergunta que vale investigar nas próximas entrevistas
+
+Finalize com: "Essa entrevista [confirma/contradiz/nuança] a hipótese
+principal porque [razão]."</div>
+
+    <div class="subsec">Skill 2 — Avaliação de proposta de valor</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Nome: Avaliação de proposta de valor — [nome do projeto]\n\nGatilho:\nUse quando eu descrever ou pedir feedback sobre a proposta de valor.\n\nInstruções:\nAvalie em Artifact com:\n1. Notas por critério (1–5 com justificativa de 1 linha):\n   - Clareza para o usuário\n   - Diferenciação em relação a concorrentes\n   - Alinhamento com as dores validadas\n   - Viabilidade técnica para um estudante\n2. Pontos fortes (até 3)\n3. Gaps críticos (até 3)\n4. Sugestão de reformulação em até 2 frases')">Copiar</button><span class="label">Skill 2 — avaliação de proposta de valor</span>Nome: Avaliação de proposta de valor — [nome do projeto]
+
+Gatilho:
+Use quando eu descrever ou pedir feedback sobre a proposta de valor.
+
+Instruções:
+Avalie em Artifact com:
+1. Notas por critério (1–5 com justificativa de 1 linha):
+   - Clareza para o usuário
+   - Diferenciação em relação a concorrentes
+   - Alinhamento com as dores validadas
+   - Viabilidade técnica para um estudante
+2. Pontos fortes (até 3)
+3. Gaps críticos (até 3)
+4. Sugestão de reformulação em até 2 frases</div>
+
+    <div class="subsec">Skill 3 — A partir de um prompt seu</div>
+    <p class="intro-text" style="margin-bottom:6px">Pense num prompt que você já usou mais de uma vez. Cole e envie:</p>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Tenho usado este prompt com frequência:\n[cole seu prompt]\n\nTransforme em Skill com nome, gatilho e instruções detalhadas.\nFormate pronto para colar no painel de Skills.')">Copiar</button>Tenho usado este prompt com frequência:
+[cole seu prompt]
+
+Transforme em Skill com nome, gatilho e instruções detalhadas.
+Formate pronto para colar no painel de Skills.</div>
+
+    <div class="subsec">Testar e ajustar</div>
+    <p class="intro-text" style="margin-bottom:6px">Para qualquer Skill que não ficou satisfatória:</p>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Esta é minha Skill: [instruções]\nTestei com: [input]\nO output foi: [output]\nProblema: [o que ficou errado]\n\nReescreva as instruções para corrigir, mantendo o que já funcionava.')">Copiar</button>Esta é minha Skill: [instruções]
+Testei com: [input]
+O output foi: [output]
+Problema: [o que ficou errado]
+
+Reescreva as instruções para corrigir, mantendo o que já funcionava.</div>
+
+    <div class="subsec">Entregável da aula</div>
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Skill de análise de entrevista</strong> criada, testada e funcionando</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Skill de avaliação de proposta de valor</strong> criada e testada</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Skill adicional</strong> criada a partir de um prompt recorrente seu</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Pelo menos uma Skill ajustada</strong> após ciclo de teste e melhoria</span></div>
+    </div>
+    <div class="next-teaser"><strong>Próxima aula — A07: Claude Cowork</strong><br>Como delegar tarefas com arquivos locais do seu computador — sem copiar e colar manualmente.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
+      <button class="nav-btn primary" onclick="goHome()">↩ Recomeçar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="right-sidebar">
+  <div class="rs-section-title">Regra prática</div>
+  <table class="rs-table">
+    <tr><td colspan="2" style="font-size:0.68rem;color:var(--accent-text);font-weight:600;font-style:italic">Usou o prompt 2x? Vira Skill.</td></tr>
+  </table>
+  <div class="rs-section-title">Anatomia da Skill</div>
+  <table class="rs-table">
+    <tr><td>Nome</td><td>Claro e descritivo</td></tr>
+    <tr><td>Gatilho</td><td>"Use quando..."</td></tr>
+    <tr><td>Instruções</td><td>Seções e formato</td></tr>
+  </table>
+  <div class="rs-section-title">Como criar</div>
+  <table class="rs-table">
+    <tr><td>A</td><td>Pelo painel de Skills</td></tr>
+    <tr><td>B</td><td>Claude cria a partir do seu prompt</td></tr>
+  </table>
+  <div class="rs-section-title">Demos desta aula</div>
+  <table class="rs-table">
+    <tr><td>Demo 1</td><td>Criar Skill ao vivo</td></tr>
+    <tr><td>Demo 2</td><td>Com vs. sem Skill</td></tr>
+    <tr><td>Demo 3</td><td>Claude cria a Skill</td></tr>
+    <tr><td>Demo 4</td><td>Testar e ajustar</td></tr>
+  </table>
+  <div class="rs-section-title">Entregáveis</div>
+  <table class="rs-table">
+    <tr><td>✅</td><td>Skill análise entrevista</td></tr>
+    <tr><td>✅</td><td>Skill proposta de valor</td></tr>
+    <tr><td>✅</td><td>Skill adicional</td></tr>
+    <tr><td>✅</td><td>1 Skill ajustada</td></tr>
+  </table>
+</div>
+
+</div>
+
+<script>
+const stepToFlow = {
+  'sec-home':  'home',
+  'sec-step1': 'skill',
+  'sec-step2': 'anatomia',
+  'sec-step3': 'prep',
+  'sec-step4': 'demo1',
+  'sec-step5': 'demo2',
+  'sec-step6': 'demo3',
+  'sec-step7': 'demo4',
+  'sec-step8': 'pratica'
+}
+const flowOrder = ['home','skill','anatomia','prep','demo1','demo2','demo3','demo4','pratica']
+const visited = new Set(['sec-home'])
+const completedFlows = new Set()
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.section === id)
+    if (visited.has(n.dataset.section)) n.classList.add('completed')
+  })
+  visited.add(id)
+  const flow = stepToFlow[id]
+  if (flow) {
+    const idx = flowOrder.indexOf(flow)
+    if (idx > 0) completedFlows.add(flowOrder[idx-1])
+  }
+  updateStepper(flow)
+  updateProgress()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function updateStepper(activeFlow) {
+  document.querySelectorAll('.stepper-node').forEach(n => {
+    const f = n.id.replace('sn-','')
+    const idx = flowOrder.indexOf(f)
+    const activeIdx = flowOrder.indexOf(activeFlow)
+    n.classList.remove('active','completed','future')
+    if (f === activeFlow) n.classList.add('active')
+    else if (completedFlows.has(f) || idx < activeIdx) n.classList.add('completed')
+    else n.classList.add('future')
+  })
+}
+
+function updateProgress() {
+  const pct = Math.round((visited.size / document.querySelectorAll('.section').length) * 100)
+  document.getElementById('pct').textContent = pct
+  document.getElementById('sp-fill').style.width = pct + '%'
+}
+
+function goHome() { showSection('sec-home') }
+
+function copyText(btn, text) {
+  navigator.clipboard?.writeText(text).then(() => {
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  }).catch(() => {
+    const ta = document.createElement('textarea')
+    ta.value = text; document.body.appendChild(ta)
+    ta.select(); document.execCommand('copy')
+    document.body.removeChild(ta)
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  })
+}
+
+updateStepper('home')
+updateProgress()
+</script>
+</body>
+</html>

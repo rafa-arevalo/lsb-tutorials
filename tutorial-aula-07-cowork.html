@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — Delegue, não execute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #F5F3EE;
+  --white: #ffffff;
+  --accent: #C8A84B;
+  --accent2: #B09040;
+  --accent-light: #F8F2E0;
+  --accent-lighter: #FBF8F0;
+  --accent-border: #DEC878;
+  --accent-text: #8B6F28;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+  --green-text: #065F46;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --orange-border: #FED7AA;
+  --orange-text: #9A3412;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --text4: #CBCAC7;
+  --border: #E5E1D8;
+  --border2: #D8D4CB;
+  --surface2: #F5F3EE;
+  --shadow-xs: 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-sm: 0 1px 3px rgba(26,26,24,0.06), 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(26,26,24,0.07), 0 2px 4px -2px rgba(26,26,24,0.05);
+}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ===== STEPPER ===== */
+.stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
+.stepper-header::-webkit-scrollbar{height:0}
+.back-btn{display:flex;align-items:center;gap:5px;padding:0 12px 0 0;text-decoration:none;color:var(--text3);font-size:0.72rem;font-weight:600;white-space:nowrap;border-right:1px solid var(--border);margin-right:12px;flex-shrink:0;transition:color 0.15s}
+.back-btn:hover{color:var(--accent)}
+.back-btn .back-arrow{font-size:0.8rem;line-height:1}
+.stepper-node{display:flex;align-items:center;gap:5px;padding:0 4px;cursor:pointer;position:relative;white-space:nowrap;transition:color 0.2s}
+.stepper-node .sn-label{font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;padding:6px 0;position:relative;transition:color 0.2s}
+.stepper-node.future .sn-label{color:var(--text4)}
+.stepper-node.completed .sn-label{color:var(--text)}
+.stepper-node.active .sn-label{color:var(--accent)}
+.stepper-node.active .sn-label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0}
+.stepper-node .sn-check{display:none;font-size:0.6rem;color:var(--green)}
+.stepper-node.completed .sn-check{display:inline}
+.stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.sidebar-header p{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-top:2px}
+.nav-group{padding:12px 0 4px}
+.nav-group-title{padding:2px 16px 6px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 16px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:450;border-left:2px solid transparent;margin:0}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-lighter);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni-num{font-size:0.62rem;font-weight:600;color:var(--text3);min-width:17px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-num{color:var(--accent)}
+.nav-item .ni-check{margin-left:auto;font-size:0.62rem;color:var(--green);opacity:0;transition:opacity 0.2s;flex-shrink:0}
+.nav-item.completed .ni-check{opacity:1}
+.sidebar-progress{padding:14px 16px;border-top:1px solid var(--border);margin-top:auto}
+.sp-label{font-size:0.62rem;color:var(--text3);font-weight:500;margin-bottom:6px}
+.sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:20px 36px 40px;max-width:700px}
+.section{display:none;animation:fadeIn 0.25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
+.sec-title .snum{color:var(--accent)}
+.sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+.overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+.oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
+.oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
+
+.intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.intro-text strong{color:var(--text);font-weight:600}
+.subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
+
+.instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
+.inst:hover{box-shadow:var(--shadow-sm)}
+.inst-num{font-size:0.56rem;font-weight:700;color:#fff;background:var(--accent);min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
+.inst-text strong{font-weight:600}
+.inst-text em{color:var(--text2);font-style:italic}
+.inst-text code{font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.68rem;background:#F3F2EE;padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+
+.content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
+.content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.content-table tr:last-child td{border-bottom:none}
+.content-table tr:hover td{background:var(--surface2)}
+.content-table td strong{font-weight:600}
+.content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
+
+/* Folder tree */
+.folder-tree{background:#F3F2EE;border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.72rem;color:var(--text);line-height:1.8;margin:10px 0 14px}
+.folder-tree .dir{color:var(--accent-text);font-weight:600}
+.folder-tree .empty{color:var(--text3);font-style:italic}
+
+/* Anatomy card */
+.anatomy-card{background:var(--white);border:1px solid var(--accent-border);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.anatomy-part{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.anatomy-part:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.anatomy-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-text);margin-bottom:3px}
+.anatomy-text{font-size:0.75rem;color:var(--text);line-height:1.5}
+.anatomy-text em{color:var(--text2);font-style:italic}
+
+/* Prep block */
+.prep-block{background:#F8F6F2;border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.prep-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.prep-badge{font-size:0.6rem;font-weight:700;color:#fff;background:var(--text3);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em}
+.prep-title{font-size:0.8rem;font-weight:700;color:var(--text)}
+.prep-file{margin-bottom:14px}
+.prep-file:last-child{margin-bottom:0}
+.prep-file-name{font-size:0.68rem;font-weight:700;color:var(--text2);margin-bottom:4px;font-family:'SF Mono','JetBrains Mono',monospace}
+
+/* Demo blocks */
+.demo-block{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.demo-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.demo-num{font-size:0.62rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0}
+.demo-title{font-size:0.82rem;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.demo-time{font-size:0.65rem;color:var(--text3);margin-left:auto;flex-shrink:0;font-weight:500}
+.demo-step{font-size:0.76rem;font-weight:700;color:var(--text);margin:12px 0 5px}
+
+/* Copy block */
+.copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
+.copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* Callout boxes */
+.tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
+.tip-box strong{font-weight:600}
+.warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
+.warning-box strong{font-weight:600}
+.speaker-box{background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--orange-text);line-height:1.5}
+.speaker-box strong{font-weight:600}
+.note-box{background:var(--accent-lighter);border:1px solid var(--accent-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.note-box strong{font-weight:600}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
+.check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
+.check-item strong{font-weight:600}
+
+.next-teaser{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.next-teaser strong{font-weight:700}
+
+/* Nav buttons */
+.nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
+.nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
+
+/* ===== RIGHT SIDEBAR ===== */
+.right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.rs-section-title:first-child{margin-top:0}
+.rs-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.rs-table td{padding:5px 6px;font-size:0.68rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--text2)}
+.rs-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap;padding-right:8px}
+.rs-table tr:last-child td{border-bottom:none}
+
+@media(max-width:1024px){.right-sidebar{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- STEPPER -->
+<div class="stepper-header">
+  <a class="back-btn" href="index.html"><span class="back-arrow">←</span>Índice</a>
+  <div class="stepper-node active" onclick="showSection('sec-home')" id="sn-home">
+    <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+    <span class="sn-check">✓</span><span class="sn-label">O que é Cowork</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+    <span class="sn-check">✓</span><span class="sn-label">Boas instruções</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
+    <span class="sn-check">✓</span><span class="sn-label">Preparação</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 1</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 2</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 3</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 4</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step8')" id="sn-step8">
+    <span class="sn-check">✓</span><span class="sn-label">Prática</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Delegue, não execute</h2>
+    <p>A07 · Link School of Business</p>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Introdução</div>
+      <div class="nav-item active" onclick="showSection('sec-home')" data-section="sec-home">
+        <span class="ni-num">00</span>Visão Geral<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Teoria</div>
+      <div class="nav-item" onclick="showSection('sec-step1')" data-section="sec-step1">
+        <span class="ni-num">01</span>O que é o Cowork<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
+        <span class="ni-num">02</span>Boas instruções de tarefa<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
+        <span class="ni-num">03</span>Preparação — arquivos<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Demonstrações</div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Demo 1 — Configurar Cowork<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>Demo 2 — Processar entrevistas<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>Demo 3 — Tarefa agendada<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
+        <span class="ni-num">07</span>Demo 4 — Briefing permanente<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Prática</div>
+      <div class="nav-item" onclick="showSection('sec-step8')" data-section="sec-step8">
+        <span class="ni-num">08</span>Prática + Entregável<span class="ni-check">✓</span>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-progress">
+    <div class="sp-label">Progresso — <span id="pct">0</span>%</div>
+    <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 00 VISÃO GERAL -->
+  <div class="section active" id="sec-home">
+    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
+    <div class="sec-desc">Claude Cowork · AI for Business</div>
+    <div class="overview-card">
+      <div class="oc-title">Sobre esta aula</div>
+      <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
+      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
+      <div class="oc-row"><span class="oc-label">Tema</span><span class="oc-value">Claude Cowork</span></div>
+      <div class="oc-row"><span class="oc-label">Contexto</span><span class="oc-value">Automação de tarefas recorrentes com arquivos locais</span></div>
+    </div>
+    <p class="intro-text">Nas aulas anteriores você aprendeu a conversar, pesquisar, organizar e padronizar o trabalho com o Claude dentro do navegador. Mas tudo isso ainda exige que você esteja presente — iniciando a conversa, colando o conteúdo, pedindo a tarefa.</p>
+    <p class="intro-text">O <strong>Cowork muda essa dinâmica</strong>. Em vez de conversar com o Claude, você <strong>delega</strong> uma tarefa a ele. Você descreve o que quer, concede acesso a uma pasta do seu computador e o Claude executa de forma autônoma — lendo arquivos, processando conteúdo, gerando resultados e salvando na sua pasta, sem que você precise ficar olhando.</p>
+    <div class="subsec">Objetivos de aprendizagem</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que é o Cowork e <strong>como ele difere do Chat</strong></span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Configurar o Cowork com <strong>acesso a uma pasta dedicada</strong> ao projeto</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Escrever <strong>instruções de tarefa claras</strong> para o Cowork executar</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Identificar quais tarefas recorrentes do projeto <strong>se beneficiam de automação</strong></span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text">Criar pelo menos <strong>uma tarefa agendada</strong> para rodar semanalmente</span></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 01 O QUE É O COWORK -->
+  <div class="section" id="sec-step1">
+    <div class="sec-title"><span class="snum">01.</span> O que é o Cowork</div>
+    <div class="sec-desc">De conversa para delegação</div>
+    <table class="content-table">
+      <thead>
+        <tr><th>Chat</th><th>Cowork</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Você conversa, o Claude responde</td><td><strong>Você delega, o Claude executa</strong></td></tr>
+        <tr><td>Você fornece o conteúdo na conversa</td><td><strong>O Claude acessa os arquivos diretamente</strong></td></tr>
+        <tr><td>Resultado entregue no chat</td><td><strong>Resultado salvo como arquivo na pasta</strong></td></tr>
+        <tr><td>Você precisa estar presente</td><td><strong>O Claude trabalha sem você</strong></td></tr>
+        <tr><td>Ideal para pensar e criar junto</td><td><strong>Ideal para processar, organizar e produzir</strong></td></tr>
+      </tbody>
+    </table>
+
+    <div class="subsec">Como o Cowork funciona</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Você <strong>concede acesso a uma pasta específica</strong> — nunca ao sistema inteiro</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">O Claude <strong>lê os arquivos, executa o fluxo</strong> e salva os resultados na mesma pasta</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Tarefas podem ser <strong>agendadas</strong> para rodar automaticamente em horários definidos</span></div>
+    </div>
+    <div class="warning-box"><strong>⚠️ Atenção:</strong> o Cowork tem acesso real de leitura e escrita. Crie uma pasta dedicada ao projeto — nunca aponte para sua pasta de Documentos inteira. Comece com tarefas de leitura e geração antes de tarefas que modificam arquivos existentes.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 02 BOAS INSTRUÇÕES -->
+  <div class="section" id="sec-step2">
+    <div class="sec-title"><span class="snum">02.</span> Boas instruções de tarefa</div>
+    <div class="sec-desc">A diferença entre uma tarefa que funciona e uma que falha</div>
+    <p class="intro-text">Uma instrução de Cowork bem escrita tem quatro partes. Se uma delas estiver vaga, o resultado vai ser imprevisível.</p>
+
+    <div class="anatomy-card">
+      <div class="anatomy-part">
+        <div class="anatomy-label">1. O que fazer</div>
+        <div class="anatomy-text">Descreva a tarefa objetivamente. Uma ação por instrução é mais seguro do que agrupar muita coisa numa frase só. <em>Ex: "Leia os arquivos de entrevista em /entrevistas/ e extraia as dores identificadas."</em></div>
+      </div>
+      <div class="anatomy-part">
+        <div class="anatomy-label">2. Com o quê</div>
+        <div class="anatomy-text">Indique os arquivos ou pastas com o caminho exato. Ambiguidade aqui gera erros. <em>Ex: "Use o arquivo /contexto/instrucoes-projeto.md como referência."</em></div>
+      </div>
+      <div class="anatomy-part">
+        <div class="anatomy-label">3. Como processar</div>
+        <div class="anatomy-text">Detalhe as etapas, a estrutura de análise e qualquer lógica específica que o Claude deve seguir. Quanto mais específico, mais consistente o resultado.</div>
+      </div>
+      <div class="anatomy-part">
+        <div class="anatomy-label">4. O que entregar</div>
+        <div class="anatomy-text">Especifique onde salvar, em qual formato e com qual nome. <em>Ex: "Salve em /analises/analise-entrevistas-[data].md"</em> — use sempre caminhos relativos à pasta raiz do projeto.</div>
+      </div>
+    </div>
+
+    <div class="tip-box"><strong>💡 Dica:</strong> escreva a instrução como se estivesse contratando um assistente humano para a tarefa. Se você precisaria explicar mais, a instrução ainda está vaga.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 03 PREPARAÇÃO -->
+  <div class="section" id="sec-step3">
+    <div class="sec-title"><span class="snum">03.</span> Preparação</div>
+    <div class="sec-desc">Estrutura de pastas e arquivos sintéticos para a demonstração</div>
+    <div class="note-box"><strong>📋 Nota para o professor:</strong> crie a estrutura de pastas e os arquivos abaixo no computador antes da aula. A pasta <code>/odontoflow-projeto/</code> precisa existir localmente para a demonstração ao vivo.</div>
+
+    <div class="subsec">Estrutura de pastas</div>
+    <div class="folder-tree">
+<span class="dir">/odontoflow-projeto/</span>
+├── <span class="dir">/contexto/</span>
+│   ├── instrucoes-projeto.md
+│   └── perfil-usuario.md
+├── <span class="dir">/pesquisa/</span>
+│   └── relatorio-mercado.md
+├── <span class="dir">/entrevistas/</span>
+│   ├── entrevista-01-dr-marcos.md
+│   ├── entrevista-02-dra-carla.md
+│   └── entrevista-03-dr-paulo.md
+├── <span class="dir">/analises/</span>
+│   └── <span class="empty">[vazio — preenchido pelo Cowork]</span>
+└── <span class="dir">/relatorios/</span>
+    └── <span class="empty">[vazio — preenchido pelo Cowork]</span></div>
+
+    <div class="prep-block">
+      <div class="prep-header">
+        <span class="prep-badge">Prep</span>
+        <span class="prep-title">Conteúdo dos arquivos — copiar e salvar localmente</span>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">/contexto/instrucoes-projeto.md</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '# OdontoFlow — Contexto do Projeto\n\n## O que é o projeto\nMicro-SaaS para clínicas odontológicas de pequeno porte (1 a 3 dentistas).\nProblema: falta de follow-up sistemático com pacientes após consultas.\nUsuário: dono de clínica que também é dentista, sem equipe de TI.\n\n## Fase atual\nValidação do problema — 3 entrevistas concluídas, 2 pendentes.\n\n## Convenções de arquivo\n- Relatórios: salvar em /relatorios/ com formato \"relatorio-[tipo]-[YYYY-MM-DD].md\"\n- Análises: salvar em /analises/ com formato \"analise-[tipo]-[YYYY-MM-DD].md\"\n- Datas: usar formato YYYY-MM-DD\n- Tom dos documentos: objetivo, direto, em português')">Copiar</button><span class="label">/contexto/instrucoes-projeto.md</span># OdontoFlow — Contexto do Projeto
+
+## O que é o projeto
+Micro-SaaS para clínicas odontológicas de pequeno porte (1 a 3 dentistas).
+Problema: falta de follow-up sistemático com pacientes após consultas.
+Usuário: dono de clínica que também é dentista, sem equipe de TI.
+
+## Fase atual
+Validação do problema — 3 entrevistas concluídas, 2 pendentes.
+
+## Convenções de arquivo
+- Relatórios: /relatorios/relatorio-[tipo]-[YYYY-MM-DD].md
+- Análises: /analises/analise-[tipo]-[YYYY-MM-DD].md
+- Datas: formato YYYY-MM-DD
+- Tom dos documentos: objetivo, direto, em português</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">/entrevistas/entrevista-01-dr-marcos.md</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '# Entrevista 01 — Dr. Marcos Oliveira\n**Perfil:** Clínica com 2 dentistas, 8 anos no mercado, São Paulo\n\n## Transcrição\n\n\"Meu maior problema é que a gente trabalha muito e não tem tempo de ficar\nligando pra paciente. A recepcionista manda WhatsApp quando lembra, mas é\nmuita coisa pra fazer. Semana passada mesmo, eu olhei a agenda e tinha 4\nburacos que poderiam ter sido preenchidos se a gente tivesse acionado\npacientes que estão sumidos há mais de 6 meses. Cada consulta que não\nacontece é dinheiro que fica na mesa.\"\n\n\"Já tentei usar uma planilha de Excel pra controlar quem precisava voltar.\nFuncionou por 3 semanas. Aí minha recepcionista tirou férias, a substituta\nnão sabia usar e perdemos o controle.\"\n\n\"O que me faz perder mais sono é a fidelização. Você faz um trabalho\nexcelente, o paciente sai satisfeito, e aí some. Vai pra outra clínica\nporque aquela ficou na cabeça dele.\"')">Copiar</button><span class="label">/entrevistas/entrevista-01-dr-marcos.md</span># Entrevista 01 — Dr. Marcos Oliveira
+**Perfil:** Clínica com 2 dentistas, 8 anos no mercado, São Paulo
+
+## Transcrição
+
+"Meu maior problema é que a gente trabalha muito e não tem tempo de ficar
+ligando pra paciente. A recepcionista manda WhatsApp quando lembra, mas é
+muita coisa pra fazer. Semana passada mesmo, eu olhei a agenda e tinha 4
+buracos que poderiam ter sido preenchidos se a gente tivesse acionado
+pacientes que estão sumidos há mais de 6 meses."
+
+"Já tentei usar uma planilha de Excel pra controlar quem precisava voltar.
+Funcionou por 3 semanas. Aí minha recepcionista tirou férias, a substituta
+não sabia usar e perdemos o controle."
+
+"O que me faz perder mais sono é a fidelização. Você faz um trabalho
+excelente, o paciente sai satisfeito, e aí some. Vai pra outra clínica
+porque aquela ficou na cabeça dele."</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">/entrevistas/entrevista-02-dra-carla.md</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '# Entrevista 02 — Dra. Carla Santos\n**Perfil:** Clínica com 1 dentista, 3 anos no mercado, Belo Horizonte\n\n## Transcrição\n\n\"Comecei a clínica há 3 anos e o maior erro foi não ter processo de\ncomunicação desde o início. Hoje tenho uns 800 pacientes cadastrados\ne sinceramente não sei quantos são ativos. Acho que uns 200, talvez 250.\"\n\n\"Uso o WhatsApp pra tudo. Agendamento, confirmação, resultado de exame.\nMas é completamente manual. Fico respondendo mensagem o tempo todo,\ninclusive nos fins de semana. É insustentável.\"\n\n\"Tentei o iClinic por 2 meses. É muito sistema pra quem é só eu.\nMe perdia no meio de tanta coisa. Cancelei e voltei pra agenda de papel.\"\n\n\"O que eu precisaria era de algo que me lembrasse: essa paciente não vem\nhá 6 meses, manda uma mensagem pra ela. Simples assim.\"')">Copiar</button><span class="label">/entrevistas/entrevista-02-dra-carla.md</span># Entrevista 02 — Dra. Carla Santos
+**Perfil:** Clínica com 1 dentista, 3 anos no mercado, Belo Horizonte
+
+## Transcrição
+
+"Comecei a clínica há 3 anos e o maior erro foi não ter processo de
+comunicação desde o início. Hoje tenho uns 800 pacientes cadastrados
+e sinceramente não sei quantos são ativos. Acho que uns 200, talvez 250."
+
+"Uso o WhatsApp pra tudo. Agendamento, confirmação, resultado de exame.
+Mas é completamente manual. Fico respondendo mensagem o tempo todo,
+inclusive nos fins de semana. É insustentável."
+
+"Tentei o iClinic por 2 meses. É muito sistema pra quem é só eu.
+Me perdia no meio de tanta coisa. Cancelei e voltei pra agenda de papel."
+
+"O que eu precisaria era de algo que me lembrasse: essa paciente não vem
+há 6 meses, manda uma mensagem pra ela. Simples assim."</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">/entrevistas/entrevista-03-dr-paulo.md</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '# Entrevista 03 — Dr. Paulo Ferreira\n**Perfil:** Clínica com 3 dentistas, 15 anos no mercado, Porto Alegre\n\n## Transcrição\n\n\"Já tentei de tudo. Software de gestão, CRM, planilha. O problema não é\nfalta de ferramenta — é que qualquer ferramenta que exige que minha equipe\nmude o comportamento falha.\"\n\n\"Calculo que perco em torno de R$ 6.000 a R$ 8.000 por mês em consultas\nque não acontecem por falta de follow-up. Sei disso porque quando fazemos\numa campanha manual de reativação — liga pra todo mundo que não vem há\n6 meses — lotamos a agenda em 2 semanas.\"\n\n\"O meu problema específico é a rotatividade da equipe. Em 15 anos tive\numas 20 recepcionistas diferentes. Cada uma tinha seu jeito de organizar.\nQuando saía, levava o método com ela.\"\n\n\"Preço não é meu maior critério. Se resolver o problema de verdade,\npago R$ 200, R$ 300 por mês sem problema.\"')">Copiar</button><span class="label">/entrevistas/entrevista-03-dr-paulo.md</span># Entrevista 03 — Dr. Paulo Ferreira
+**Perfil:** Clínica com 3 dentistas, 15 anos no mercado, Porto Alegre
+
+## Transcrição
+
+"Já tentei de tudo. Software de gestão, CRM, planilha. O problema não é
+falta de ferramenta — é que qualquer ferramenta que exige que minha equipe
+mude o comportamento falha."
+
+"Calculo que perco em torno de R$ 6.000 a R$ 8.000 por mês em consultas
+que não acontecem por falta de follow-up. Sei disso porque quando fazemos
+uma campanha manual de reativação — liga pra todo mundo que não vem há
+6 meses — lotamos a agenda em 2 semanas."
+
+"O meu problema específico é a rotatividade da equipe. Em 15 anos tive
+umas 20 recepcionistas diferentes. Cada uma tinha seu jeito de organizar.
+Quando saía, levava o método com ela."
+
+"Preço não é meu maior critério. Se resolver o problema de verdade,
+pago R$ 200, R$ 300 por mês sem problema."</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 04 DEMO 1 -->
+  <div class="section" id="sec-step4">
+    <div class="sec-title"><span class="snum">04.</span> Demo 1 — Configurar o Cowork</div>
+    <div class="sec-desc">Acessar a pasta e mostrar a estrutura ao vivo</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 1</span>
+        <span class="demo-title">Configurando o Cowork e explorando a pasta do projeto</span>
+        <span class="demo-time">8 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Abra o Cowork no desktop</div>
+      <p class="intro-text" style="margin-bottom:6px">Clique em <strong>Novo projeto → Configurar acesso a pasta → Selecionar pasta</strong> e escolha a pasta <code>/odontoflow-projeto/</code>.</p>
+
+      <div class="speaker-box"><strong>🎙️ Fala para a turma:</strong> <em>"Estou concedendo acesso apenas a esta pasta específica do projeto — não ao computador inteiro. O Cowork só enxerga o que você autorizar explicitamente."</em></div>
+
+      <div class="demo-step">Passo 2 — Mostre a estrutura de arquivos no painel do Cowork</div>
+      <p class="intro-text" style="margin-bottom:6px">O painel detecta automaticamente as pastas e arquivos. Mostre que existem 3 entrevistas, o contexto e as pastas de análises e relatórios ainda vazias.</p>
+
+      <div class="speaker-box"><strong>🎙️ Fala para a turma:</strong> <em>"Vocês podem ver que o Cowork já detectou toda a estrutura. As pastas /analises/ e /relatorios/ estão vazias — é exatamente isso que vamos preencher agora. O Claude não vai tocar em nenhum outro arquivo fora dessa pasta."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 05 DEMO 2 -->
+  <div class="section" id="sec-step5">
+    <div class="sec-title"><span class="snum">05.</span> Demo 2 — Processar entrevistas</div>
+    <div class="sec-desc">Uma instrução, três arquivos, um documento consolidado</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 2</span>
+        <span class="demo-title">Processando as três entrevistas automaticamente</span>
+        <span class="demo-time">12 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Crie uma nova tarefa no Cowork</div>
+      <p class="intro-text" style="margin-bottom:6px">Cole a instrução abaixo e execute:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Leia o arquivo de contexto em /contexto/instrucoes-projeto.md para\nentender o projeto.\n\nEm seguida, leia os 3 arquivos de entrevista na pasta /entrevistas/.\n\nPara cada entrevista, extraia:\n1. Dores identificadas (com frequência e impacto: alto/médio/baixo)\n2. Comportamento atual do entrevistado\n3. Citações diretas relevantes (mínimo 3 por entrevista)\n4. O que essa entrevista confirma ou contradiz sobre o problema central\n\nApós analisar as 3 entrevistas individualmente, gere um documento\nconsolidado com:\n- Dores mais recorrentes (mencionadas em 2 ou 3 entrevistas)\n- Padrões de comportamento em comum\n- Citação mais impactante de cada entrevistado\n- Conclusão: a hipótese de problema do OdontoFlow está validada? Por quê?\n\nSalve o resultado consolidado em:\n/analises/analise-consolidada-entrevistas-[data de hoje].md')">Copiar</button><span class="label">instrução da tarefa — colar no Cowork</span>Leia o arquivo de contexto em /contexto/instrucoes-projeto.md para
+entender o projeto.
+
+Em seguida, leia os 3 arquivos de entrevista na pasta /entrevistas/.
+
+Para cada entrevista, extraia:
+1. Dores identificadas (com frequência e impacto: alto/médio/baixo)
+2. Comportamento atual do entrevistado
+3. Citações diretas relevantes (mínimo 3 por entrevista)
+4. O que essa entrevista confirma ou contradiz sobre o problema central
+
+Após analisar as 3 entrevistas individualmente, gere um documento
+consolidado com:
+- Dores mais recorrentes (mencionadas em 2 ou 3 entrevistas)
+- Padrões de comportamento em comum
+- Citação mais impactante de cada entrevistado
+- Conclusão: a hipótese de problema do OdontoFlow está validada? Por quê?
+
+Salve o resultado consolidado em:
+/analises/analise-consolidada-entrevistas-[data de hoje].md</div>
+
+      <div class="demo-step">Passo 2 — Execute e acompanhe ao vivo</div>
+      <p class="intro-text" style="margin-bottom:6px">Mostre o Cowork executando: lendo cada arquivo, processando e gerando o documento. Ao final, abra o arquivo criado em <code>/analises/</code>.</p>
+
+      <div class="speaker-box"><strong>🎙️ Fala para a turma:</strong> <em>"Em menos de 2 minutos, o Cowork leu três transcrições, extraiu os padrões relevantes e salvou um documento de análise. Isso é o que levaria 1 a 2 horas fazer manualmente."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 06 DEMO 3 -->
+  <div class="section" id="sec-step6">
+    <div class="sec-title"><span class="snum">06.</span> Demo 3 — Tarefa agendada semanal</div>
+    <div class="sec-desc">Uma configuração, relatório toda segunda de manhã</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 3</span>
+        <span class="demo-title">Automatizando o relatório de status semanal</span>
+        <span class="demo-time">10 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Clique em "Nova tarefa agendada"</div>
+      <p class="intro-text" style="margin-bottom:6px">Configure para rodar <strong>toda segunda-feira às 8h</strong>. Cole a instrução abaixo:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Toda segunda-feira, execute o seguinte fluxo para o projeto OdontoFlow:\n\n1. Leia o arquivo /contexto/instrucoes-projeto.md\n\n2. Verifique a pasta /entrevistas/ e identifique:\n   - Quantas entrevistas existem no total\n   - Quais foram adicionadas desde a última segunda-feira\n\n3. Se houver entrevistas novas, processe cada uma seguindo a mesma\n   estrutura das análises existentes em /analises/\n\n4. Verifique a pasta /analises/ e identifique os documentos da semana anterior\n\n5. Gere um relatório de status semanal com:\n   - Resumo executivo (3 linhas sobre o estado atual do projeto)\n   - O que avançou na semana (entrevistas realizadas, análises geradas)\n   - O que está pendente ou bloqueado\n   - Próximos passos recomendados para a semana\n\n6. Salve em /relatorios/status-semana-[data-de-hoje].md')">Copiar</button><span class="label">instrução da tarefa agendada semanal</span>Toda segunda-feira, execute o seguinte fluxo para o projeto OdontoFlow:
+
+1. Leia o arquivo /contexto/instrucoes-projeto.md
+
+2. Verifique a pasta /entrevistas/ e identifique:
+   - Quantas entrevistas existem no total
+   - Quais foram adicionadas desde a última segunda-feira
+
+3. Se houver entrevistas novas, processe cada uma seguindo a mesma
+   estrutura das análises existentes em /analises/
+
+4. Verifique a pasta /analises/ e identifique os documentos da semana anterior
+
+5. Gere um relatório de status semanal com:
+   - Resumo executivo (3 linhas sobre o estado atual do projeto)
+   - O que avançou na semana (entrevistas realizadas, análises geradas)
+   - O que está pendente ou bloqueado
+   - Próximos passos recomendados para a semana
+
+6. Salve em /relatorios/status-semana-[data-de-hoje].md</div>
+
+      <div class="demo-step">Passo 2 — Mostre a tarefa salva no painel</div>
+      <p class="intro-text">Mostre a tarefa agendada aparecendo no painel do Cowork com o horário configurado.</p>
+
+      <div class="speaker-box"><strong>🎙️ Fala para a turma:</strong> <em>"A partir de agora, toda segunda de manhã esse relatório vai aparecer na pasta /relatorios/ automaticamente. Não preciso abrir o Claude, não preciso colar nada — só verificar o que foi gerado."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 07 DEMO 4 -->
+  <div class="section" id="sec-step7">
+    <div class="sec-title"><span class="snum">07.</span> Demo 4 — Briefing permanente</div>
+    <div class="sec-desc">Como o arquivo de contexto personaliza todas as tarefas</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 4</span>
+        <span class="demo-title">instrucoes-projeto.md como memória persistente do Cowork</span>
+        <span class="demo-time">5 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Crie uma tarefa simples</div>
+      <p class="intro-text" style="margin-bottom:6px">Envie a instrução abaixo no Cowork:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Com base no arquivo /contexto/instrucoes-projeto.md,\ngere um resumo de 1 parágrafo do projeto atual que eu possa\nusar como introdução numa apresentação para o professor.\nSalve em /relatorios/resumo-apresentacao.md')">Copiar</button>Com base no arquivo /contexto/instrucoes-projeto.md,
+gere um resumo de 1 parágrafo do projeto atual que eu possa
+usar como introdução numa apresentação para o professor.
+Salve em /relatorios/resumo-apresentacao.md</div>
+
+      <div class="demo-step">Passo 2 — Mostre que o Claude usou o contexto</div>
+      <p class="intro-text">Abra o arquivo gerado e mostre que a linguagem, o tom e os detalhes do projeto vieram do arquivo <code>instrucoes-projeto.md</code> — sem você precisar explicar nada na instrução.</p>
+
+      <div class="speaker-box"><strong>🎙️ Fala para a turma:</strong> <em>"O arquivo instrucoes-projeto.md é o equivalente no Cowork das instruções do Project no Claude.ai. Toda tarefa que mencionar esse arquivo vai ter acesso ao contexto completo do projeto — fase atual, convenções, quem é o usuário. Você escreve uma vez e o Claude carrega em todas as tarefas."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step8')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 08 PRÁTICA + ENTREGÁVEL -->
+  <div class="section" id="sec-step8">
+    <div class="sec-title"><span class="snum">08.</span> Prática + Entregável</div>
+    <div class="sec-desc">Configure o Cowork do seu projeto agora</div>
+
+    <div class="subsec">Passo 1 — Crie a estrutura de pastas</div>
+    <p class="intro-text" style="margin-bottom:6px">No seu computador, crie a pasta raiz do projeto e as subpastas:</p>
+    <div class="folder-tree">
+<span class="dir">/micro-saas-[seu-tema]/</span>
+├── <span class="dir">/contexto/</span>
+│   └── instrucoes-projeto.md
+├── <span class="dir">/pesquisa/</span>
+├── <span class="dir">/entrevistas/</span>
+├── <span class="dir">/analises/</span>
+└── <span class="dir">/relatorios/</span></div>
+    <p class="intro-text">Mova os arquivos das aulas anteriores para as pastas corretas. Entrevistas em <code>/entrevistas/</code>, pesquisa de mercado em <code>/pesquisa/</code>.</p>
+
+    <div class="subsec">Passo 2 — Crie o arquivo instrucoes-projeto.md</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '# [Nome do seu Micro-SaaS] — Contexto do Projeto\n\n## O que é o projeto\n[descrição do problema e solução em 2 a 3 linhas]\n\n## Fase atual\n[onde você está na jornada agora]\n\n## Convenções\n- Relatórios: /relatorios/relatorio-[tipo]-[data].md\n- Análises: /analises/analise-[tipo]-[data].md\n- Datas: formato YYYY-MM-DD\n- Tom: objetivo, direto, em português')">Copiar</button><span class="label">template — instrucoes-projeto.md (adaptar para seu projeto)</span># [Nome do seu Micro-SaaS] — Contexto do Projeto
+
+## O que é o projeto
+[descrição do problema e solução em 2 a 3 linhas]
+
+## Fase atual
+[onde você está na jornada agora]
+
+## Convenções
+- Relatórios: /relatorios/relatorio-[tipo]-[data].md
+- Análises: /analises/analise-[tipo]-[data].md
+- Datas: formato YYYY-MM-DD
+- Tom: objetivo, direto, em português</div>
+
+    <div class="subsec">Passo 3 — Configure o Cowork e execute a análise de entrevistas</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Leia o arquivo /contexto/instrucoes-projeto.md e os arquivos de entrevista\nem /entrevistas/.\n\nPara cada entrevista, extraia: dores identificadas, comportamento atual,\ncitações relevantes e hipóteses para o projeto.\n\nConsolide tudo num documento com os padrões encontrados e\nsalve em /analises/analise-consolidada-[data].md')">Copiar</button><span class="label">tarefa 1 — análise consolidada de entrevistas</span>Leia o arquivo /contexto/instrucoes-projeto.md e os arquivos de entrevista
+em /entrevistas/.
+
+Para cada entrevista, extraia: dores identificadas, comportamento atual,
+citações relevantes e hipóteses para o projeto.
+
+Consolide tudo num documento com os padrões encontrados e
+salve em /analises/analise-consolidada-[data].md</div>
+
+    <div class="subsec">Passo 4 — Configure a tarefa semanal</div>
+    <p class="intro-text">Configure uma tarefa agendada para <strong>toda segunda-feira</strong> que lê os arquivos novos da semana e gera o relatório de status em <code>/relatorios/</code>. Use a instrução da Demo 3 como base, adaptando para o seu projeto.</p>
+
+    <div class="subsec">Entregável da aula</div>
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Estrutura de pastas</strong> criada e organizada no computador</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>instrucoes-projeto.md</strong> com briefing completo do projeto</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Cowork configurado</strong> com acesso à pasta raiz do projeto</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Análise consolidada</strong> de entrevistas gerada pelo Cowork em <code>/analises/</code></span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Tarefa semanal agendada</strong> para gerar relatório de status às segundas</span></div>
+    </div>
+    <div class="next-teaser"><strong>Próxima aula — A08: Claude Code</strong><br>Como usar o Claude no terminal para gerar o primeiro protótipo funcional do Micro-SaaS — sem precisar ser desenvolvedor.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
+      <button class="nav-btn primary" onclick="goHome()">↩ Recomeçar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="right-sidebar">
+  <div class="rs-section-title">Chat vs. Cowork</div>
+  <table class="rs-table">
+    <tr><td>Chat</td><td>você conversa</td></tr>
+    <tr><td>Cowork</td><td>você delega</td></tr>
+  </table>
+  <div class="rs-section-title">Anatomia da instrução</div>
+  <table class="rs-table">
+    <tr><td>1</td><td>O que fazer</td></tr>
+    <tr><td>2</td><td>Com o quê</td></tr>
+    <tr><td>3</td><td>Como processar</td></tr>
+    <tr><td>4</td><td>O que entregar</td></tr>
+  </table>
+  <div class="rs-section-title">Estrutura de pastas</div>
+  <table class="rs-table">
+    <tr><td>/contexto/</td><td>briefing</td></tr>
+    <tr><td>/entrevistas/</td><td>transcrições</td></tr>
+    <tr><td>/analises/</td><td>gerado pelo Cowork</td></tr>
+    <tr><td>/relatorios/</td><td>gerado pelo Cowork</td></tr>
+  </table>
+  <div class="rs-section-title">Demos desta aula</div>
+  <table class="rs-table">
+    <tr><td>Demo 1</td><td>Configurar Cowork</td></tr>
+    <tr><td>Demo 2</td><td>Processar entrevistas</td></tr>
+    <tr><td>Demo 3</td><td>Tarefa agendada</td></tr>
+    <tr><td>Demo 4</td><td>Briefing permanente</td></tr>
+  </table>
+  <div class="rs-section-title">Entregáveis</div>
+  <table class="rs-table">
+    <tr><td>✅</td><td>Estrutura de pastas</td></tr>
+    <tr><td>✅</td><td>instrucoes-projeto.md</td></tr>
+    <tr><td>✅</td><td>Cowork configurado</td></tr>
+    <tr><td>✅</td><td>Análise consolidada</td></tr>
+    <tr><td>✅</td><td>Tarefa semanal</td></tr>
+  </table>
+</div>
+
+</div>
+
+<script>
+const stepToFlow = {
+  'sec-home':  'home',
+  'sec-step1': 'cowork',
+  'sec-step2': 'instrucoes',
+  'sec-step3': 'prep',
+  'sec-step4': 'demo1',
+  'sec-step5': 'demo2',
+  'sec-step6': 'demo3',
+  'sec-step7': 'demo4',
+  'sec-step8': 'pratica'
+}
+const flowOrder = ['home','cowork','instrucoes','prep','demo1','demo2','demo3','demo4','pratica']
+const visited = new Set(['sec-home'])
+const completedFlows = new Set()
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.section === id)
+    if (visited.has(n.dataset.section)) n.classList.add('completed')
+  })
+  visited.add(id)
+  const flow = stepToFlow[id]
+  if (flow) {
+    const idx = flowOrder.indexOf(flow)
+    if (idx > 0) completedFlows.add(flowOrder[idx-1])
+  }
+  updateStepper(flow)
+  updateProgress()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function updateStepper(activeFlow) {
+  document.querySelectorAll('.stepper-node').forEach(n => {
+    const f = n.id.replace('sn-','')
+    const idx = flowOrder.indexOf(f)
+    const activeIdx = flowOrder.indexOf(activeFlow)
+    n.classList.remove('active','completed','future')
+    if (f === activeFlow) n.classList.add('active')
+    else if (completedFlows.has(f) || idx < activeIdx) n.classList.add('completed')
+    else n.classList.add('future')
+  })
+}
+
+function updateProgress() {
+  const pct = Math.round((visited.size / document.querySelectorAll('.section').length) * 100)
+  document.getElementById('pct').textContent = pct
+  document.getElementById('sp-fill').style.width = pct + '%'
+}
+
+function goHome() { showSection('sec-home') }
+
+function copyText(btn, text) {
+  navigator.clipboard?.writeText(text).then(() => {
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  }).catch(() => {
+    const ta = document.createElement('textarea')
+    ta.value = text; document.body.appendChild(ta)
+    ta.select(); document.execCommand('copy')
+    document.body.removeChild(ta)
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  })
+}
+
+updateStepper('home')
+updateProgress()
+</script>
+</body>
+</html>

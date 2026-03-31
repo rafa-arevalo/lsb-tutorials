@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tutorial — Claude como parceiro de raciocínio</title>
+<title>Tutorial — Sua primeira conversa produtiva com o Claude</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -23,6 +23,9 @@
   --green-border: #A7F3D0;
   --green-text: #065F46;
   --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --orange-border: #FED7AA;
+  --orange-text: #9A3412;
   --red: #DC2626;
   --red-bg: #FEF2F2;
   --red-border: #FECACA;
@@ -40,7 +43,7 @@
 
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
-/* ========== STEPPER ========== */
+/* ===== STEPPER ===== */
 .stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
 .stepper-header::-webkit-scrollbar{height:0}
 .back-btn{display:flex;align-items:center;gap:5px;padding:0 12px 0 0;text-decoration:none;color:var(--text3);font-size:0.72rem;font-weight:600;white-space:nowrap;border-right:1px solid var(--border);margin-right:12px;flex-shrink:0;transition:color 0.15s}
@@ -56,10 +59,10 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .stepper-node.completed .sn-check{display:inline}
 .stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
 
-/* ========== LAYOUT ========== */
+/* ===== LAYOUT ===== */
 .layout{display:flex;min-height:calc(100vh - 52px)}
 
-/* ========== SIDEBAR ========== */
+/* ===== SIDEBAR ===== */
 .sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
 .sidebar::-webkit-scrollbar{width:3px}
 .sidebar::-webkit-scrollbar-track{background:transparent}
@@ -81,38 +84,31 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
 .sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
 
-/* ========== MAIN ========== */
+/* ===== MAIN ===== */
 .main{flex:1;padding:20px 36px 40px;max-width:700px}
 .section{display:none;animation:fadeIn 0.25s ease}
 .section.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
 .sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
 .sec-title .snum{color:var(--accent)}
 .sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
 
-/* Overview card */
 .overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
 .oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
 .oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
 .oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
 .oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
 
-/* Intro text */
 .intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
 .intro-text strong{color:var(--text);font-weight:600}
-
-/* Subsection heading */
 .subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
 
-/* Feature cards */
 .feature-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
 .feature-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px 14px;box-shadow:var(--shadow-xs)}
 .fc-title{font-size:0.8rem;font-weight:700;color:var(--text);margin-bottom:5px;display:flex;align-items:center;gap:8px}
 .fc-badge{font-size:0.58rem;background:var(--accent-light);color:var(--accent-text);padding:2px 7px;border-radius:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
 .fc-body{font-size:0.76rem;color:var(--text2);line-height:1.55}
 
-/* Instructions */
 .instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
 .inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
 .inst:hover{box-shadow:var(--shadow-sm)}
@@ -120,19 +116,27 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
 .inst-text strong{font-weight:600}
 
-/* Copy block */
+.demo-block{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.demo-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.demo-num{font-size:0.62rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0}
+.demo-title{font-size:0.82rem;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.demo-time{font-size:0.65rem;color:var(--text3);margin-left:auto;flex-shrink:0;font-weight:500}
+.demo-step{font-size:0.76rem;font-weight:700;color:var(--text);margin:12px 0 5px}
+
 .copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
 .copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
 .copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
 .copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
 
-/* Callout boxes */
 .tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
 .tip-box strong{font-weight:600}
 .warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
 .warning-box strong{font-weight:600}
+.speaker-box{background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--orange-text);line-height:1.5}
+.speaker-box strong{font-weight:600}
+.note-box{background:var(--accent-lighter);border:1px solid var(--accent-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.note-box strong{font-weight:600}
 
-/* Table */
 .content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
 .content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
 .content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
@@ -141,17 +145,14 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .content-table td strong{font-weight:600}
 .content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
 
-/* Checklist */
 .checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
 .check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
 .check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
 .check-item strong{font-weight:600}
 
-/* Next teaser */
 .next-teaser{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
 .next-teaser strong{font-weight:700}
 
-/* Nav buttons */
 .nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
 .nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
 .nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
@@ -159,7 +160,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
 .nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
 
-/* ========== RIGHT SIDEBAR ========== */
+/* ===== RIGHT SIDEBAR ===== */
 .right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
 .rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
 .rs-section-title:first-child{margin-top:0}
@@ -170,7 +171,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .rs-link{display:block;font-size:0.7rem;color:var(--accent);text-decoration:none;padding:4px 0;font-weight:500}
 .rs-link:hover{text-decoration:underline}
 
-/* ========== RESPONSIVE ========== */
 @media(max-width:1024px){.right-sidebar{display:none}}
 @media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
 </style>
@@ -197,11 +197,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
-    <span class="sn-check">✓</span><span class="sn-label">Web Search</span>
+    <span class="sn-check">✓</span><span class="sn-label">Memory</span>
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
-    <span class="sn-check">✓</span><span class="sn-label">Demo</span>
+    <span class="sn-check">✓</span><span class="sn-label">Demonstração</span>
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
@@ -218,7 +218,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-header">
-    <h2>Claude como parceiro de raciocínio</h2>
+    <h2>Sua primeira conversa produtiva com o Claude</h2>
     <p>A01 · Link School of Business</p>
   </div>
   <nav>
@@ -240,7 +240,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
         <span class="ni-num">03</span>Iteração<span class="ni-check">✓</span>
       </div>
       <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
-        <span class="ni-num">04</span>Web Search<span class="ni-check">✓</span>
+        <span class="ni-num">04</span>Memory<span class="ni-check">✓</span>
       </div>
     </div>
     <div class="nav-group">
@@ -268,27 +268,24 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   <!-- 00 VISÃO GERAL -->
   <div class="section active" id="sec-home">
     <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
-    <div class="sec-desc">Chat, Prompts e Web Search · AI for Business</div>
-
+    <div class="sec-desc">Chat, Prompts e Memory · AI for Business</div>
     <div class="overview-card">
       <div class="oc-title">Sobre esta aula</div>
       <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
       <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
-      <div class="oc-row"><span class="oc-label">Temas</span><span class="oc-value">Chat · Prompting · Web Search</span></div>
-      <div class="oc-row"><span class="oc-label">Projeto</span><span class="oc-value">Micro-SaaS — definição do problema</span></div>
+      <div class="oc-row"><span class="oc-label">Temas</span><span class="oc-value">Chat · Prompting · Memory</span></div>
+      <div class="oc-row"><span class="oc-label">Exemplo</span><span class="oc-value">Micro-SaaS para clínicas odontológicas</span></div>
     </div>
-
-    <p class="intro-text">Nesta aula você vai aprender a usar o Claude do zero — não apenas a "conversar" com ele, mas a extrair respostas realmente úteis para o seu dia a dia na faculdade, no estágio e no seu projeto de Micro-SaaS.</p>
-    <p class="intro-text">A grande virada de chave desta aula é entender que a qualidade da resposta do Claude depende quase sempre da qualidade da sua pergunta. Isso tem um nome: <strong>prompt</strong>. E tem uma estrutura. Quando você domina essa estrutura, o Claude deixa de ser um chatbot genérico e passa a ser um <strong>parceiro de raciocínio de verdade</strong>.</p>
-
+    <p class="intro-text">Esta é a primeira aula do curso e o ponto de partida para tudo que vem a seguir. Antes de automatizar, pesquisar, construir e entregar, você precisa aprender a <strong>conversar bem com o Claude</strong>.</p>
+    <p class="intro-text">A maioria das pessoas que usa o Claude pela primeira vez trata ele como um motor de busca — faz perguntas curtas, recebe respostas genéricas e conclui que "a IA não é tão boa assim". O problema não é o Claude. <strong>É a forma de perguntar.</strong></p>
+    <p class="intro-text">Nesta aula você vai entender como o Claude funciona, aprender a estrutura de um bom prompt e descobrir como a Memory faz com que o Claude te conheça melhor a cada conversa. Ao final, você vai sair com sua primeira hipótese de problema documentada.</p>
     <div class="subsec">Objetivos de aprendizagem</div>
     <div class="instructions">
       <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que é o Claude e como ele se diferencia de outros assistentes de IA</span></div>
       <div class="inst"><span class="inst-num">2</span><span class="inst-text">Formular prompts eficazes usando a estrutura: <strong>contexto + papel + tarefa + formato + restrições</strong></span></div>
-      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Usar a <strong>Web Search</strong> do Claude para pesquisar mercados e benchmarks do seu Micro-SaaS</span></div>
-      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Iterar dentro de uma mesma conversa sem precisar recomeçar do zero</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Iterar dentro de uma mesma conversa sem precisar recomeçar do zero</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Ativar e gerenciar a <strong>Memory</strong> do Claude para que ele aprenda suas preferências ao longo do semestre</span></div>
     </div>
-
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
       <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
@@ -299,10 +296,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   <div class="section" id="sec-step1">
     <div class="sec-title"><span class="snum">01.</span> O que é o Claude</div>
     <div class="sec-desc">E por que ele é diferente dos outros assistentes de IA</div>
-
-    <p class="intro-text">O Claude é um assistente de inteligência artificial desenvolvido pela Anthropic. Na prática, você conversa com ele em linguagem natural — como se estivesse mandando mensagem para alguém — e ele responde, analisa, escreve, calcula, explica e ajuda a pensar.</p>
+    <p class="intro-text">O Claude é um assistente de inteligência artificial desenvolvido pela Anthropic. Você conversa com ele em linguagem natural — como se estivesse mandando mensagem para alguém — e ele responde, analisa, escreve, calcula, explica e ajuda a pensar.</p>
     <p class="intro-text">Três características fazem o Claude se destacar:</p>
-
     <div class="feature-list">
       <div class="feature-card">
         <div class="fc-title"><span class="fc-badge">01</span>Contexto longo</div>
@@ -310,14 +305,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
       </div>
       <div class="feature-card">
         <div class="fc-title"><span class="fc-badge">02</span>Raciocínio estruturado</div>
-        <div class="fc-body">Diferente de assistentes que respondem de forma superficial, o Claude consegue raciocinar em etapas, comparar opções, identificar inconsistências e explicar o porquê das suas conclusões.</div>
+        <div class="fc-body">O Claude consegue raciocinar em etapas, comparar opções, identificar inconsistências e explicar o porquê das suas conclusões — não apenas responder superficialmente.</div>
       </div>
       <div class="feature-card">
-        <div class="fc-title"><span class="fc-badge">03</span>Sem memória entre sessões</div>
-        <div class="fc-body">Cada conversa começa do zero, a menos que você use os recursos de Memory ou Projects — que veremos nas próximas aulas. Por enquanto, assuma que o Claude "esquece tudo" quando você fecha a janela.</div>
+        <div class="fc-title"><span class="fc-badge">03</span>Sem memória entre sessões (por padrão)</div>
+        <div class="fc-body">Cada conversa começa do zero, a menos que você ative a Memory ou use Projects. Por enquanto, assuma que o Claude "esquece tudo" quando você fecha a janela.</div>
       </div>
     </div>
-
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
       <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
@@ -328,33 +322,22 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   <div class="section" id="sec-step2">
     <div class="sec-title"><span class="snum">02.</span> Anatomia de um Prompt</div>
     <div class="sec-desc">A estrutura que transforma respostas genéricas em respostas úteis</div>
-
-    <p class="intro-text">Prompt é o nome que damos à mensagem que você envia ao Claude. E existe uma diferença enorme entre um prompt fraco e um prompt forte.</p>
-
+    <p class="intro-text">Prompt é o nome que damos à mensagem que você envia ao Claude. Existe uma diferença enorme entre um prompt fraco e um prompt forte.</p>
     <div class="subsec">Prompt fraco vs. Prompt forte</div>
-
-    <div class="copy-block"><span class="label">Prompt fraco ✗</span><button class="copy-btn" onclick="copyText(this,'Me ajuda com um e-mail.')">Copiar</button>Me ajuda com um e-mail.</div>
-
-    <p class="intro-text" style="margin-top:10px">O Claude vai gerar algo genérico, provavelmente inútil. Faltam informações básicas: quem está escrevendo, para quem, sobre o quê, com qual tom, com qual objetivo.</p>
-
-    <div class="copy-block"><span class="label">Prompt forte ✓</span><button class="copy-btn" onclick="copyText(this,'Você é um profissional de comunicação corporativa. Escreva um e-mail para o meu orientador de TCC pedindo uma reunião de alinhamento sobre o cronograma. Tom: respeitoso e direto. Extensão máxima: 5 linhas.')">Copiar</button>Você é um profissional de comunicação corporativa. Escreva um e-mail para o meu orientador de TCC pedindo uma reunião de alinhamento sobre o cronograma. Tom: respeitoso e direto. Extensão máxima: 5 linhas.</div>
-
+    <div class="copy-block"><span class="label">Prompt fraco ✗</span><button class="copy-btn" onclick="copyText(this,'Me ajuda com meu projeto.')">Copiar</button>Me ajuda com meu projeto.</div>
+    <div class="copy-block"><span class="label">Prompt forte ✓</span><button class="copy-btn" onclick="copyText(this,'Você é um especialista em produto para startups B2B de saúde. Estou desenvolvendo um Micro-SaaS para clínicas odontológicas que resolve o problema de perda de pacientes por falta de follow-up pós-consulta. Me ajude a formular uma hipótese de problema clara em 3 frases, no formato: [Perfil] tem dificuldade em [problema] o que causa [consequência].')">Copiar</button>Você é um especialista em produto para startups B2B de saúde. Estou desenvolvendo um Micro-SaaS para clínicas odontológicas que resolve o problema de perda de pacientes por falta de follow-up pós-consulta. Me ajude a formular uma hipótese de problema clara em 3 frases, no formato: [Perfil] tem dificuldade em [problema] o que causa [consequência].</div>
     <div class="subsec">Os 5 ingredientes do prompt eficaz</div>
     <table class="content-table">
-      <thead>
-        <tr><th>Ingrediente</th><th>O que é</th><th>Exemplo</th></tr>
-      </thead>
+      <thead><tr><th>Ingrediente</th><th>O que é</th><th>Exemplo</th></tr></thead>
       <tbody>
-        <tr><td><strong>Contexto</strong></td><td>Quem você é e qual a situação</td><td><em>"Sou estudante de Adm. desenvolvendo um Micro-SaaS para autônomos."</em></td></tr>
-        <tr><td><strong>Papel</strong></td><td>Qual especialista o Claude deve ser</td><td><em>"Aja como um pesquisador de mercado com experiência em startups B2B."</em></td></tr>
-        <tr><td><strong>Tarefa</strong></td><td>O que exatamente você quer que ele faça</td><td><em>"Liste os 5 maiores problemas de autônomos na gestão da agenda."</em></td></tr>
-        <tr><td><strong>Formato</strong></td><td>Como você quer receber a resposta</td><td><em>"Responda em tópicos curtos, no máximo 2 linhas cada."</em></td></tr>
-        <tr><td><strong>Restrições</strong></td><td>O que ele deve evitar ou respeitar</td><td><em>"Não inclua ferramentas pagas. Foque em dores, não em soluções."</em></td></tr>
+        <tr><td><strong>Contexto</strong></td><td>Quem você é e qual a situação</td><td><em>"Estou desenvolvendo um Micro-SaaS para clínicas odontológicas."</em></td></tr>
+        <tr><td><strong>Papel</strong></td><td>Qual especialista o Claude deve ser</td><td><em>"Aja como especialista em produto para startups de saúde."</em></td></tr>
+        <tr><td><strong>Tarefa</strong></td><td>O que exatamente você quer</td><td><em>"Formule uma hipótese de problema clara."</em></td></tr>
+        <tr><td><strong>Formato</strong></td><td>Como quer receber a resposta</td><td><em>"No formato: [Perfil] + [problema] + [consequência]."</em></td></tr>
+        <tr><td><strong>Restrições</strong></td><td>O que ele deve evitar</td><td><em>"Não mencione soluções tecnológicas. Foque nas dores humanas."</em></td></tr>
       </tbody>
     </table>
-
-    <div class="tip-box">💡 <strong>Dica:</strong> você não precisa usar todos os cinco ingredientes o tempo todo. Mas quanto mais contexto você fornecer, melhor tende a ser o resultado.</div>
-
+    <div class="tip-box">💡 <strong>Dica:</strong> você não precisa usar todos os cinco ingredientes sempre. Mas quanto mais contexto você fornecer, melhor tende a ser o resultado.</div>
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
       <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
@@ -365,82 +348,122 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   <div class="section" id="sec-step3">
     <div class="sec-title"><span class="snum">03.</span> Iteração</div>
     <div class="sec-desc">O segredo que a maioria ignora</div>
-
-    <p class="intro-text">Uma das maiores vantagens do Claude em relação a uma busca no Google é que você pode continuar a conversa. Não precisa ser perfeito na primeira mensagem.</p>
-
-    <div class="subsec">O fluxo natural de uma boa conversa</div>
+    <p class="intro-text">Você pode continuar a conversa. Não precisa ser perfeito na primeira mensagem.</p>
+    <div class="subsec">O fluxo natural</div>
     <div class="instructions">
       <div class="inst"><span class="inst-num">1</span><span class="inst-text">Você manda um prompt inicial</span></div>
       <div class="inst"><span class="inst-num">2</span><span class="inst-text">O Claude responde</span></div>
-      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Você avalia o que veio e pede ajustes <strong>na mesma conversa</strong></span></div>
-      <div class="inst"><span class="inst-num">4</span><span class="inst-text">O Claude melhora a resposta levando em conta tudo que já foi dito</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Você avalia e pede ajustes <strong>na mesma conversa</strong></span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">O Claude melhora levando em conta tudo que já foi dito</span></div>
     </div>
-
     <div class="subsec">Mensagens de iteração que funcionam bem</div>
-    <div class="copy-block"><span class="label">Exemplos prontos para usar</span><button class="copy-btn" onclick="copyText(this,'Está bom, mas quero um tom mais informal.\nReduz para metade do tamanho.\nReescreva o segundo parágrafo focando nos benefícios, não nas funcionalidades.\nGere mais 3 variações diferentes do mesmo título.\nFaça 3 perguntas que me ajudem a refinar essa ideia antes de continuar.')">Copiar</button>Está bom, mas quero um tom mais informal.
+    <div class="copy-block"><span class="label">Exemplos prontos para usar</span><button class="copy-btn" onclick="copyText(this,'Está bom, mas quero um tom mais informal.\nReduz para metade do tamanho.\nReescreva focando nas consequências financeiras.\nGere mais 2 variações com perfis de usuário diferentes.\nAntes de continuar, me faça 3 perguntas para entender melhor meu projeto.')">Copiar</button>Está bom, mas quero um tom mais informal.
 Reduz para metade do tamanho.
-Reescreva o segundo parágrafo focando nos benefícios, não nas funcionalidades.
-Gere mais 3 variações diferentes do mesmo título.
-Faça 3 perguntas que me ajudem a refinar essa ideia antes de continuar.</div>
-
-    <div class="tip-box">💡 <strong>Poderoso:</strong> pedir ao Claude que te faça perguntas antes de responder garante que ele entende exatamente o que você precisa — e você clareia sua própria ideia no processo.</div>
-
+Reescreva focando nas consequências financeiras.
+Gere mais 2 variações com perfis de usuário diferentes.
+Antes de continuar, me faça 3 perguntas para entender melhor meu projeto.</div>
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
       <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
     </div>
   </div>
 
-  <!-- 04 WEB SEARCH -->
+  <!-- 04 MEMORY -->
   <div class="section" id="sec-step4">
-    <div class="sec-title"><span class="snum">04.</span> Web Search</div>
-    <div class="sec-desc">Pesquisa em tempo real dentro do Claude</div>
-
-    <p class="intro-text">O Claude tem acesso à internet quando a Web Search está ativada. Isso significa que você pode pedir pesquisas de mercado, tendências recentes, notícias, benchmarks e referências — e ele vai buscar e citar as fontes.</p>
-
-    <div class="subsec">Quando usar</div>
+    <div class="sec-title"><span class="snum">04.</span> Memory</div>
+    <div class="sec-desc">O Claude que aprende com você</div>
+    <p class="intro-text">A Memory permite ao Claude derivar preferências e contexto das suas conversas e carregá-los automaticamente nas sessões seguintes.</p>
+    <div class="subsec">O que o Claude lembra</div>
+    <p class="intro-text">Preferências de comunicação, informações sobre seus projetos ativos, restrições que você mencionou, decisões já tomadas.</p>
+    <div class="subsec">O que você pode fazer</div>
     <div class="instructions">
-      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Pesquisar <strong>concorrentes</strong> do seu Micro-SaaS</span></div>
-      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Levantar <strong>dados de mercado</strong> para embasar uma decisão</span></div>
-      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Verificar se uma <strong>tendência</strong> que você percebeu já tem cobertura de imprensa</span></div>
-      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Buscar <strong>artigos acadêmicos</strong> ou relatórios de setor</span></div>
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Visualizar tudo em <strong>Configurações → Memória</strong></span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Editar uma memória incorreta ou desatualizada</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Deletar memórias específicas ou apagar tudo</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Adicionar manualmente informações importantes do seu projeto</span></div>
     </div>
-
-    <div class="subsec">Como ativar</div>
-    <p class="intro-text">Certifique-se de que o ícone de pesquisa está habilitado na interface do Claude antes de enviar a mensagem.</p>
-
-    <div class="warning-box">⚠️ <strong>Atenção:</strong> o Claude não garante que todas as fontes estão corretas. Sempre verifique informações críticas na fonte original, especialmente dados numéricos.</div>
-
+    <div class="tip-box">💡 <strong>Dica:</strong> logo após esta aula, acesse <strong>Configurações → Memória</strong> e adicione as informações do seu projeto para que o Claude as use em todas as conversas seguintes.</div>
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
       <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
     </div>
   </div>
 
-  <!-- 05 DEMO -->
+  <!-- 05 DEMONSTRAÇÃO -->
   <div class="section" id="sec-step5">
     <div class="sec-title"><span class="snum">05.</span> Demonstração ao Vivo</div>
-    <div class="sec-desc">Acompanhe a tela e observe os resultados</div>
+    <div class="sec-desc">Todos os prompts prontos para copiar — acompanhe e depois repita</div>
+    <div class="note-box">📋 <strong>Nota:</strong> esta seção contém o passo a passo completo da prática ao vivo, incluindo todos os prompts e dados sintéticos necessários. O professor executa no projetor — os alunos acompanham e depois repetem na atividade prática.</div>
 
-    <p class="intro-text">O professor vai demonstrar ao vivo os conceitos desta aula. Acompanhe a tela e observe os resultados de cada demonstração.</p>
+    <div class="demo-block">
+      <div class="demo-header"><span class="demo-num">Demo 1</span><span class="demo-title">Prompt fraco vs. prompt forte</span><span class="demo-time">10 min</span></div>
+      <p class="intro-text" style="margin-bottom:10px"><strong>Objetivo:</strong> mostrar visivelmente a diferença de qualidade entre um prompt genérico e um estruturado.</p>
+      <div class="demo-step">Passo 1 — Execute o prompt fraco</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra o Claude.ai numa nova conversa. Copie e envie:</p>
+      <div class="copy-block"><span class="label">Prompt fraco ✗</span><button class="copy-btn" onclick="copyText(this,'Me ajuda com meu projeto de odontologia.')">Copiar</button>Me ajuda com meu projeto de odontologia.</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "Observem a resposta. O Claude não tem contexto nenhum — ele não sabe quem somos, o que queremos, nem para que serve. O resultado é previsível: vago e inútil."</div>
+      <div class="demo-step">Passo 2 — Abra uma nova conversa e execute o prompt forte</div>
+      <div class="copy-block"><span class="label">Prompt forte ✓</span><button class="copy-btn" onclick="copyText(this,'Você é um especialista em desenvolvimento de produto para startups de saúde.\n\nContexto: estou desenvolvendo um Micro-SaaS para clínicas odontológicas de pequeno porte (1 a 3 dentistas) que perdem pacientes porque não fazem follow-up após as consultas.\n\nTarefa: me ajude a formular uma hipótese de problema clara.\n\nFormato: use a estrutura — \"[Perfil do usuário] tem dificuldade em [problema específico] o que causa [consequência mensurável para o negócio].\" Gere 2 variações com perfis de usuário ligeiramente diferentes.\n\nRestrições: não mencione soluções tecnológicas ainda. Foque exclusivamente nas dores humanas e operacionais.')">Copiar</button>Você é um especialista em desenvolvimento de produto para startups de saúde.
 
-    <div class="instructions">
-      <div class="inst">
-        <span class="inst-num">1</span>
-        <span class="inst-text"><strong>Prompt fraco vs. forte.</strong> Dois prompts sobre o mesmo tema. Observe a diferença de qualidade, especificidade e utilidade das respostas.</span>
-      </div>
-      <div class="inst">
-        <span class="inst-num">2</span>
-        <span class="inst-text"><strong>Web Search para pesquisa de mercado.</strong> Pesquisa de tendências de Micro-SaaS no Brasil. Observe como o Claude cita as fontes e como você pode pedir para aprofundar um ponto específico.</span>
-      </div>
-      <div class="inst">
-        <span class="inst-num">3</span>
-        <span class="inst-text"><strong>Iteração em conversa.</strong> Partindo de uma resposta medíocre, refinando em três rodadas de ajustes — sem criar uma nova conversa.</span>
-      </div>
-      <div class="inst">
-        <span class="inst-num">4</span>
-        <span class="inst-text"><strong>Claude ajudando a formular a hipótese de problema.</strong> Ideia vaga → prompt inicial → perguntas do Claude → hipótese refinada.</span>
-      </div>
+Contexto: estou desenvolvendo um Micro-SaaS para clínicas odontológicas de pequeno porte (1 a 3 dentistas) que perdem pacientes porque não fazem follow-up após as consultas.
+
+Tarefa: me ajude a formular uma hipótese de problema clara.
+
+Formato: use a estrutura — "[Perfil do usuário] tem dificuldade em [problema específico] o que causa [consequência mensurável para o negócio]." Gere 2 variações com perfis de usuário ligeiramente diferentes.
+
+Restrições: não mencione soluções tecnológicas ainda. Foque exclusivamente nas dores humanas e operacionais.</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "Notem como o Claude agora entrega algo específico, estruturado e diretamente útil. A diferença não está no Claude — está na qualidade do pedido."</div>
+      <div class="demo-step">Passo 3 — Compare as duas respostas</div>
+      <p class="intro-text" style="margin-bottom:0">Role a tela para mostrar as duas janelas abertas. Peça à turma para identificar as diferenças.</p>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-header"><span class="demo-num">Demo 2</span><span class="demo-title">Iteração em conversa</span><span class="demo-time">10 min</span></div>
+      <p class="intro-text" style="margin-bottom:10px"><strong>Objetivo:</strong> mostrar que é possível refinar progressivamente sem recomeçar do zero.</p>
+      <div class="demo-step">Passo 1 — Continue na conversa da Demo 1 que gerou as duas variações</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Gostei da segunda variação. Agora reescreva ela tornando a consequência mais específica — use números estimados para tornar o impacto mais tangível. Exemplo: \"o que causa perda estimada de R$ X por mês em receita de retorno.\"')">Copiar</button>Gostei da segunda variação. Agora reescreva ela tornando a consequência mais específica — use números estimados para tornar o impacto mais tangível. Exemplo: "o que causa perda estimada de R$ X por mês em receita de retorno."</div>
+      <div class="demo-step">Passo 2 — Após a resposta, envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Ótimo. Agora reformule em linguagem mais simples, como se eu fosse apresentar para um colega que não tem familiaridade com startups. Máximo de 2 frases.')">Copiar</button>Ótimo. Agora reformule em linguagem mais simples, como se eu fosse apresentar para um colega que não tem familiaridade com startups. Máximo de 2 frases.</div>
+      <div class="demo-step">Passo 3 — Após a resposta, envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Perfeito. Antes de continuarmos, me faça 3 perguntas que vão me ajudar a refinar ainda mais essa hipótese de problema.')">Copiar</button>Perfeito. Antes de continuarmos, me faça 3 perguntas que vão me ajudar a refinar ainda mais essa hipótese de problema.</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "Em três mensagens saímos de uma hipótese genérica para algo bem afinado — e o Claude manteve o contexto de tudo que foi dito antes, sem precisar repetir nada. Esse é o poder da iteração."</div>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-header"><span class="demo-num">Demo 3</span><span class="demo-title">Claude como parceiro de raciocínio</span><span class="demo-time">10 min</span></div>
+      <p class="intro-text" style="margin-bottom:10px"><strong>Objetivo:</strong> mostrar o Claude ajudando a pensar, não apenas executando.</p>
+      <div class="demo-step">Passo 1 — Abra uma nova conversa e envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Tenho uma ideia para um Micro-SaaS voltado para clínicas odontológicas. Minha percepção é que as clínicas perdem muitos pacientes porque não fazem acompanhamento após as consultas.\n\nAntes de me ajudar a estruturar qualquer coisa, me faça as perguntas que você precisaria responder para avaliar se esse é realmente um problema relevante e viável de resolver com tecnologia.')">Copiar</button>Tenho uma ideia para um Micro-SaaS voltado para clínicas odontológicas. Minha percepção é que as clínicas perdem muitos pacientes porque não fazem acompanhamento após as consultas.
+
+Antes de me ajudar a estruturar qualquer coisa, me faça as perguntas que você precisaria responder para avaliar se esse é realmente um problema relevante e viável de resolver com tecnologia.</div>
+      <div class="demo-step">Passo 2 — Responda as perguntas do Claude com estes dados:</div>
+      <div class="copy-block"><span class="label">Dados sintéticos para a demo</span><button class="copy-btn" onclick="copyText(this,'Respondendo suas perguntas:\n\n1. Sobre frequência do problema: dentistas relatam que 40% a 60% dos pacientes não retornam após a primeira consulta sem um contato ativo da clínica.\n\n2. Sobre como lidam hoje: a maioria usa WhatsApp manual ou simplesmente não faz follow-up — fica na memória da recepcionista.\n\n3. Sobre impacto financeiro: uma consulta de retorno vale entre R$ 200 e R$ 400. Uma clínica pequena perde cerca de 20 pacientes por mês por falta de follow-up. Isso representa entre R$ 4.000 e R$ 8.000 mensais em receita não realizada.\n\n4. Sobre soluções existentes: há CRMs genéricos (Salesforce, Pipedrive) mas são caros e complexos para clínicas pequenas que não têm equipe de TI. Softwares odontológicos focam em prontuário, não em relacionamento.')">Copiar</button>Respondendo suas perguntas:
+
+1. Sobre frequência do problema: dentistas relatam que 40% a 60% dos pacientes não retornam após a primeira consulta sem um contato ativo da clínica.
+
+2. Sobre como lidam hoje: a maioria usa WhatsApp manual ou simplesmente não faz follow-up — fica na memória da recepcionista.
+
+3. Sobre impacto financeiro: uma consulta de retorno vale entre R$ 200 e R$ 400. Uma clínica pequena perde cerca de 20 pacientes por mês por falta de follow-up. Isso representa entre R$ 4.000 e R$ 8.000 mensais em receita não realizada.
+
+4. Sobre soluções existentes: há CRMs genéricos (Salesforce, Pipedrive) mas são caros e complexos para clínicas pequenas que não têm equipe de TI. Softwares odontológicos focam em prontuário, não em relacionamento.</div>
+      <div class="demo-step">Passo 3 — Após a resposta, envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Com base nas minhas respostas, formule a hipótese de problema mais forte possível para o meu Micro-SaaS. Em seguida, avalie: essa hipótese é suficientemente específica para guiar entrevistas de validação com dentistas?')">Copiar</button>Com base nas minhas respostas, formule a hipótese de problema mais forte possível para o meu Micro-SaaS. Em seguida, avalie: essa hipótese é suficientemente específica para guiar entrevistas de validação com dentistas?</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "Notem que não precisei ter a resposta perfeita de antemão. O Claude me ajudou a chegar lá através de perguntas — isso é usar IA como parceiro de raciocínio."</div>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-header"><span class="demo-num">Demo 4</span><span class="demo-title">Configurando a Memory</span><span class="demo-time">5 min</span></div>
+      <p class="intro-text" style="margin-bottom:10px"><strong>Objetivo:</strong> mostrar como salvar contexto para uso automático nas próximas sessões.</p>
+      <div class="demo-step">Passo 1 — Acesse Configurações → Memória</div>
+      <p class="intro-text" style="margin-bottom:6px">Mostre o painel para a turma. Se houver memórias já geradas automaticamente, comente brevemente.</p>
+      <div class="demo-step">Passo 2 — Clique em "Adicionar memória" e insira:</div>
+      <div class="copy-block"><span class="label">Memória do projeto — exemplo</span><button class="copy-btn" onclick="copyText(this,'Projeto atual: Micro-SaaS para clínicas odontológicas de pequeno porte.\nProblema: falta de follow-up com pacientes após consultas, causando perda de receita de retorno.\nContexto: estudante de AI for Business, fase de validação de problema.\nPreferência: respostas diretas, objetivas e com exemplos práticos.')">Copiar</button>Projeto atual: Micro-SaaS para clínicas odontológicas de pequeno porte.
+Problema: falta de follow-up com pacientes após consultas, causando perda de receita de retorno.
+Contexto: estudante de AI for Business, fase de validação de problema.
+Preferência: respostas diretas, objetivas e com exemplos práticos.</div>
+      <div class="demo-step">Passo 3 — Abra uma nova conversa e envie apenas:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Com base no que você sabe sobre meu projeto, qual é o perfil de usuário mais importante que eu deveria entrevistar primeiro para validar o problema?')">Copiar</button>Com base no que você sabe sobre meu projeto, qual é o perfil de usuário mais importante que eu deveria entrevistar primeiro para validar o problema?</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "O Claude usou o contexto da Memory sem eu precisar repetir nada. A partir de agora, toda nova conversa já começa com esse contexto carregado automaticamente."</div>
     </div>
 
     <div class="nav-buttons">
@@ -452,25 +475,24 @@ Faça 3 perguntas que me ajudem a refinar essa ideia antes de continuar.</div>
   <!-- 06 ATIVIDADE -->
   <div class="section" id="sec-step6">
     <div class="sec-title"><span class="snum">06.</span> Atividade Prática</div>
-    <div class="sec-desc">Sua vez. Cada passo leva de 5 a 10 minutos.</div>
-
+    <div class="sec-desc">Sua vez — cada passo leva de 5 a 10 minutos</div>
     <div class="subsec">Passo 1 — Seu primeiro prompt fraco</div>
-    <p class="intro-text">Abra o Claude e escreva, da forma mais natural possível, o que você quer descobrir sobre o problema que o seu Micro-SaaS resolve. Não tente ser perfeito. Mande como se fosse uma mensagem de WhatsApp mesmo.</p>
-
+    <p class="intro-text">Abra o Claude e escreva, da forma mais natural possível, uma mensagem sobre o problema que o seu Micro-SaaS resolve. Não tente ser perfeito — mande como se fosse uma mensagem de WhatsApp.</p>
     <div class="subsec">Passo 2 — Reescreva com estrutura</div>
-    <p class="intro-text">Reescreva o mesmo prompt usando a estrutura: <strong>contexto + papel + tarefa + formato + restrições</strong>. Mande numa nova conversa e compare os dois resultados lado a lado.</p>
+    <p class="intro-text">Reescreva o mesmo prompt usando: <strong>contexto + papel + tarefa + formato + restrições</strong>. Mande numa nova conversa e compare os dois resultados lado a lado.</p>
+    <div class="subsec">Passo 3 — Peça ao Claude que te faça perguntas</div>
+    <div class="copy-block"><span class="label">Prompt — adapte para o seu segmento</span><button class="copy-btn" onclick="copyText(this,'Tenho uma ideia de Micro-SaaS para [descreva seu segmento].\nMinha percepção inicial é que [descreva o problema que você identificou].\n\nAntes de me ajudar a estruturar a hipótese, me faça 3 perguntas\nque vão me ajudar a entender se esse problema é realmente relevante.')">Copiar</button>Tenho uma ideia de Micro-SaaS para [descreva seu segmento].
+Minha percepção inicial é que [descreva o problema que você identificou].
 
-    <div class="subsec">Passo 3 — Web Search para o seu segmento</div>
-    <p class="intro-text">Com a Web Search ativada, pesquise concorrentes, benchmarks ou tendências do seu Micro-SaaS. Use o prompt abaixo como ponto de partida — substitua os colchetes pelo seu contexto:</p>
-    <div class="copy-block"><span class="label">Prompt — Web Search</span><button class="copy-btn" onclick="copyText(this,'Pesquise os principais concorrentes e soluções existentes para [descreva seu problema].\nListe cada um com: nome, proposta de valor e principal limitação relatada por usuários.')">Copiar</button>Pesquise os principais concorrentes e soluções existentes para [descreva seu problema].
-Liste cada um com: nome, proposta de valor e principal limitação relatada por usuários.</div>
-
-    <div class="subsec">Passo 4 — Peça ao Claude que te faça perguntas</div>
-    <p class="intro-text">Mande a instrução abaixo adaptada para o seu contexto. Responda as perguntas e veja como a hipótese que sair dessa conversa é mais precisa do que a que você tinha antes:</p>
-    <div class="copy-block"><span class="label">Prompt — Hipótese de problema</span><button class="copy-btn" onclick="copyText(this,'Estou desenvolvendo um Micro-SaaS para [descreva o problema].\nAntes de me ajudar a estruturar a hipótese de problema,\nme faça 3 perguntas que vão me ajudar a pensar com mais clareza sobre isso.')">Copiar</button>Estou desenvolvendo um Micro-SaaS para [descreva o problema].
-Antes de me ajudar a estruturar a hipótese de problema,
-me faça 3 perguntas que vão me ajudar a pensar com mais clareza sobre isso.</div>
-
+Antes de me ajudar a estruturar a hipótese, me faça 3 perguntas
+que vão me ajudar a entender se esse problema é realmente relevante.</div>
+    <p class="intro-text">Responda as perguntas e peça ao Claude para formular a hipótese final.</p>
+    <div class="subsec">Passo 4 — Configure sua Memory</div>
+    <div class="copy-block"><span class="label">Template de memória — adapte para o seu projeto</span><button class="copy-btn" onclick="copyText(this,'Projeto atual: Micro-SaaS para [seu segmento].\nProblema: [descreva o problema em 1 frase].\nContexto: estudante de AI for Business, fase de [fase atual].\nPreferência: [seu estilo preferido de resposta].')">Copiar</button>Projeto atual: Micro-SaaS para [seu segmento].
+Problema: [descreva o problema em 1 frase].
+Contexto: estudante de AI for Business, fase de [fase atual].
+Preferência: [seu estilo preferido de resposta].</div>
+    <p class="intro-text">Acesse <strong>Configurações → Memória</strong>, clique em "Adicionar memória" e cole o texto adaptado.</p>
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
       <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
@@ -481,18 +503,13 @@ me faça 3 perguntas que vão me ajudar a pensar com mais clareza sobre isso.</d
   <div class="section" id="sec-step7">
     <div class="sec-title"><span class="snum">07.</span> Entregável</div>
     <div class="sec-desc">O que você deve ter ao final desta aula</div>
-
     <div class="checklist">
-      <div class="check-item"><span class="ci-icon">✅</span><span>Uma <strong>hipótese de problema</strong> escrita em 2–3 frases</span></div>
-      <div class="check-item"><span class="ci-icon">✅</span><span>Pelo menos <strong>3 referências de mercado</strong> encontradas pela Web Search</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Hipótese de problema</strong> escrita em 2–3 frases com a estrutura: [Perfil] + [Problema] + [Consequência]</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Memory configurada</strong> com as informações do seu projeto</span></div>
     </div>
-
-    <div class="tip-box">💡 <strong>Guarde isso.</strong> Vamos usar na Aula 2 para montar o Project do seu Micro-SaaS no Claude.</div>
-
     <div class="next-teaser">
-      <strong>Próxima aula:</strong> Aula 2 — Memória, Projects e Deep Research: como criar um espaço de trabalho persistente para o seu Micro-SaaS no Claude.
+      <strong>Próxima aula:</strong> Aula 2 — Connectors: conectando o Claude às ferramentas que você já usa no dia a dia.
     </div>
-
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
       <button class="nav-btn primary" onclick="goHome()">↩ Início</button>
@@ -511,78 +528,74 @@ me faça 3 perguntas que vão me ajudar a pensar com mais clareza sobre isso.</d
     <tr><td>Formato</td><td>Como receber a resposta</td></tr>
     <tr><td>Restrições</td><td>O que evitar ou respeitar</td></tr>
   </table>
-
-  <div class="rs-section-title">Links Úteis</div>
-  <a class="rs-link" href="https://claude.ai" target="_blank">→ Claude.ai</a>
-  <a class="rs-link" href="https://claude.ai/projects" target="_blank">→ Claude Projects</a>
-
+  <div class="rs-section-title">Memory</div>
+  <table class="rs-table">
+    <tr><td>Acessar</td><td>Config → Memória</td></tr>
+    <tr><td>Ver</td><td>Lista de memórias ativas</td></tr>
+    <tr><td>Editar</td><td>Clique na memória</td></tr>
+    <tr><td>Deletar</td><td>Individual ou tudo</td></tr>
+    <tr><td>Adicionar</td><td>"Adicionar memória"</td></tr>
+  </table>
   <div class="rs-section-title">Entregáveis</div>
   <table class="rs-table">
-    <tr><td>✅</td><td>Hipótese de problema (2–3 frases)</td></tr>
-    <tr><td>✅</td><td>3 referências de mercado</td></tr>
+    <tr><td>✅</td><td>Hipótese de problema</td></tr>
+    <tr><td>✅</td><td>Memory configurada</td></tr>
   </table>
+  <div class="rs-section-title">Links Úteis</div>
+  <a class="rs-link" href="https://claude.ai" target="_blank">→ Claude.ai</a>
 </div>
 
 </div><!-- /layout -->
 
 <script>
-const stepToFlow = {
-  'sec-home':'home','sec-step1':'step1','sec-step2':'step2','sec-step3':'step3',
-  'sec-step4':'step4','sec-step5':'step5','sec-step6':'step6','sec-step7':'step7'
-}
-const flowOrder = ['home','step1','step2','step3','step4','step5','step6','step7']
-const visited = new Set(['sec-home'])
-const completedFlows = new Set()
+const stepToFlow={'sec-home':'home','sec-step1':'step1','sec-step2':'step2','sec-step3':'step3','sec-step4':'step4','sec-step5':'step5','sec-step6':'step6','sec-step7':'step7'}
+const flowOrder=['home','step1','step2','step3','step4','step5','step6','step7']
+const visited=new Set(['sec-home'])
+const completedFlows=new Set()
 
-function showSection(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'))
   document.getElementById(id)?.classList.add('active')
-  document.querySelectorAll('.nav-item').forEach(n => {
-    n.classList.toggle('active', n.dataset.section === id)
-    if (visited.has(n.dataset.section)) n.classList.add('completed')
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('active',n.dataset.section===id)
+    if(visited.has(n.dataset.section))n.classList.add('completed')
   })
   visited.add(id)
-  const flow = stepToFlow[id]
-  if (flow) {
-    const idx = flowOrder.indexOf(flow)
-    if (idx > 0) completedFlows.add(flowOrder[idx-1])
-  }
+  const flow=stepToFlow[id]
+  if(flow){const idx=flowOrder.indexOf(flow);if(idx>0)completedFlows.add(flowOrder[idx-1])}
   updateStepper(flow)
   updateProgress()
   window.scrollTo({top:0,behavior:'smooth'})
 }
 
-function updateStepper(activeFlow) {
-  document.querySelectorAll('.stepper-node').forEach(n => {
-    const f = n.id.replace('sn-','')
-    const idx = flowOrder.indexOf(f)
-    const activeIdx = flowOrder.indexOf(activeFlow)
+function updateStepper(activeFlow){
+  document.querySelectorAll('.stepper-node').forEach(n=>{
+    const f=n.id.replace('sn-','')
+    const idx=flowOrder.indexOf(f)
+    const activeIdx=flowOrder.indexOf(activeFlow)
     n.classList.remove('active','completed','future')
-    if (f === activeFlow) n.classList.add('active')
-    else if (completedFlows.has(f) || idx < activeIdx) n.classList.add('completed')
+    if(f===activeFlow)n.classList.add('active')
+    else if(completedFlows.has(f)||idx<activeIdx)n.classList.add('completed')
     else n.classList.add('future')
   })
 }
 
-function updateProgress() {
-  const pct = Math.round((visited.size / document.querySelectorAll('.section').length) * 100)
-  document.getElementById('pct').textContent = pct
-  document.getElementById('sp-fill').style.width = pct + '%'
+function updateProgress(){
+  const pct=Math.round((visited.size/document.querySelectorAll('.section').length)*100)
+  document.getElementById('pct').textContent=pct
+  document.getElementById('sp-fill').style.width=pct+'%'
 }
 
-function goHome() { showSection('sec-home') }
+function goHome(){showSection('sec-home')}
 
-function copyText(btn, text) {
-  navigator.clipboard?.writeText(text).then(() => {
-    btn.textContent = 'Copiado!'
-    setTimeout(() => btn.textContent = 'Copiar', 1800)
-  }).catch(() => {
-    const ta = document.createElement('textarea')
-    ta.value = text; document.body.appendChild(ta)
-    ta.select(); document.execCommand('copy')
-    document.body.removeChild(ta)
-    btn.textContent = 'Copiado!'
-    setTimeout(() => btn.textContent = 'Copiar', 1800)
+function copyText(btn,text){
+  navigator.clipboard?.writeText(text).then(()=>{
+    btn.textContent='Copiado!'
+    setTimeout(()=>btn.textContent='Copiar',1800)
+  }).catch(()=>{
+    const ta=document.createElement('textarea')
+    ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta)
+    btn.textContent='Copiado!';setTimeout(()=>btn.textContent='Copiar',1800)
   })
 }
 

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — Pesquisa de mercado com IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #F5F3EE;
+  --white: #ffffff;
+  --accent: #C8A84B;
+  --accent2: #B09040;
+  --accent-light: #F8F2E0;
+  --accent-lighter: #FBF8F0;
+  --accent-border: #DEC878;
+  --accent-text: #8B6F28;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+  --green-text: #065F46;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --orange-border: #FED7AA;
+  --orange-text: #9A3412;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --text4: #CBCAC7;
+  --border: #E5E1D8;
+  --border2: #D8D4CB;
+  --surface2: #F5F3EE;
+  --shadow-xs: 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-sm: 0 1px 3px rgba(26,26,24,0.06), 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(26,26,24,0.07), 0 2px 4px -2px rgba(26,26,24,0.05);
+}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ===== STEPPER ===== */
+.stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
+.stepper-header::-webkit-scrollbar{height:0}
+.back-btn{display:flex;align-items:center;gap:5px;padding:0 12px 0 0;text-decoration:none;color:var(--text3);font-size:0.72rem;font-weight:600;white-space:nowrap;border-right:1px solid var(--border);margin-right:12px;flex-shrink:0;transition:color 0.15s}
+.back-btn:hover{color:var(--accent)}
+.back-btn .back-arrow{font-size:0.8rem;line-height:1}
+.stepper-node{display:flex;align-items:center;gap:5px;padding:0 4px;cursor:pointer;position:relative;white-space:nowrap;transition:color 0.2s}
+.stepper-node .sn-label{font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;padding:6px 0;position:relative;transition:color 0.2s}
+.stepper-node.future .sn-label{color:var(--text4)}
+.stepper-node.completed .sn-label{color:var(--text)}
+.stepper-node.active .sn-label{color:var(--accent)}
+.stepper-node.active .sn-label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0}
+.stepper-node .sn-check{display:none;font-size:0.6rem;color:var(--green)}
+.stepper-node.completed .sn-check{display:inline}
+.stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.sidebar-header p{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-top:2px}
+.nav-group{padding:12px 0 4px}
+.nav-group-title{padding:2px 16px 6px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 16px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:450;border-left:2px solid transparent;margin:0}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-lighter);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni-num{font-size:0.62rem;font-weight:600;color:var(--text3);min-width:17px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-num{color:var(--accent)}
+.nav-item .ni-check{margin-left:auto;font-size:0.62rem;color:var(--green);opacity:0;transition:opacity 0.2s;flex-shrink:0}
+.nav-item.completed .ni-check{opacity:1}
+.sidebar-progress{padding:14px 16px;border-top:1px solid var(--border);margin-top:auto}
+.sp-label{font-size:0.62rem;color:var(--text3);font-weight:500;margin-bottom:6px}
+.sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:20px 36px 40px;max-width:700px}
+.section{display:none;animation:fadeIn 0.25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
+.sec-title .snum{color:var(--accent)}
+.sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+.overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+.oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
+.oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
+
+.intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.intro-text strong{color:var(--text);font-weight:600}
+.subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
+
+.instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
+.inst:hover{box-shadow:var(--shadow-sm)}
+.inst-num{font-size:0.56rem;font-weight:700;color:#fff;background:var(--accent);min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
+.inst-text strong{font-weight:600}
+.inst-text em{color:var(--text2);font-style:italic}
+.inst-text code{font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.68rem;background:#F3F2EE;padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+
+.content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
+.content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.content-table tr:last-child td{border-bottom:none}
+.content-table tr:hover td{background:var(--surface2)}
+.content-table td strong{font-weight:600}
+.content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
+
+/* Demo blocks */
+.demo-block{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.demo-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.demo-num{font-size:0.62rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0}
+.demo-title{font-size:0.82rem;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.demo-time{font-size:0.65rem;color:var(--text3);margin-left:auto;flex-shrink:0;font-weight:500}
+.demo-step{font-size:0.76rem;font-weight:700;color:var(--text);margin:12px 0 5px}
+
+/* Copy block */
+.copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
+.copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* Callout boxes */
+.tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
+.tip-box strong{font-weight:600}
+.warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
+.warning-box strong{font-weight:600}
+.speaker-box{background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--orange-text);line-height:1.5}
+.speaker-box strong{font-weight:600}
+.note-box{background:var(--accent-lighter);border:1px solid var(--accent-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.note-box strong{font-weight:600}
+
+/* Comparison card */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 16px}
+.compare-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px 14px;box-shadow:var(--shadow-xs)}
+.compare-card-title{font-size:0.72rem;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.compare-card-title span{display:inline-block;font-size:0.58rem;font-weight:600;background:var(--accent-light);color:var(--accent-text);padding:2px 7px;border-radius:4px;margin-right:6px;vertical-align:middle}
+.compare-card ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.compare-card li{font-size:0.72rem;color:var(--text2);line-height:1.45;padding-left:12px;position:relative}
+.compare-card li::before{content:'·';position:absolute;left:2px;color:var(--accent)}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
+.check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
+.check-item strong{font-weight:600}
+
+.next-teaser{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.next-teaser strong{font-weight:700}
+
+/* Nav buttons */
+.nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
+.nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
+
+/* ===== RIGHT SIDEBAR ===== */
+.right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.rs-section-title:first-child{margin-top:0}
+.rs-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.rs-table td{padding:5px 6px;font-size:0.68rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--text2)}
+.rs-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap;padding-right:8px}
+.rs-table tr:last-child td{border-bottom:none}
+.rs-link{display:block;font-size:0.7rem;color:var(--accent);text-decoration:none;padding:4px 0;font-weight:500}
+.rs-link:hover{text-decoration:underline}
+
+@media(max-width:1024px){.right-sidebar{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- STEPPER -->
+<div class="stepper-header">
+  <a class="back-btn" href="index.html"><span class="back-arrow">←</span>Índice</a>
+  <div class="stepper-node active" onclick="showSection('sec-home')" id="sn-home">
+    <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+    <span class="sn-check">✓</span><span class="sn-label">Web Search</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+    <span class="sn-check">✓</span><span class="sn-label">Deep Research</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
+    <span class="sn-check">✓</span><span class="sn-label">Como estruturar</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 1</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 2</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 3</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 4</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step8')" id="sn-step8">
+    <span class="sn-check">✓</span><span class="sn-label">Prática</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Pesquisa de mercado com IA</h2>
+    <p>A03 · Link School of Business</p>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Introdução</div>
+      <div class="nav-item active" onclick="showSection('sec-home')" data-section="sec-home">
+        <span class="ni-num">00</span>Visão Geral<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Teoria</div>
+      <div class="nav-item" onclick="showSection('sec-step1')" data-section="sec-step1">
+        <span class="ni-num">01</span>Web Search<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
+        <span class="ni-num">02</span>Deep Research<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
+        <span class="ni-num">03</span>Como estruturar<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Demonstrações</div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Demo 1 — Web Search<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>Demo 2 — Dores do usuário<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>Demo 3 — Concorrentes<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
+        <span class="ni-num">07</span>Demo 4 — Calibrando hipótese<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Prática</div>
+      <div class="nav-item" onclick="showSection('sec-step8')" data-section="sec-step8">
+        <span class="ni-num">08</span>Prática + Entregável<span class="ni-check">✓</span>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-progress">
+    <div class="sp-label">Progresso — <span id="pct">0</span>%</div>
+    <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 00 VISÃO GERAL -->
+  <div class="section active" id="sec-home">
+    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
+    <div class="sec-desc">Web Search · Deep Research · AI for Business</div>
+    <div class="overview-card">
+      <div class="oc-title">Sobre esta aula</div>
+      <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
+      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
+      <div class="oc-row"><span class="oc-label">Temas</span><span class="oc-value">Web Search · Deep Research</span></div>
+      <div class="oc-row"><span class="oc-label">Exemplo</span><span class="oc-value">Micro-SaaS para clínicas odontológicas</span></div>
+    </div>
+    <p class="intro-text">Você tem uma hipótese de problema. Mas antes de sair fazendo entrevistas, você precisa saber o que já é conhecido — o que outros usuários relatam, quais soluções já existem, onde essas soluções falham.</p>
+    <p class="intro-text">Essa aula te ensina a usar o Claude como um <strong>pesquisador de mercado</strong>. Você vai aprender a diferença entre uma busca rápida na web e uma pesquisa profunda multi-fonte, e vai usar as duas para construir o mapa de contexto do seu Micro-SaaS antes de ir a campo.</p>
+    <div class="subsec">Objetivos de aprendizagem</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Usar a <strong>Web Search</strong> do Claude para buscas pontuais e verificação de dados</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Usar o <strong>Deep Research</strong> para gerar relatórios aprofundados a partir de múltiplas fontes</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Pesquisar concorrentes, benchmarks e dores do usuário do seu segmento</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Transformar os resultados da pesquisa em insumos para o <strong>roteiro de entrevistas</strong></span></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 01 WEB SEARCH -->
+  <div class="section" id="sec-step1">
+    <div class="sec-title"><span class="snum">01.</span> Web Search — pesquisa em tempo real</div>
+    <div class="sec-desc">Quando usar e como aproveitar</div>
+    <p class="intro-text">O Claude tem acesso à internet quando a <strong>Web Search está ativada</strong>. Você pode pedir pesquisas de mercado, tendências recentes, notícias, benchmarks e referências.</p>
+    <div class="subsec">Quando usar Web Search</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">✓</span><span class="inst-text">Verificar um dado específico — <em>"qual o número de clínicas odontológicas no Brasil?"</em></span></div>
+      <div class="inst"><span class="inst-num">✓</span><span class="inst-text">Buscar informações recentes sobre um tema ou tendência</span></div>
+      <div class="inst"><span class="inst-num">✓</span><span class="inst-text">Pesquisar rapidamente um concorrente específico</span></div>
+      <div class="inst"><span class="inst-num">✓</span><span class="inst-text">Confirmar se uma informação ainda é atual</span></div>
+    </div>
+    <div class="warning-box"><strong>⚠️ Atenção:</strong> o Claude não garante que todas as fontes estão corretas. Sempre verifique dados críticos na fonte original antes de usá-los em apresentações ou decisões importantes.</div>
+    <p class="intro-text" style="margin-top:14px">A Web Search responde perguntas pontuais com agilidade. Para panoramas completos e análises aprofundadas, você vai precisar de outra ferramenta — o Deep Research.</p>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 02 DEEP RESEARCH -->
+  <div class="section" id="sec-step2">
+    <div class="sec-title"><span class="snum">02.</span> Deep Research — análise profunda</div>
+    <div class="sec-desc">Não é busca rápida — é pesquisa de verdade</div>
+    <p class="intro-text">O <strong>Deep Research</strong> executa dezenas de pesquisas em sequência, sintetiza múltiplas fontes e entrega um relatório estruturado. É como contratar um pesquisador que leva alguns minutos para ler tudo e te entregar um briefing completo.</p>
+    <table class="content-table">
+      <thead>
+        <tr>
+          <th>Web Search</th>
+          <th>Deep Research</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1 busca, resposta rápida</td><td>Dezenas de buscas em sequência</td></tr>
+        <tr><td>Responde em segundos</td><td>Pode levar alguns minutos</td></tr>
+        <tr><td>Ideal para dados pontuais</td><td>Ideal para panoramas completos</td></tr>
+        <tr><td>Cita 2–5 fontes</td><td>Sintetiza 20+ fontes</td></tr>
+        <tr><td>Resultado: parágrafo ou lista</td><td>Resultado: relatório estruturado</td></tr>
+      </tbody>
+    </table>
+    <div class="subsec">Quando usar Deep Research</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">✓</span><span class="inst-text">Mapear dores mais relatadas por um perfil de usuário</span></div>
+      <div class="inst"><span class="inst-num">✓</span><span class="inst-text">Entender o cenário competitivo completo de um mercado</span></div>
+      <div class="inst"><span class="inst-num">✓</span><span class="inst-text">Levantar dados para embasar uma decisão estratégica</span></div>
+    </div>
+    <div class="warning-box"><strong>⚠️ Atenção:</strong> Deep Research está disponível nos planos pagos (Pro e Max). Verifique se seu plano inclui esse recurso antes da aula.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 03 COMO ESTRUTURAR -->
+  <div class="section" id="sec-step3">
+    <div class="sec-title"><span class="snum">03.</span> Como estruturar uma boa pesquisa</div>
+    <div class="sec-desc">Três variáveis que definem a qualidade do resultado</div>
+    <p class="intro-text">A qualidade da pesquisa depende diretamente de como você formula o pedido. Três variáveis fazem toda a diferença:</p>
+
+    <div class="subsec">1. Defina o perfil</div>
+    <p class="intro-text">Quem é o usuário? Quanto mais específico, melhor.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="compare-card-title"><span>Fraco</span></div>
+        <ul><li>"dentistas"</li></ul>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
+        <ul><li>"donos de clínicas odontológicas de pequeno porte com 1 a 3 dentistas no Brasil"</li></ul>
+      </div>
+    </div>
+
+    <div class="subsec">2. Defina o foco</div>
+    <p class="intro-text">O que exatamente você quer descobrir?</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="compare-card-title"><span>Fraco</span></div>
+        <ul><li>"pesquise sobre esse segmento"</li></ul>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
+        <ul><li>"quais são as principais dificuldades relatadas na gestão de relacionamento com pacientes"</li></ul>
+      </div>
+    </div>
+
+    <div class="subsec">3. Defina o output</div>
+    <p class="intro-text">Como você quer receber as informações?</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="compare-card-title"><span>Fraco</span></div>
+        <ul><li>"me dê um resumo"</li></ul>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
+        <ul><li>"organize por frequência de menção, com fontes indicadas"</li></ul>
+      </div>
+    </div>
+
+    <div class="tip-box"><strong>💡 Regra de ouro:</strong> Perfil específico + foco claro + formato definido = pesquisa que realmente serve ao seu projeto.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 04 DEMO 1 -->
+  <div class="section" id="sec-step4">
+    <div class="sec-title"><span class="snum">04.</span> Demo 1 — Web Search para dados pontuais</div>
+    <div class="sec-desc">Verificação de mercado e dados factuais em tempo real</div>
+    <div class="note-box"><strong>📋 Nota:</strong> Esta demonstração usa Web Search para perguntas factuais sobre o mercado odontológico. Verifique que o ícone de lupa está habilitado na interface antes de começar.</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 1</span>
+        <span class="demo-title">Web Search — Dados pontuais do mercado</span>
+        <span class="demo-time">8 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Tamanho do mercado</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa com Web Search ativada. Envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Quantas clínicas odontológicas existem no Brasil? Qual o perfil predominante \nem termos de tamanho (número de dentistas por clínica)?\nCite as fontes dos dados.')">Copiar</button>Quantas clínicas odontológicas existem no Brasil? Qual o perfil predominante
+em termos de tamanho (número de dentistas por clínica)?
+Cite as fontes dos dados.</div>
+
+      <div class="demo-step">Passo 2 — Ticket médio e frequência</div>
+      <p class="intro-text" style="margin-bottom:6px">Após a resposta, envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Qual é o ticket médio de uma consulta de retorno em clínicas odontológicas \nde pequeno porte no Brasil em 2024? E qual a frequência recomendada de \nretorno para manutenção preventiva?')">Copiar</button>Qual é o ticket médio de uma consulta de retorno em clínicas odontológicas
+de pequeno porte no Brasil em 2024? E qual a frequência recomendada de
+retorno para manutenção preventiva?</div>
+
+      <div class="demo-step">Passo 3 — Taxa de abandono</div>
+      <p class="intro-text" style="margin-bottom:6px">Após a resposta, envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Existem dados sobre taxa de abandono de pacientes em clínicas odontológicas \nno Brasil — ou seja, percentual de pacientes que não retornam após a \nprimeira consulta?')">Copiar</button>Existem dados sobre taxa de abandono de pacientes em clínicas odontológicas
+no Brasil — ou seja, percentual de pacientes que não retornam após a
+primeira consulta?</div>
+
+      <div class="speaker-box" style="margin-top:12px"><strong>🎙️ Fala para a turma:</strong> <em>"Notem como o Claude cita as fontes. Isso é importante: os dados vêm da web em tempo real — então podem ter variações. A regra é sempre verificar dados críticos na fonte antes de usar numa apresentação ou decisão importante."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 05 DEMO 2 -->
+  <div class="section" id="sec-step5">
+    <div class="sec-title"><span class="snum">05.</span> Demo 2 — Deep Research: dores do usuário</div>
+    <div class="sec-desc">Relatório aprofundado sobre dores do segmento odontológico</div>
+    <div class="note-box"><strong>📋 Nota:</strong> Esta pesquisa pode levar 2 a 4 minutos. Planeje o tempo da aula — use a espera para explicar o que o Claude está fazendo em segundo plano.</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 2</span>
+        <span class="demo-title">Deep Research — Mapeamento de dores</span>
+        <span class="demo-time">12 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Disparar o Deep Research</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa. Envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Faça uma pesquisa aprofundada sobre as principais dores e desafios \noperacionais enfrentados por donos de clínicas odontológicas de pequeno \nporte (1 a 3 dentistas) no Brasil no que diz respeito a:\n- Gestão do relacionamento com pacientes\n- Processos de agendamento e confirmação de consultas\n- Follow-up e fidelização pós-consulta\n- Comunicação com pacientes via WhatsApp ou outros canais\n\nOrganize os resultados em:\n1. Dores mais frequentemente relatadas (com frequência de menção estimada)\n2. Impacto percebido de cada dor no negócio\n3. Como tentam resolver hoje e por que as soluções atuais falham\n4. Lacunas não resolvidas por nenhuma solução existente no mercado')">Copiar</button>Faça uma pesquisa aprofundada sobre as principais dores e desafios
+operacionais enfrentados por donos de clínicas odontológicas de pequeno
+porte (1 a 3 dentistas) no Brasil no que diz respeito a:
+- Gestão do relacionamento com pacientes
+- Processos de agendamento e confirmação de consultas
+- Follow-up e fidelização pós-consulta
+- Comunicação com pacientes via WhatsApp ou outros canais
+
+Organize os resultados em:
+1. Dores mais frequentemente relatadas (com frequência de menção estimada)
+2. Impacto percebido de cada dor no negócio
+3. Como tentam resolver hoje e por que as soluções atuais falham
+4. Lacunas não resolvidas por nenhuma solução existente no mercado</div>
+
+      <div class="speaker-box" style="margin-top:10px"><strong>🎙️ Enquanto aguarda, explique:</strong> <em>"O Claude está fazendo dezenas de buscas em sequência — fóruns odontológicos, grupos do Facebook, plataformas de review, artigos de gestão em saúde, relatórios do CFO. O resultado vai ser um relatório estruturado, não apenas uma lista."</em></div>
+
+      <div class="demo-step">Passo 2 — Após o relatório, envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Com base nesse relatório, quais são as 3 dores com maior potencial \nde monetização para um Micro-SaaS? Justifique considerando: \nfrequência do problema, disposição a pagar e viabilidade técnica.')">Copiar</button>Com base nesse relatório, quais são as 3 dores com maior potencial
+de monetização para um Micro-SaaS? Justifique considerando:
+frequência do problema, disposição a pagar e viabilidade técnica.</div>
+
+      <div class="speaker-box" style="margin-top:10px"><strong>🎙️ Fala para a turma:</strong> <em>"Notem a diferença entre a Web Search da Demo 1 — que respondeu perguntas pontuais — e esse relatório do Deep Research — que sintetizou dezenas de fontes num panorama completo. São ferramentas complementares, não substitutas."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 06 DEMO 3 -->
+  <div class="section" id="sec-step6">
+    <div class="sec-title"><span class="snum">06.</span> Demo 3 — Mapeamento de concorrentes</div>
+    <div class="sec-desc">Cenário competitivo e análise de lacunas do mercado</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 3</span>
+        <span class="demo-title">Análise competitiva do segmento</span>
+        <span class="demo-time">10 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Mapear soluções existentes</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa. Envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Pesquise as principais soluções e softwares disponíveis no mercado brasileiro \npara gestão de clínicas odontológicas de pequeno porte, com foco específico \nem funcionalidades de relacionamento com pacientes, agendamento e follow-up.\n\nPara cada solução encontrada, informe:\n- Nome e empresa desenvolvedora\n- Proposta de valor principal\n- Funcionalidades de comunicação com pacientes (se existirem)\n- Faixa de preço mensal (se disponível)\n- Principal ponto forte relatado por usuários\n- Principal limitação ou reclamação relatada por usuários')">Copiar</button>Pesquise as principais soluções e softwares disponíveis no mercado brasileiro
+para gestão de clínicas odontológicas de pequeno porte, com foco específico
+em funcionalidades de relacionamento com pacientes, agendamento e follow-up.
+
+Para cada solução encontrada, informe:
+- Nome e empresa desenvolvedora
+- Proposta de valor principal
+- Funcionalidades de comunicação com pacientes (se existirem)
+- Faixa de preço mensal (se disponível)
+- Principal ponto forte relatado por usuários
+- Principal limitação ou reclamação relatada por usuários</div>
+
+      <div class="demo-step">Passo 2 — Identificar o espaço em branco</div>
+      <p class="intro-text" style="margin-bottom:6px">Após a resposta, envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Com base nesse mapeamento, existe alguma lacuna clara que nenhuma \ndessas soluções resolve bem? Se sim, como um Micro-SaaS focado \nexclusivamente em follow-up e fidelização de pacientes se posicionaria \nem relação a essas soluções?')">Copiar</button>Com base nesse mapeamento, existe alguma lacuna clara que nenhuma
+dessas soluções resolve bem? Se sim, como um Micro-SaaS focado
+exclusivamente em follow-up e fidelização de pacientes se posicionaria
+em relação a essas soluções?</div>
+
+      <div class="speaker-box" style="margin-top:10px"><strong>🎙️ Fala para a turma:</strong> <em>"Esse exercício é o que chamamos de análise competitiva. Notem que não estamos apenas listando concorrentes — estamos identificando onde eles falham para encontrar o espaço em branco onde nosso produto pode entrar."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 07 DEMO 4 -->
+  <div class="section" id="sec-step7">
+    <div class="sec-title"><span class="snum">07.</span> Demo 4 — Calibrando a hipótese</div>
+    <div class="sec-desc">Fechando o ciclo: pesquisa → evidências → hipótese refinada</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 4</span>
+        <span class="demo-title">Hipótese + perguntas para entrevistas</span>
+        <span class="demo-time">8 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Avaliar a hipótese com as evidências</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa. Envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Esta é a hipótese de problema que formulei na Aula 1:\n\n"Donos de clínicas odontológicas de pequeno porte (1 a 3 dentistas) têm \ndificuldade em manter contato sistemático com pacientes após as consultas, \no que causa perda estimada de 40% dos pacientes que não retornam para \ntratamentos de continuidade — representando entre R$ 4.000 e R$ 8.000 \nmensais em receita não realizada por clínica."\n\nCom base na pesquisa de mercado que fizemos hoje (dores do usuário e \nmapeamento de concorrentes), avalie essa hipótese respondendo:\n\n1. O que a pesquisa confirma sobre esse problema?\n2. O que contradiz ou nuança minha hipótese?\n3. O que ainda não sabemos e precisaria ser descoberto em entrevistas?\n4. Como você reformularia a hipótese com base nas evidências encontradas?')">Copiar</button>Esta é a hipótese de problema que formulei na Aula 1:
+
+"Donos de clínicas odontológicas de pequeno porte (1 a 3 dentistas) têm
+dificuldade em manter contato sistemático com pacientes após as consultas,
+o que causa perda estimada de 40% dos pacientes que não retornam para
+tratamentos de continuidade — representando entre R$ 4.000 e R$ 8.000
+mensais em receita não realizada por clínica."
+
+Com base na pesquisa de mercado que fizemos hoje (dores do usuário e
+mapeamento de concorrentes), avalie essa hipótese respondendo:
+
+1. O que a pesquisa confirma sobre esse problema?
+2. O que contradiz ou nuança minha hipótese?
+3. O que ainda não sabemos e precisaria ser descoberto em entrevistas?
+4. Como você reformularia a hipótese com base nas evidências encontradas?</div>
+
+      <div class="demo-step">Passo 2 — Gerar perguntas para entrevistas</div>
+      <p class="intro-text" style="margin-bottom:6px">Após a resposta, envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Agora, com base na hipótese refinada, sugira 5 perguntas abertas \npara entrevistas de validação com donos de clínicas odontológicas.\n\nAs perguntas devem:\n- Explorar comportamento real, não opiniões sobre soluções\n- Investigar as dores identificadas sem mencioná-las diretamente\n- Ser abertas (sem resposta de sim ou não)\n- Ir do mais geral para o mais específico')">Copiar</button>Agora, com base na hipótese refinada, sugira 5 perguntas abertas
+para entrevistas de validação com donos de clínicas odontológicas.
+
+As perguntas devem:
+- Explorar comportamento real, não opiniões sobre soluções
+- Investigar as dores identificadas sem mencioná-las diretamente
+- Ser abertas (sem resposta de sim ou não)
+- Ir do mais geral para o mais específico</div>
+
+      <div class="speaker-box" style="margin-top:10px"><strong>🎙️ Fala para a turma:</strong> <em>"Notem o ciclo completo: formulamos uma hipótese na Aula 1, pesquisamos o mercado hoje e agora refinamos a hipótese com base em evidências reais. As entrevistas que vêm a seguir vão confirmar ou contradizer o que encontramos aqui."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step8')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 08 PRÁTICA + ENTREGÁVEL -->
+  <div class="section" id="sec-step8">
+    <div class="sec-title"><span class="snum">08.</span> Prática + Entregável</div>
+    <div class="sec-desc">Agora é a sua vez — aplique para o seu Micro-SaaS</div>
+
+    <div class="subsec">Passo 1 — Web Search: dados do seu mercado</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Pesquise dados de mercado sobre [segmento do seu Micro-SaaS] no Brasil.\nQuero: tamanho do mercado, perfil predominante dos usuários, \nprincipais tendências e desafios do setor. Cite as fontes.')">Copiar</button>Pesquise dados de mercado sobre [segmento do seu Micro-SaaS] no Brasil.
+Quero: tamanho do mercado, perfil predominante dos usuários,
+principais tendências e desafios do setor. Cite as fontes.</div>
+
+    <div class="subsec">Passo 2 — Deep Research: dores do seu usuário</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Faça uma pesquisa aprofundada sobre as principais dores e desafios \nenfrentados por [perfil do seu usuário] no contexto de [área do problema].\n\nOrganize em:\n1. Dores mais frequentes (com frequência estimada)\n2. Impacto de cada dor no negócio\n3. Como tentam resolver hoje e por que falham\n4. Lacunas não resolvidas pelo mercado atual')">Copiar</button>Faça uma pesquisa aprofundada sobre as principais dores e desafios
+enfrentados por [perfil do seu usuário] no contexto de [área do problema].
+
+Organize em:
+1. Dores mais frequentes (com frequência estimada)
+2. Impacto de cada dor no negócio
+3. Como tentam resolver hoje e por que falham
+4. Lacunas não resolvidas pelo mercado atual</div>
+
+    <div class="subsec">Passo 3 — Mapeamento de concorrentes</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Pesquise as principais soluções existentes para [seu problema].\nPara cada uma: nome, proposta de valor, pontos fortes, \nlimitações relatadas por usuários e faixa de preço.')">Copiar</button>Pesquise as principais soluções existentes para [seu problema].
+Para cada uma: nome, proposta de valor, pontos fortes,
+limitações relatadas por usuários e faixa de preço.</div>
+
+    <div class="subsec">Passo 4 — Calibre sua hipótese</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Esta é minha hipótese de problema: [cole sua hipótese da Aula 1]\n\nCom base na pesquisa que fizemos, avalie:\n1. O que confirma minha hipótese?\n2. O que contradiz ou nuança?\n3. O que ainda precisa ser descoberto em entrevistas?\n4. Como você reformularia a hipótese?')">Copiar</button>Esta é minha hipótese de problema: [cole sua hipótese da Aula 1]
+
+Com base na pesquisa que fizemos, avalie:
+1. O que confirma minha hipótese?
+2. O que contradiz ou nuança?
+3. O que ainda precisa ser descoberto em entrevistas?
+4. Como você reformularia a hipótese?</div>
+
+    <div class="subsec">Passo 5 — Perguntas para entrevistas</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Com base na hipótese refinada, sugira 5 perguntas abertas \npara entrevistas de validação com [perfil do usuário].\nAs perguntas devem explorar comportamento real, não opiniões sobre soluções.')">Copiar</button>Com base na hipótese refinada, sugira 5 perguntas abertas
+para entrevistas de validação com [perfil do usuário].
+As perguntas devem explorar comportamento real, não opiniões sobre soluções.</div>
+
+    <div class="subsec">Entregável da aula</div>
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Relatório de mercado</strong> com dados do segmento e tendências</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Relatório de dores</strong> do perfil de usuário com frequência e impacto</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Mapeamento de concorrentes</strong> com pontos fortes e limitações</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Hipótese calibrada</strong> com base nas evidências encontradas</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>5 perguntas iniciais</strong> para o roteiro de entrevistas</span></div>
+    </div>
+    <div class="tip-box"><strong>💾 Onde salvar:</strong> Salve tudo na pasta do projeto no Google Drive — são os insumos das entrevistas que você vai fazer nas próximas semanas.</div>
+    <div class="next-teaser"><strong>Próxima aula — A04: Projects</strong><br>Como criar um espaço de trabalho persistente para o seu Micro-SaaS no Claude — com memória, contexto e organização por projeto.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
+      <button class="nav-btn primary" onclick="goHome()">↩ Recomeçar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="right-sidebar">
+  <div class="rs-section-title">Quando usar cada um</div>
+  <table class="rs-table">
+    <tr><td>Web Search</td><td>Dados pontuais, verificação rápida</td></tr>
+    <tr><td>Deep Research</td><td>Panoramas, relatórios, análises</td></tr>
+  </table>
+  <div class="rs-section-title">Planos necessários</div>
+  <table class="rs-table">
+    <tr><td>Web Search</td><td>Todos os planos</td></tr>
+    <tr><td>Deep Research</td><td>Pro e Max</td></tr>
+  </table>
+  <div class="rs-section-title">3 variáveis do prompt</div>
+  <table class="rs-table">
+    <tr><td>Perfil</td><td>Quem é o usuário?</td></tr>
+    <tr><td>Foco</td><td>O que descobrir?</td></tr>
+    <tr><td>Output</td><td>Como receber?</td></tr>
+  </table>
+  <div class="rs-section-title">Demos desta aula</div>
+  <table class="rs-table">
+    <tr><td>Demo 1</td><td>Web Search — dados</td></tr>
+    <tr><td>Demo 2</td><td>Deep Research — dores</td></tr>
+    <tr><td>Demo 3</td><td>Concorrentes</td></tr>
+    <tr><td>Demo 4</td><td>Calibrar hipótese</td></tr>
+  </table>
+  <div class="rs-section-title">Entregáveis</div>
+  <table class="rs-table">
+    <tr><td>✅</td><td>Relatório de mercado</td></tr>
+    <tr><td>✅</td><td>Mapa de dores</td></tr>
+    <tr><td>✅</td><td>Análise competitiva</td></tr>
+    <tr><td>✅</td><td>Hipótese calibrada</td></tr>
+    <tr><td>✅</td><td>5 perguntas de entrevista</td></tr>
+  </table>
+</div>
+
+</div>
+
+<script>
+const stepToFlow = {
+  'sec-home':  'home',
+  'sec-step1': 'websearch',
+  'sec-step2': 'deepresearch',
+  'sec-step3': 'estrutura',
+  'sec-step4': 'demo1',
+  'sec-step5': 'demo2',
+  'sec-step6': 'demo3',
+  'sec-step7': 'demo4',
+  'sec-step8': 'pratica'
+}
+const flowOrder = ['home','websearch','deepresearch','estrutura','demo1','demo2','demo3','demo4','pratica']
+const visited = new Set(['sec-home'])
+const completedFlows = new Set()
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.section === id)
+    if (visited.has(n.dataset.section)) n.classList.add('completed')
+  })
+  visited.add(id)
+  const flow = stepToFlow[id]
+  if (flow) {
+    const idx = flowOrder.indexOf(flow)
+    if (idx > 0) completedFlows.add(flowOrder[idx-1])
+  }
+  updateStepper(flow)
+  updateProgress()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function updateStepper(activeFlow) {
+  document.querySelectorAll('.stepper-node').forEach(n => {
+    const f = n.id.replace('sn-','')
+    const idx = flowOrder.indexOf(f)
+    const activeIdx = flowOrder.indexOf(activeFlow)
+    n.classList.remove('active','completed','future')
+    if (f === activeFlow) n.classList.add('active')
+    else if (completedFlows.has(f) || idx < activeIdx) n.classList.add('completed')
+    else n.classList.add('future')
+  })
+}
+
+function updateProgress() {
+  const pct = Math.round((visited.size / document.querySelectorAll('.section').length) * 100)
+  document.getElementById('pct').textContent = pct
+  document.getElementById('sp-fill').style.width = pct + '%'
+}
+
+function goHome() { showSection('sec-home') }
+
+function copyText(btn, text) {
+  navigator.clipboard?.writeText(text).then(() => {
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  }).catch(() => {
+    const ta = document.createElement('textarea')
+    ta.value = text; document.body.appendChild(ta)
+    ta.select(); document.execCommand('copy')
+    document.body.removeChild(ta)
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  })
+}
+
+updateStepper('home')
+updateProgress()
+</script>
+</body>
+</html>

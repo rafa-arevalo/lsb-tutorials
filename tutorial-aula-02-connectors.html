@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — O Claude conectado ao seu mundo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #F5F3EE;
+  --white: #ffffff;
+  --accent: #C8A84B;
+  --accent2: #B09040;
+  --accent-light: #F8F2E0;
+  --accent-lighter: #FBF8F0;
+  --accent-border: #DEC878;
+  --accent-text: #8B6F28;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+  --green-text: #065F46;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --orange-border: #FED7AA;
+  --orange-text: #9A3412;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --text4: #CBCAC7;
+  --border: #E5E1D8;
+  --border2: #D8D4CB;
+  --surface2: #F5F3EE;
+  --shadow-xs: 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-sm: 0 1px 3px rgba(26,26,24,0.06), 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(26,26,24,0.07), 0 2px 4px -2px rgba(26,26,24,0.05);
+}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ===== STEPPER ===== */
+.stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
+.stepper-header::-webkit-scrollbar{height:0}
+.back-btn{display:flex;align-items:center;gap:5px;padding:0 12px 0 0;text-decoration:none;color:var(--text3);font-size:0.72rem;font-weight:600;white-space:nowrap;border-right:1px solid var(--border);margin-right:12px;flex-shrink:0;transition:color 0.15s}
+.back-btn:hover{color:var(--accent)}
+.back-btn .back-arrow{font-size:0.8rem;line-height:1}
+.stepper-node{display:flex;align-items:center;gap:5px;padding:0 4px;cursor:pointer;position:relative;white-space:nowrap;transition:color 0.2s}
+.stepper-node .sn-label{font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;padding:6px 0;position:relative;transition:color 0.2s}
+.stepper-node.future .sn-label{color:var(--text4)}
+.stepper-node.completed .sn-label{color:var(--text)}
+.stepper-node.active .sn-label{color:var(--accent)}
+.stepper-node.active .sn-label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0}
+.stepper-node .sn-check{display:none;font-size:0.6rem;color:var(--green)}
+.stepper-node.completed .sn-check{display:inline}
+.stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.sidebar-header p{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-top:2px}
+.nav-group{padding:12px 0 4px}
+.nav-group-title{padding:2px 16px 6px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 16px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:450;border-left:2px solid transparent;margin:0}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-lighter);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni-num{font-size:0.62rem;font-weight:600;color:var(--text3);min-width:17px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-num{color:var(--accent)}
+.nav-item .ni-check{margin-left:auto;font-size:0.62rem;color:var(--green);opacity:0;transition:opacity 0.2s;flex-shrink:0}
+.nav-item.completed .ni-check{opacity:1}
+.sidebar-progress{padding:14px 16px;border-top:1px solid var(--border);margin-top:auto}
+.sp-label{font-size:0.62rem;color:var(--text3);font-weight:500;margin-bottom:6px}
+.sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:20px 36px 40px;max-width:700px}
+.section{display:none;animation:fadeIn 0.25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
+.sec-title .snum{color:var(--accent)}
+.sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+.overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+.oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
+.oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
+
+.intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.intro-text strong{color:var(--text);font-weight:600}
+.subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
+
+.instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
+.inst:hover{box-shadow:var(--shadow-sm)}
+.inst-num{font-size:0.56rem;font-weight:700;color:#fff;background:var(--accent);min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
+.inst-text strong{font-weight:600}
+.inst-text em{color:var(--text2);font-style:italic}
+.inst-text code{font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.68rem;background:#F3F2EE;padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+
+.content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
+.content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.content-table tr:last-child td{border-bottom:none}
+.content-table tr:hover td{background:var(--surface2)}
+.content-table td strong{font-weight:600}
+.content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
+
+/* Demo blocks */
+.demo-block{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.demo-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.demo-num{font-size:0.62rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0}
+.demo-title{font-size:0.82rem;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.demo-time{font-size:0.65rem;color:var(--text3);margin-left:auto;flex-shrink:0;font-weight:500}
+.demo-step{font-size:0.76rem;font-weight:700;color:var(--text);margin:12px 0 5px}
+
+/* Prep block */
+.prep-block{background:#F8F6F2;border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.prep-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.prep-badge{font-size:0.6rem;font-weight:700;color:#fff;background:var(--text3);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em}
+.prep-title{font-size:0.8rem;font-weight:700;color:var(--text)}
+.prep-file{margin-bottom:12px}
+.prep-file-name{font-size:0.68rem;font-weight:700;color:var(--text2);margin-bottom:4px;font-family:'SF Mono','JetBrains Mono',monospace}
+
+/* Copy block */
+.copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
+.copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* Callout boxes */
+.tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
+.tip-box strong{font-weight:600}
+.warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
+.warning-box strong{font-weight:600}
+.speaker-box{background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--orange-text);line-height:1.5}
+.speaker-box strong{font-weight:600}
+.note-box{background:var(--accent-lighter);border:1px solid var(--accent-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.note-box strong{font-weight:600}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
+.check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
+.check-item strong{font-weight:600}
+
+.next-teaser{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.next-teaser strong{font-weight:700}
+
+/* Nav buttons */
+.nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
+.nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
+
+/* ===== RIGHT SIDEBAR ===== */
+.right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.rs-section-title:first-child{margin-top:0}
+.rs-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.rs-table td{padding:5px 6px;font-size:0.68rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--text2)}
+.rs-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap;padding-right:8px}
+.rs-table tr:last-child td{border-bottom:none}
+.rs-link{display:block;font-size:0.7rem;color:var(--accent);text-decoration:none;padding:4px 0;font-weight:500}
+.rs-link:hover{text-decoration:underline}
+
+@media(max-width:1024px){.right-sidebar{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- STEPPER -->
+<div class="stepper-header">
+  <a class="back-btn" href="index.html"><span class="back-arrow">←</span>Índice</a>
+  <div class="stepper-node active" onclick="showSection('sec-home')" id="sn-home">
+    <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+    <span class="sn-check">✓</span><span class="sn-label">Connectors</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+    <span class="sn-check">✓</span><span class="sn-label">Capacidades</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
+    <span class="sn-check">✓</span><span class="sn-label">Como conectar</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
+    <span class="sn-check">✓</span><span class="sn-label">Aplicação</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
+    <span class="sn-check">✓</span><span class="sn-label">Demonstração</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
+    <span class="sn-check">✓</span><span class="sn-label">Prática</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
+    <span class="sn-check">✓</span><span class="sn-label">Entregável</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>O Claude conectado ao seu mundo</h2>
+    <p>A02 · Link School of Business</p>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Introdução</div>
+      <div class="nav-item active" onclick="showSection('sec-home')" data-section="sec-home">
+        <span class="ni-num">00</span>Visão Geral<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Teoria</div>
+      <div class="nav-item" onclick="showSection('sec-step1')" data-section="sec-step1">
+        <span class="ni-num">01</span>O que são Connectors<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
+        <span class="ni-num">02</span>Capacidades por ferramenta<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
+        <span class="ni-num">03</span>Como conectar<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Aplicação no projeto<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Prática</div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>Demonstração ao Vivo<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>Atividade Prática<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
+        <span class="ni-num">07</span>Entregável<span class="ni-check">✓</span>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-progress">
+    <div class="sp-label">Progresso — <span id="pct">0</span>%</div>
+    <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 00 VISÃO GERAL -->
+  <div class="section active" id="sec-home">
+    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
+    <div class="sec-desc">Connectors · MCP · AI for Business</div>
+    <div class="overview-card">
+      <div class="oc-title">Sobre esta aula</div>
+      <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
+      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
+      <div class="oc-row"><span class="oc-label">Temas</span><span class="oc-value">Connectors · MCP</span></div>
+      <div class="oc-row"><span class="oc-label">Exemplo</span><span class="oc-value">Micro-SaaS para clínicas odontológicas</span></div>
+    </div>
+    <p class="intro-text">Na aula anterior você aprendeu a conversar bem com o Claude. Mas provavelmente percebeu uma limitação: toda vez que queria trazer informações de fora — um e-mail, um documento, uma tarefa do Notion — precisava copiar e colar o conteúdo manualmente no chat.</p>
+    <p class="intro-text">Os <strong>Connectors</strong> resolvem esse problema. Eles permitem que o Claude acesse diretamente as ferramentas que você já usa — Gmail, Google Drive, Google Calendar, Notion, Slack e outras — e trabalhe com as informações em tempo real, sem intermediários.</p>
+    <div class="subsec">Objetivos de aprendizagem</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que são Connectors e como funcionam tecnicamente (protocolo <strong>MCP</strong>)</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Conectar pelo menos duas ferramentas externas ao Claude</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Usar os Connectors para acessar documentos, e-mails e tarefas <strong>sem copiar e colar</strong></span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Identificar quais integrações são mais úteis para o fluxo de trabalho do projeto</span></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 01 O QUE SÃO CONNECTORS -->
+  <div class="section" id="sec-step1">
+    <div class="sec-title"><span class="snum">01.</span> O que são Connectors</div>
+    <div class="sec-desc">E o protocolo que os torna possíveis</div>
+    <p class="intro-text">Connectors são integrações que permitem ao Claude acessar e interagir com ferramentas externas em tempo real. Eles funcionam sobre um protocolo chamado <strong>MCP (Model Context Protocol)</strong> — um padrão aberto que define como o Claude se comunica com sistemas externos.</p>
+    <p class="intro-text">Sem Connectors, o Claude só trabalha com o que está dentro da janela de conversa. Com Connectors, ele passa a ter acesso a informações que vivem fora do chat — nos seus arquivos, e-mails, calendário e ferramentas de gestão.</p>
+    <p class="intro-text">A diferença prática é enorme: em vez de você trazer a informação para o Claude, o Claude vai buscar a informação onde ela está.</p>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 02 CAPACIDADES -->
+  <div class="section" id="sec-step2">
+    <div class="sec-title"><span class="snum">02.</span> Capacidades por ferramenta</div>
+    <div class="sec-desc">O que cada Connector permite fazer</div>
+    <table class="content-table">
+      <thead>
+        <tr><th>Ferramenta</th><th>O que o Claude consegue fazer</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Gmail</strong></td><td>Ler e-mails, resumir threads, identificar pendências, rascunhar respostas</td></tr>
+        <tr><td><strong>Google Drive</strong></td><td>Buscar documentos, resumir conteúdo, extrair informações de arquivos</td></tr>
+        <tr><td><strong>Google Calendar</strong></td><td>Consultar agenda, listar reuniões, identificar conflitos de horário</td></tr>
+        <tr><td><strong>Notion</strong></td><td>Buscar páginas, resumir notas, criar e atualizar conteúdo</td></tr>
+        <tr><td><strong>Slack</strong></td><td>Ler mensagens, resumir canais, encontrar informações no histórico</td></tr>
+        <tr><td><strong>HubSpot</strong></td><td>Acessar contatos, registros de clientes e dados de pipeline</td></tr>
+      </tbody>
+    </table>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 03 COMO CONECTAR -->
+  <div class="section" id="sec-step3">
+    <div class="sec-title"><span class="snum">03.</span> Como conectar uma ferramenta</div>
+    <div class="sec-desc">O processo leva menos de 1 minuto</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Acesse <strong>Configurações → Connectors</strong></span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Escolha a ferramenta que deseja integrar</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Autorize o acesso na janela de login da ferramenta</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Defina o escopo — <strong>leitura</strong> ou <strong>leitura + escrita</strong></span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text">Salve. O Connector estará disponível em todas as conversas</span></div>
+    </div>
+    <div class="warning-box">⚠️ <strong>Atenção:</strong> os Connectors têm acesso real às suas contas. Revise cuidadosamente quais permissões você concede e nunca autorize escopos mais amplos do que o necessário para a tarefa.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 04 APLICAÇÃO -->
+  <div class="section" id="sec-step4">
+    <div class="sec-title"><span class="snum">04.</span> Aplicação no projeto</div>
+    <div class="sec-desc">Como organizar o Micro-SaaS para trabalhar com Connectors</div>
+    <p class="intro-text">Para aproveitar os Connectors ao máximo, a organização dos arquivos importa. O Claude encontra documentos com mais facilidade quando eles estão em pastas nomeadas de forma consistente e os arquivos seguem uma nomenclatura previsível.</p>
+    <div class="subsec">Estrutura recomendada no Google Drive</div>
+    <div class="copy-block"><span class="label">Estrutura de pastas — adapte para o seu projeto</span><button class="copy-btn" onclick="copyText(this,'/Micro-SaaS [seu tema]/\n├── 01-validacao/\n│   ├── hipotese-de-problema.md\n│   ├── roteiro-entrevistas.md\n│   └── notas-entrevista-[nome].md\n├── 02-priorizacao/\n│   ├── analise-entrevistas.md\n│   └── proposta-de-valor.md\n├── 03-construcao/\n│   ├── CLAUDE.md\n│   └── README.md\n└── 04-testes/\n    └── feedback-usuarios.md')">Copiar</button>/Micro-SaaS [seu tema]/
+├── 01-validacao/
+│   ├── hipotese-de-problema.md
+│   ├── roteiro-entrevistas.md
+│   └── notas-entrevista-[nome].md
+├── 02-priorizacao/
+│   ├── analise-entrevistas.md
+│   └── proposta-de-valor.md
+├── 03-construcao/
+│   ├── CLAUDE.md
+│   └── README.md
+└── 04-testes/
+    └── feedback-usuarios.md</div>
+    <div class="tip-box">💡 <strong>Dica:</strong> prefixe as pastas com números (01, 02, 03...) e os arquivos com datas (2026-04-01-notas.md) para que o Claude consiga identificar a ordem cronológica e a fase do projeto sem precisar abrir cada arquivo.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 05 DEMONSTRAÇÃO -->
+  <div class="section" id="sec-step5">
+    <div class="sec-title"><span class="snum">05.</span> Demonstração ao Vivo</div>
+    <div class="sec-desc">Todos os arquivos sintéticos e prompts prontos para copiar</div>
+
+    <div class="note-box">📋 <strong>Nota para o professor:</strong> antes da aula, crie os arquivos descritos abaixo no seu Google Drive e envie o e-mail para si mesmo. Os conteúdos estão prontos para copiar.</div>
+
+    <!-- PREPARAÇÃO -->
+    <div class="prep-block">
+      <div class="prep-header">
+        <span class="prep-badge">Preparação</span>
+        <span class="prep-title">Criar antes da aula — estrutura no Google Drive</span>
+      </div>
+      <p class="intro-text" style="margin-bottom:10px">Crie a pasta <strong>/Micro-SaaS Odonto Demo/</strong> no seu Drive com os três arquivos abaixo:</p>
+
+      <div class="prep-file">
+        <div class="prep-file-name">hipotese-de-problema.md</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'# Hipótese de Problema — OdontoFlow\n\n**Versão:** 1.0\n\n## Hipótese principal\n\nDonos de clínicas odontológicas de pequeno porte (1 a 3 dentistas) têm\ndificuldade em manter contato sistemático com pacientes após as consultas,\no que causa perda estimada de 40% dos pacientes que não retornam para\ntratamentos de continuidade — representando entre R$ 4.000 e R$ 8.000\nmensais em receita não realizada por clínica.\n\n## Perfil do usuário principal\n\n- Dentista que também é dono da clínica\n- Atende entre 10 e 25 pacientes por dia\n- Equipe de 1 a 2 recepcionistas\n- Não tem equipe de TI\n- Usa WhatsApp informalmente para comunicação com pacientes\n\n## Problema específico\n\nNão existe um processo sistemático de follow-up. O retorno do paciente\ndepende da memória da recepcionista ou de um lembrete manual no WhatsApp.\n\n## Consequência para o negócio\n\n- Perda de receita de retorno (tratamentos em continuidade)\n- Baixa fidelização: pacientes migram para clínicas que \"aparecem mais\"\n- Agenda com buracos por falta de agendamentos proativos')">Copiar</button># Hipótese de Problema — OdontoFlow
+
+**Versão:** 1.0
+
+## Hipótese principal
+
+Donos de clínicas odontológicas de pequeno porte (1 a 3 dentistas) têm
+dificuldade em manter contato sistemático com pacientes após as consultas,
+o que causa perda estimada de 40% dos pacientes que não retornam para
+tratamentos de continuidade — representando entre R$ 4.000 e R$ 8.000
+mensais em receita não realizada por clínica.
+
+## Perfil do usuário principal
+
+- Dentista que também é dono da clínica
+- Atende entre 10 e 25 pacientes por dia
+- Equipe de 1 a 2 recepcionistas
+- Não tem equipe de TI
+- Usa WhatsApp informalmente para comunicação com pacientes
+
+## Consequência para o negócio
+
+- Perda de receita de retorno (tratamentos em continuidade)
+- Baixa fidelização: pacientes migram para clínicas que "aparecem mais"
+- Agenda com buracos por falta de agendamentos proativos</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">notas-reuniao-orientador.md</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'# Notas — Reunião com Orientador\n\n## Pontos discutidos\n\n1. Hipótese de problema aprovada — orientador considerou bem fundamentada\n2. Próxima entrega: roteiro de entrevistas para validação com 5 dentistas\n3. Prazo: apresentar roteiro na próxima semana\n4. Sugestão do orientador: entrevistar também recepcionistas, não só dentistas\n5. Dúvida levantada: o problema é de falta de ferramenta ou de processo/hábito?\n\n## Ações definidas\n\n- [ ] Criar roteiro de entrevista até sexta\n- [ ] Agendar 3 entrevistas com dentistas conhecidos\n- [ ] Pesquisar concorrentes: OdontoSoft, Clínica nas Nuvens, SimplesVet')">Copiar</button># Notas — Reunião com Orientador
+
+## Pontos discutidos
+
+1. Hipótese de problema aprovada — orientador considerou bem fundamentada
+2. Próxima entrega: roteiro de entrevistas para validação com 5 dentistas
+3. Prazo: apresentar roteiro na próxima semana
+4. Sugestão do orientador: entrevistar também recepcionistas, não só dentistas
+5. Dúvida levantada: o problema é de falta de ferramenta ou de processo/hábito?
+
+## Ações definidas
+
+- [ ] Criar roteiro de entrevista até sexta
+- [ ] Agendar 3 entrevistas com dentistas conhecidos
+- [ ] Pesquisar concorrentes: OdontoSoft, Clínica nas Nuvens, SimplesVet</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">tarefas-semana.md</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'# Tarefas da Semana — Projeto Micro-SaaS\n\n## Em andamento\n- [ ] Finalizar roteiro de entrevistas (prazo: sexta)\n- [ ] Pesquisa de concorrentes (em andamento)\n\n## Concluído\n- [x] Formular hipótese de problema (Aula 1)\n- [x] Configurar Memory do Claude\n\n## Bloqueado\n- [ ] Agendar entrevistas — aguardando resposta de 2 dentistas\n\n## Próxima semana\n- Realizar 3 entrevistas de validação\n- Usar Web Search e Deep Research para mapear dores (Aula 3)')">Copiar</button># Tarefas da Semana — Projeto Micro-SaaS
+
+## Em andamento
+- [ ] Finalizar roteiro de entrevistas (prazo: sexta)
+- [ ] Pesquisa de concorrentes (em andamento)
+
+## Concluído
+- [x] Formular hipótese de problema (Aula 1)
+- [x] Configurar Memory do Claude
+
+## Bloqueado
+- [ ] Agendar entrevistas — aguardando resposta de 2 dentistas
+
+## Próxima semana
+- Realizar 3 entrevistas de validação
+- Usar Web Search e Deep Research para mapear dores (Aula 3)</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">E-mail para enviar para si mesmo (Demo 3)</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Assunto: Re: Entrevista projeto Micro-SaaS — Dra. Fernanda\n\nOlá! Tudo bem. Sim, posso conversar sobre o projeto de vocês. Tenho disponibilidade na quinta-feira às 14h ou na sexta às 10h. Pode ser uma videochamada de 30 minutos.\n\nAbrações, Dra. Fernanda Costa.')">Copiar</button>Assunto: Re: Entrevista projeto Micro-SaaS — Dra. Fernanda
+
+Olá! Tudo bem. Sim, posso conversar sobre o projeto de vocês. Tenho disponibilidade na quinta-feira às 14h ou na sexta às 10h. Pode ser uma videochamada de 30 minutos.
+
+Abraços, Dra. Fernanda Costa.</div>
+      </div>
+    </div>
+
+    <!-- DEMO 1 -->
+    <div class="demo-block">
+      <div class="demo-header"><span class="demo-num">Demo 1</span><span class="demo-title">Conectando o Google Drive</span><span class="demo-time">8 min</span></div>
+      <p class="intro-text" style="margin-bottom:10px"><strong>Objetivo:</strong> mostrar o processo de conexão e o primeiro acesso a um arquivo real.</p>
+
+      <div class="demo-step">Passo 1 — Conecte o Google Drive ao vivo</div>
+      <p class="intro-text" style="margin-bottom:6px">Acesse <strong>Configurações → Connectors → Google Drive → Conectar</strong>. Faça o login e autorize o acesso. Mostre a tela de confirmação.</p>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "O processo leva menos de 1 minuto e é feito uma única vez. Depois disso, o Claude tem acesso à minha conta do Drive em qualquer conversa."</div>
+
+      <div class="demo-step">Passo 2 — Abra uma nova conversa e envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Busque no meu Google Drive a pasta &quot;Micro-SaaS Odonto Demo&quot; e me diga\nquais arquivos existem nela e o que cada um contém resumidamente.')">Copiar</button>Busque no meu Google Drive a pasta "Micro-SaaS Odonto Demo" e me diga
+quais arquivos existem nela e o que cada um contém resumidamente.</div>
+
+      <div class="demo-step">Passo 3 — Após a resposta, envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Agora acesse o arquivo &quot;hipotese-de-problema.md&quot; e me dê um resumo\nem 3 pontos: qual é o perfil do usuário, qual é o problema e\nqual é a consequência financeira estimada.')">Copiar</button>Agora acesse o arquivo "hipotese-de-problema.md" e me dê um resumo
+em 3 pontos: qual é o perfil do usuário, qual é o problema e
+qual é a consequência financeira estimada.</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "Notem que não fiz nenhum upload. O Claude acessou o arquivo diretamente do Drive. Isso muda completamente o fluxo de trabalho — qualquer documento que eu atualizar no Drive fica automaticamente disponível para o Claude."</div>
+    </div>
+
+    <!-- DEMO 2 -->
+    <div class="demo-block">
+      <div class="demo-header"><span class="demo-num">Demo 2</span><span class="demo-title">Consolidando documentos espalhados</span><span class="demo-time">8 min</span></div>
+      <p class="intro-text" style="margin-bottom:10px"><strong>Objetivo:</strong> mostrar o Claude sintetizando informações de múltiplos arquivos.</p>
+
+      <div class="demo-step">Passo 1 — Continue na mesma conversa. Envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Acesse os três arquivos da pasta &quot;Micro-SaaS Odonto Demo&quot; e me entregue\numa visão consolidada do projeto respondendo:\n\n1. Qual é o problema que estamos resolvendo?\n2. O que já foi feito até agora?\n3. O que está pendente ou bloqueado?\n4. Qual é o próximo passo mais urgente?')">Copiar</button>Acesse os três arquivos da pasta "Micro-SaaS Odonto Demo" e me entregue
+uma visão consolidada do projeto respondendo:
+
+1. Qual é o problema que estamos resolvendo?
+2. O que já foi feito até agora?
+3. O que está pendente ou bloqueado?
+4. Qual é o próximo passo mais urgente?</div>
+
+      <div class="demo-step">Passo 2 — Após a resposta, envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Com base nas notas da reunião com o orientador, que pergunta ele levantou\nque ainda não respondemos? E como o Claude me ajudaria a respondê-la\nantes das entrevistas?')">Copiar</button>Com base nas notas da reunião com o orientador, que pergunta ele levantou
+que ainda não respondemos? E como o Claude me ajudaria a respondê-la
+antes das entrevistas?</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "O Claude leu três documentos diferentes, entendeu o contexto do projeto e identificou uma lacuna que eu precisaria resolver. Isso é o que chamamos de síntese — algo que levaria minutos fazendo manualmente."</div>
+    </div>
+
+    <!-- DEMO 3 -->
+    <div class="demo-block">
+      <div class="demo-header"><span class="demo-num">Demo 3</span><span class="demo-title">Gmail para organizar pendências</span><span class="demo-time">8 min</span></div>
+      <p class="intro-text" style="margin-bottom:10px"><strong>Objetivo:</strong> mostrar o Claude acessando e-mails para identificar ações pendentes.</p>
+
+      <div class="demo-step">Passo 1 — Conecte o Gmail</div>
+      <p class="intro-text" style="margin-bottom:6px">Mesmo processo do Drive. Após conectar, envie numa nova conversa:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Verifique minha caixa de entrada do Gmail e me diga se existe algum\ne-mail relacionado ao meu projeto de Micro-SaaS ou a entrevistas\ncom dentistas que ainda não respondi.')">Copiar</button>Verifique minha caixa de entrada do Gmail e me diga se existe algum
+e-mail relacionado ao meu projeto de Micro-SaaS ou a entrevistas
+com dentistas que ainda não respondi.</div>
+
+      <div class="demo-step">Passo 2 — Após o Claude identificar o e-mail da Dra. Fernanda, envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Para o e-mail da Dra. Fernanda Costa, rascunhe uma resposta confirmando\no horário de quinta às 14h e informando que a entrevista dura 30 minutos\ne vai ser sobre as dificuldades de gestão de pacientes na clínica dela.\nTom: profissional mas informal.')">Copiar</button>Para o e-mail da Dra. Fernanda Costa, rascunhe uma resposta confirmando
+o horário de quinta às 14h e informando que a entrevista dura 30 minutos
+e vai ser sobre as dificuldades de gestão de pacientes na clínica dela.
+Tom: profissional mas informal.</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "O Claude identificou o e-mail pendente, entendeu o contexto e rascunhou uma resposta profissional em segundos. Notem que não precisei copiar o e-mail — ele leu diretamente da minha conta."</div>
+    </div>
+
+    <!-- DEMO 4 -->
+    <div class="demo-block">
+      <div class="demo-header"><span class="demo-num">Demo 4</span><span class="demo-title">Definindo a estrutura de pastas para o semestre</span><span class="demo-time">5 min</span></div>
+      <p class="intro-text" style="margin-bottom:10px"><strong>Objetivo:</strong> usar o Claude para planejar a organização do projeto antes de começar.</p>
+
+      <div class="demo-step">Passo 1 — Abra uma nova conversa. Envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Estou no início de um projeto de Micro-SaaS para clínicas odontológicas\nque vai durar um semestre. As etapas são:\n1. Validação do problema (entrevistas com dentistas)\n2. Priorização da proposta de valor\n3. Construção do MVP\n4. Testes com usuários reais\n\nSugira uma estrutura de pastas para o Google Drive que me ajude a manter\ntudo organizado ao longo dessas 4 etapas, pensando em arquivos que vou\ngerar em cada fase.')">Copiar</button>Estou no início de um projeto de Micro-SaaS para clínicas odontológicas
+que vai durar um semestre. As etapas são:
+1. Validação do problema (entrevistas com dentistas)
+2. Priorização da proposta de valor
+3. Construção do MVP
+4. Testes com usuários reais
+
+Sugira uma estrutura de pastas para o Google Drive que me ajude a manter
+tudo organizado ao longo dessas 4 etapas, pensando em arquivos que vou
+gerar em cada fase.</div>
+
+      <div class="demo-step">Passo 2 — Após a resposta, envie:</div>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Ótimo. Agora me diga: com o Connector do Drive ativo, como devo nomear\nos arquivos para que o Claude consiga encontrá-los facilmente quando eu\npedir &quot;acesse as transcrições de entrevistas&quot; ou &quot;abra a análise mais recente&quot;?')">Copiar</button>Ótimo. Agora me diga: com o Connector do Drive ativo, como devo nomear
+os arquivos para que o Claude consiga encontrá-los facilmente quando eu
+pedir "acesse as transcrições de entrevistas" ou "abra a análise mais recente"?</div>
+      <div class="speaker-box">🎙️ <strong>Fala para a turma:</strong> "Convenções de nomenclatura parecem um detalhe, mas fazem uma diferença enorme quando você está pedindo ao Claude para acessar arquivos específicos em meio a dezenas de documentos."</div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 06 ATIVIDADE -->
+  <div class="section" id="sec-step6">
+    <div class="sec-title"><span class="snum">06.</span> Atividade Prática</div>
+    <div class="sec-desc">Sua vez — cada passo leva de 5 a 10 minutos</div>
+
+    <div class="subsec">Passo 1 — Conecte o Google Drive</div>
+    <p class="intro-text">Acesse <strong>Configurações → Connectors</strong>, conecte o Google Drive e crie uma pasta chamada <strong>"Micro-SaaS [seu tema]"</strong> com pelo menos um documento do projeto. Teste com:</p>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Busque no meu Google Drive a pasta do meu projeto de Micro-SaaS\ne me diga o que está documentado até agora.')">Copiar</button>Busque no meu Google Drive a pasta do meu projeto de Micro-SaaS
+e me diga o que está documentado até agora.</div>
+
+    <div class="subsec">Passo 2 — Conecte mais uma ferramenta</div>
+    <p class="intro-text">Conecte Gmail, Notion ou Google Calendar — o que for mais relevante para o seu fluxo. Teste com o prompt do seu contexto:</p>
+    <div class="copy-block"><span class="label">Gmail</span><button class="copy-btn" onclick="copyText(this,'Existe algum e-mail não respondido relacionado ao meu projeto\nou à disciplina AI for Business?')">Copiar</button>Existe algum e-mail não respondido relacionado ao meu projeto
+ou à disciplina AI for Business?</div>
+    <div class="copy-block"><span class="label">Notion</span><button class="copy-btn" onclick="copyText(this,'Acesse meu workspace e me diga quais tarefas abertas\nestão relacionadas ao projeto de Micro-SaaS.')">Copiar</button>Acesse meu workspace e me diga quais tarefas abertas
+estão relacionadas ao projeto de Micro-SaaS.</div>
+
+    <div class="subsec">Passo 3 — Consolide o que existe sobre o projeto</div>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this,'Com acesso às minhas ferramentas conectadas, faça um levantamento\ndo que já existe documentado sobre o meu projeto de Micro-SaaS.\nMe entregue: o que já foi feito, o que está em andamento e o que falta.')">Copiar</button>Com acesso às minhas ferramentas conectadas, faça um levantamento
+do que já existe documentado sobre o meu projeto de Micro-SaaS.
+Me entregue: o que já foi feito, o que está em andamento e o que falta.</div>
+
+    <div class="subsec">Passo 4 — Crie a estrutura de pastas</div>
+    <p class="intro-text">Peça ao Claude para sugerir a estrutura de pastas do Drive para o semestre e crie agora. Essa pasta vai ser o hub central do projeto — os Connectors da Aula 3 em diante vão depender dela.</p>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 07 ENTREGÁVEL -->
+  <div class="section" id="sec-step7">
+    <div class="sec-title"><span class="snum">07.</span> Entregável</div>
+    <div class="sec-desc">O que você deve ter ao final desta aula</div>
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Pelo menos 2 Connectors ativos</strong> integrados ao seu fluxo de trabalho</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Estrutura de pastas no Drive</strong> criada e pronta para o semestre</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Levantamento consolidado</strong> do que já existe sobre o projeto</span></div>
+    </div>
+    <div class="next-teaser">
+      <strong>Próxima aula:</strong> Aula 3 — Web Search e Deep Research: como pesquisar o mercado, mapear concorrentes e levantar dados que embasem as decisões do projeto.
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+      <button class="nav-btn primary" onclick="goHome()">↩ Início</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- RIGHT SIDEBAR -->
+<div class="right-sidebar">
+  <div class="rs-section-title">Connectors disponíveis</div>
+  <table class="rs-table">
+    <tr><td>Gmail</td><td>E-mails e threads</td></tr>
+    <tr><td>Drive</td><td>Documentos e arquivos</td></tr>
+    <tr><td>Calendar</td><td>Agenda e reuniões</td></tr>
+    <tr><td>Notion</td><td>Páginas e notas</td></tr>
+    <tr><td>Slack</td><td>Mensagens e canais</td></tr>
+    <tr><td>HubSpot</td><td>Contatos e pipeline</td></tr>
+  </table>
+  <div class="rs-section-title">Como conectar</div>
+  <table class="rs-table">
+    <tr><td>1</td><td>Config → Connectors</td></tr>
+    <tr><td>2</td><td>Escolha a ferramenta</td></tr>
+    <tr><td>3</td><td>Autorize o acesso</td></tr>
+    <tr><td>4</td><td>Defina o escopo</td></tr>
+    <tr><td>5</td><td>Salve</td></tr>
+  </table>
+  <div class="rs-section-title">Entregáveis</div>
+  <table class="rs-table">
+    <tr><td>✅</td><td>2 Connectors ativos</td></tr>
+    <tr><td>✅</td><td>Pastas no Drive criadas</td></tr>
+    <tr><td>✅</td><td>Levantamento consolidado</td></tr>
+  </table>
+  <div class="rs-section-title">Links Úteis</div>
+  <a class="rs-link" href="https://claude.ai" target="_blank">→ Claude.ai</a>
+</div>
+
+</div><!-- /layout -->
+
+<script>
+const stepToFlow={'sec-home':'home','sec-step1':'step1','sec-step2':'step2','sec-step3':'step3','sec-step4':'step4','sec-step5':'step5','sec-step6':'step6','sec-step7':'step7'}
+const flowOrder=['home','step1','step2','step3','step4','step5','step6','step7']
+const visited=new Set(['sec-home'])
+const completedFlows=new Set()
+
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('active',n.dataset.section===id)
+    if(visited.has(n.dataset.section))n.classList.add('completed')
+  })
+  visited.add(id)
+  const flow=stepToFlow[id]
+  if(flow){const idx=flowOrder.indexOf(flow);if(idx>0)completedFlows.add(flowOrder[idx-1])}
+  updateStepper(flow)
+  updateProgress()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function updateStepper(activeFlow){
+  document.querySelectorAll('.stepper-node').forEach(n=>{
+    const f=n.id.replace('sn-','')
+    const idx=flowOrder.indexOf(f)
+    const activeIdx=flowOrder.indexOf(activeFlow)
+    n.classList.remove('active','completed','future')
+    if(f===activeFlow)n.classList.add('active')
+    else if(completedFlows.has(f)||idx<activeIdx)n.classList.add('completed')
+    else n.classList.add('future')
+  })
+}
+
+function updateProgress(){
+  const pct=Math.round((visited.size/document.querySelectorAll('.section').length)*100)
+  document.getElementById('pct').textContent=pct
+  document.getElementById('sp-fill').style.width=pct+'%'
+}
+
+function goHome(){showSection('sec-home')}
+
+function copyText(btn,text){
+  navigator.clipboard?.writeText(text).then(()=>{
+    btn.textContent='Copiado!'
+    setTimeout(()=>btn.textContent='Copiar',1800)
+  }).catch(()=>{
+    const ta=document.createElement('textarea')
+    ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta)
+    btn.textContent='Copiado!';setTimeout(()=>btn.textContent='Copiar',1800)
+  })
+}
+
+updateStepper('home')
+updateProgress()
+</script>
+</body>
+</html>

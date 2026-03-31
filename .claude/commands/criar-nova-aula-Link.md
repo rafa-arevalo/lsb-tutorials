@@ -220,7 +220,7 @@ updateProgress()
 
 ## PASSO 3 — Adicionar card em `index.html`
 
-Abra `/Users/rafael-arevalo/Documents/lsb-tutorials/index.html` e adicione **antes do comentário `<!-- Cards de tutoriais serão adicionados aqui -->`** (ou após o último card existente):
+Abra `/Users/rafael-arevalo/Documents/lsb-tutorials/index.html` e insira o novo card **após o último `</a>` existente dentro do container**, mantendo a ordem numérica da lista:
 
 ```html
 <a class="card" href="tutorial-{slug}.html">
@@ -234,10 +234,23 @@ Cores disponíveis: `tag-gold`, `tag-blue`, `tag-green`, `tag-red`, `tag-gray`
 
 ---
 
-## PASSO 4 — Confirmação final
+## PASSO 4 — Publicar e retornar URL
 
-Após criar os arquivos, informe:
-1. O nome do arquivo criado
-2. Quantas seções foram geradas
-3. Que o card foi adicionado ao index
-4. Sugira rodar o servidor local para visualizar: `python3 -m http.server 8080`
+Execute os comandos abaixo **na ordem**, a partir do diretório `/Users/rafael-arevalo/Documents/lsb-tutorials/`:
+
+```bash
+git add tutorial-{slug}.html index.html
+git commit -m "Add {TAG}: {Título da Aula}"
+git push origin main
+```
+
+Após o push ser concluído com sucesso, retorne ao usuário a mensagem:
+
+```
+✅ Aula publicada!
+
+📄 Página: https://rafa-arevalo.github.io/lsb-tutorials/tutorial-{slug}.html
+📋 Índice: https://rafa-arevalo.github.io/lsb-tutorials/
+
+⏱ O GitHub Pages pode levar até 1 minuto para refletir a atualização.
+```

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — Seu espaço de trabalho no Claude</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #F5F3EE;
+  --white: #ffffff;
+  --accent: #C8A84B;
+  --accent2: #B09040;
+  --accent-light: #F8F2E0;
+  --accent-lighter: #FBF8F0;
+  --accent-border: #DEC878;
+  --accent-text: #8B6F28;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+  --green-text: #065F46;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --orange-border: #FED7AA;
+  --orange-text: #9A3412;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --text4: #CBCAC7;
+  --border: #E5E1D8;
+  --border2: #D8D4CB;
+  --surface2: #F5F3EE;
+  --shadow-xs: 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-sm: 0 1px 3px rgba(26,26,24,0.06), 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(26,26,24,0.07), 0 2px 4px -2px rgba(26,26,24,0.05);
+}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ===== STEPPER ===== */
+.stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
+.stepper-header::-webkit-scrollbar{height:0}
+.back-btn{display:flex;align-items:center;gap:5px;padding:0 12px 0 0;text-decoration:none;color:var(--text3);font-size:0.72rem;font-weight:600;white-space:nowrap;border-right:1px solid var(--border);margin-right:12px;flex-shrink:0;transition:color 0.15s}
+.back-btn:hover{color:var(--accent)}
+.back-btn .back-arrow{font-size:0.8rem;line-height:1}
+.stepper-node{display:flex;align-items:center;gap:5px;padding:0 4px;cursor:pointer;position:relative;white-space:nowrap;transition:color 0.2s}
+.stepper-node .sn-label{font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;padding:6px 0;position:relative;transition:color 0.2s}
+.stepper-node.future .sn-label{color:var(--text4)}
+.stepper-node.completed .sn-label{color:var(--text)}
+.stepper-node.active .sn-label{color:var(--accent)}
+.stepper-node.active .sn-label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0}
+.stepper-node .sn-check{display:none;font-size:0.6rem;color:var(--green)}
+.stepper-node.completed .sn-check{display:inline}
+.stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.sidebar-header p{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-top:2px}
+.nav-group{padding:12px 0 4px}
+.nav-group-title{padding:2px 16px 6px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 16px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:450;border-left:2px solid transparent;margin:0}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-lighter);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni-num{font-size:0.62rem;font-weight:600;color:var(--text3);min-width:17px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-num{color:var(--accent)}
+.nav-item .ni-check{margin-left:auto;font-size:0.62rem;color:var(--green);opacity:0;transition:opacity 0.2s;flex-shrink:0}
+.nav-item.completed .ni-check{opacity:1}
+.sidebar-progress{padding:14px 16px;border-top:1px solid var(--border);margin-top:auto}
+.sp-label{font-size:0.62rem;color:var(--text3);font-weight:500;margin-bottom:6px}
+.sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:20px 36px 40px;max-width:700px}
+.section{display:none;animation:fadeIn 0.25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
+.sec-title .snum{color:var(--accent)}
+.sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+.overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+.oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
+.oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
+
+.intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.intro-text strong{color:var(--text);font-weight:600}
+.subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
+
+.instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
+.inst:hover{box-shadow:var(--shadow-sm)}
+.inst-num{font-size:0.56rem;font-weight:700;color:#fff;background:var(--accent);min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
+.inst-text strong{font-weight:600}
+.inst-text em{color:var(--text2);font-style:italic}
+.inst-text code{font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.68rem;background:#F3F2EE;padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+
+.content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
+.content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.content-table tr:last-child td{border-bottom:none}
+.content-table tr:hover td{background:var(--surface2)}
+.content-table td strong{font-weight:600}
+.content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
+
+/* Demo blocks */
+.demo-block{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.demo-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.demo-num{font-size:0.62rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0}
+.demo-title{font-size:0.82rem;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.demo-time{font-size:0.65rem;color:var(--text3);margin-left:auto;flex-shrink:0;font-weight:500}
+.demo-step{font-size:0.76rem;font-weight:700;color:var(--text);margin:12px 0 5px}
+
+/* Prep block */
+.prep-block{background:#F8F6F2;border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.prep-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.prep-badge{font-size:0.6rem;font-weight:700;color:#fff;background:var(--text3);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em}
+.prep-title{font-size:0.8rem;font-weight:700;color:var(--text)}
+.prep-file{margin-bottom:14px}
+.prep-file:last-child{margin-bottom:0}
+.prep-file-name{font-size:0.68rem;font-weight:700;color:var(--text2);margin-bottom:4px;font-family:'SF Mono','JetBrains Mono',monospace}
+
+/* Copy block */
+.copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
+.copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* Callout boxes */
+.tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
+.tip-box strong{font-weight:600}
+.warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
+.warning-box strong{font-weight:600}
+.speaker-box{background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--orange-text);line-height:1.5}
+.speaker-box strong{font-weight:600}
+.note-box{background:var(--accent-lighter);border:1px solid var(--accent-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.note-box strong{font-weight:600}
+
+/* Feature cards */
+.feature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0 16px}
+.feature-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px 13px;box-shadow:var(--shadow-xs)}
+.feature-card-icon{font-size:1.1rem;margin-bottom:6px}
+.feature-card-title{font-size:0.72rem;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-0.01em}
+.feature-card-desc{font-size:0.68rem;color:var(--text2);line-height:1.45}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
+.check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
+.check-item strong{font-weight:600}
+
+.next-teaser{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.next-teaser strong{font-weight:700}
+
+/* Nav buttons */
+.nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
+.nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
+
+/* ===== RIGHT SIDEBAR ===== */
+.right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.rs-section-title:first-child{margin-top:0}
+.rs-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.rs-table td{padding:5px 6px;font-size:0.68rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--text2)}
+.rs-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap;padding-right:8px}
+.rs-table tr:last-child td{border-bottom:none}
+.rs-link{display:block;font-size:0.7rem;color:var(--accent);text-decoration:none;padding:4px 0;font-weight:500}
+.rs-link:hover{text-decoration:underline}
+
+@media(max-width:1024px){.right-sidebar{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- STEPPER -->
+<div class="stepper-header">
+  <a class="back-btn" href="index.html"><span class="back-arrow">←</span>Índice</a>
+  <div class="stepper-node active" onclick="showSection('sec-home')" id="sn-home">
+    <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+    <span class="sn-check">✓</span><span class="sn-label">O que é um Project</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+    <span class="sn-check">✓</span><span class="sn-label">Boas instruções</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
+    <span class="sn-check">✓</span><span class="sn-label">Arquivos da Demo</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 1</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 2</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 3</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
+    <span class="sn-check">✓</span><span class="sn-label">Demo 4</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step8')" id="sn-step8">
+    <span class="sn-check">✓</span><span class="sn-label">Prática</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Seu espaço de trabalho no Claude</h2>
+    <p>A04 · Link School of Business</p>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Introdução</div>
+      <div class="nav-item active" onclick="showSection('sec-home')" data-section="sec-home">
+        <span class="ni-num">00</span>Visão Geral<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Teoria</div>
+      <div class="nav-item" onclick="showSection('sec-step1')" data-section="sec-step1">
+        <span class="ni-num">01</span>O que é um Project<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
+        <span class="ni-num">02</span>Boas instruções<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
+        <span class="ni-num">03</span>Arquivos da Demo<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Demonstrações</div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Demo 1 — Criando o Project<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>Demo 2 — Upload de arquivos<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>Demo 3 — Antes vs. depois<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
+        <span class="ni-num">07</span>Demo 4 — Evoluindo o Project<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Prática</div>
+      <div class="nav-item" onclick="showSection('sec-step8')" data-section="sec-step8">
+        <span class="ni-num">08</span>Prática + Entregável<span class="ni-check">✓</span>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-progress">
+    <div class="sp-label">Progresso — <span id="pct">0</span>%</div>
+    <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 00 VISÃO GERAL -->
+  <div class="section active" id="sec-home">
+    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
+    <div class="sec-desc">Projects · AI for Business</div>
+    <div class="overview-card">
+      <div class="oc-title">Sobre esta aula</div>
+      <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
+      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
+      <div class="oc-row"><span class="oc-label">Tema</span><span class="oc-value">Projects</span></div>
+      <div class="oc-row"><span class="oc-label">Exemplo</span><span class="oc-value">Micro-SaaS para clínicas odontológicas</span></div>
+    </div>
+    <p class="intro-text">Até agora cada conversa começa do zero — você reexplica quem é você, o que é o projeto, em qual fase está. Os <strong>Projects</strong> resolvem isso de forma definitiva.</p>
+    <p class="intro-text">Um Project é um espaço de trabalho isolado dentro do Claude onde você define o contexto uma única vez, faz upload dos documentos do projeto e esse contexto fica disponível automaticamente em todas as conversas futuras. A partir desta aula, <strong>todo o trabalho do semestre acontece dentro do seu Project</strong>.</p>
+    <div class="subsec">Objetivos de aprendizagem</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que é um Project e como ele difere de uma <strong>conversa comum</strong></span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Criar um Project com <strong>instruções persistentes</strong> bem escritas</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Fazer upload de <strong>arquivos de referência</strong> no Project</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Usar o Project para trabalhar <strong>sem repetir contexto</strong> toda vez</span></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 01 O QUE É UM PROJECT -->
+  <div class="section" id="sec-step1">
+    <div class="sec-title"><span class="snum">01.</span> O que é um Project</div>
+    <div class="sec-desc">Três componentes que mudam tudo</div>
+    <p class="intro-text">Um Project é um espaço de trabalho isolado com três componentes principais:</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-card-icon">📋</div>
+        <div class="feature-card-title">Instruções</div>
+        <div class="feature-card-desc">Texto que o Claude carrega automaticamente no início de cada conversa. Funciona como um briefing permanente.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">📁</div>
+        <div class="feature-card-title">Arquivos</div>
+        <div class="feature-card-desc">Documentos que você faz upload e que ficam disponíveis para o Claude em todas as conversas do projeto.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">💬</div>
+        <div class="feature-card-title">Histórico</div>
+        <div class="feature-card-desc">Todas as conversas organizadas e acessíveis — você pode retomar uma conversa de semanas atrás.</div>
+      </div>
+    </div>
+    <table class="content-table">
+      <thead>
+        <tr>
+          <th>Conversa comum</th>
+          <th>Project</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Começa do zero toda vez</td><td><strong>Contexto carregado automaticamente</strong></td></tr>
+        <tr><td>Sem arquivos persistentes</td><td><strong>Arquivos sempre disponíveis</strong></td></tr>
+        <tr><td>Histórico misturado</td><td><strong>Histórico organizado por projeto</strong></td></tr>
+        <tr><td>Você reexplica o contexto</td><td><strong>O Claude já sabe o que precisa</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="tip-box"><strong>💡 Por que isso importa:</strong> com Projects, a qualidade das respostas melhora porque o Claude tem contexto suficiente para ser específico — não genérico.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 02 BOAS INSTRUÇÕES -->
+  <div class="section" id="sec-step2">
+    <div class="sec-title"><span class="snum">02.</span> Como escrever boas instruções</div>
+    <div class="sec-desc">Quatro perguntas que todo briefing precisa responder</div>
+    <p class="intro-text">Uma boa instrução de projeto responde a <strong>quatro perguntas</strong>. Se faltar uma, o Claude vai compensar com suposições — e as suposições costumam ser genéricas.</p>
+    <div class="instructions">
+      <div class="inst">
+        <span class="inst-num">1</span>
+        <span class="inst-text"><strong>Quem sou eu?</strong> — Seu papel e contexto acadêmico. <em>Ex: "Sou estudante de Adm no 5º semestre, cursando AI for Business."</em></span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">2</span>
+        <span class="inst-text"><strong>O que é o projeto?</strong> — Problema, usuário e proposta de valor em validação. Seja específico.</span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">3</span>
+        <span class="inst-text"><strong>Em qual fase estamos?</strong> — Onde você está na jornada agora. Isso muda o tipo de ajuda que você precisa.</span>
+      </div>
+      <div class="inst">
+        <span class="inst-num">4</span>
+        <span class="inst-text"><strong>Como quero que o Claude se comporte?</strong> — Tom, foco, restrições. <em>Ex: "Respostas diretas. Aponte inconsistências na minha hipótese."</em></span>
+      </div>
+    </div>
+    <div class="tip-box"><strong>💡 Dica:</strong> As instruções não precisam ser perfeitas no primeiro dia. Comece com o que você sabe e atualize à medida que o projeto evolui — a Demo 4 vai mostrar como fazer isso.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 03 ARQUIVOS DA DEMO -->
+  <div class="section" id="sec-step3">
+    <div class="sec-title"><span class="snum">03.</span> Arquivos para a demonstração</div>
+    <div class="sec-desc">Conteúdo sintético pronto para usar na aula ao vivo</div>
+    <div class="note-box"><strong>📋 Nota para o professor:</strong> o Arquivo 1 (instruções) será colado diretamente no campo "Instruções do projeto" — não como upload. Os Arquivos 2 e 3 serão feitos upload no Project durante as Demos 2 e 3.</div>
+
+    <div class="prep-block">
+      <div class="prep-header">
+        <span class="prep-badge">Prep</span>
+        <span class="prep-title">Arquivos sintéticos da demonstração — OdontoFlow</span>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">instrucoes-projeto.md — colar nas instruções do Project (Demo 1)</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '# Contexto do Projeto — OdontoFlow\n\n## Quem sou eu\nSou estudante de Administração no 5º semestre, cursando a disciplina \nAI for Business. Estou desenvolvendo um Micro-SaaS como projeto da disciplina.\n\n## O que é o projeto\nNome: OdontoFlow\nProblema: Clínicas odontológicas de pequeno porte (1 a 3 dentistas) perdem \nentre 40% e 60% dos pacientes após a primeira consulta porque não têm um \nprocesso sistemático de follow-up. A comunicação com pacientes é feita de \nforma manual via WhatsApp pela recepcionista, o que falha por volume e turnover.\n\nUsuário principal: Dono de clínica odontológica que também é dentista, \natende 10 a 25 pacientes/dia, não tem equipe de TI, usa WhatsApp como \nprincipal canal de comunicação.\n\nProposta de valor atual (em validação): software simples de follow-up \nautomático que integra com o WhatsApp e a agenda da clínica, enviando \nlembretes e mensagens de reengajamento no momento certo.\n\n## Fase atual\nValidação do problema — realizando entrevistas com donos de clínicas \npara confirmar as dores e entender o comportamento atual antes de construir.\n\n## Como o Claude deve se comportar\n- Respostas diretas e objetivas\n- Sempre que eu colar notas de entrevista, estruture em: dores, comportamento \n  atual, citações e hipóteses\n- Quando eu pedir análise de concorrentes, foque em lacunas e oportunidades\n- Aponte inconsistências na minha hipótese quando identificar\n- Tom: consultivo, como um mentor de produto experiente')">Copiar</button><span class="label">instrucoes-projeto.md</span># Contexto do Projeto — OdontoFlow
+
+## Quem sou eu
+Sou estudante de Administração no 5º semestre, cursando a disciplina
+AI for Business. Estou desenvolvendo um Micro-SaaS como projeto da disciplina.
+
+## O que é o projeto
+Nome: OdontoFlow
+Problema: Clínicas odontológicas de pequeno porte (1 a 3 dentistas) perdem
+entre 40% e 60% dos pacientes após a primeira consulta porque não têm um
+processo sistemático de follow-up. A comunicação com pacientes é feita de
+forma manual via WhatsApp pela recepcionista, o que falha por volume e turnover.
+
+Usuário principal: Dono de clínica odontológica que também é dentista,
+atende 10 a 25 pacientes/dia, não tem equipe de TI, usa WhatsApp como
+principal canal de comunicação.
+
+Proposta de valor atual (em validação): software simples de follow-up
+automático que integra com o WhatsApp e a agenda da clínica, enviando
+lembretes e mensagens de reengajamento no momento certo.
+
+## Fase atual
+Validação do problema — realizando entrevistas com donos de clínicas
+para confirmar as dores e entender o comportamento atual antes de construir.
+
+## Como o Claude deve se comportar
+- Respostas diretas e objetivas
+- Sempre que eu colar notas de entrevista, estruture em: dores, comportamento
+  atual, citações e hipóteses
+- Quando eu pedir análise de concorrentes, foque em lacunas e oportunidades
+- Aponte inconsistências na minha hipótese quando identificar
+- Tom: consultivo, como um mentor de produto experiente</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">pesquisa-mercado.md — fazer upload no Project (Demo 2)</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '# Pesquisa de Mercado — OdontoFlow\n\n## Dados do mercado\n- 336.000 cirurgiões-dentistas registrados no CFO (2024)\n- ~120.000 clínicas odontológicas ativas no Brasil\n- 70% são de pequeno porte (1 a 3 dentistas)\n- Ticket médio de consulta de retorno: R$ 180 a R$ 400\n- Frequência recomendada de retorno: a cada 6 meses\n\n## Dores mais relatadas pelos usuários\n\n1. Perda de pacientes por falta de follow-up (muito alta)\n   - 40-60% dos pacientes não retornam sem contato ativo\n   - Impacto: R$ 4.000 a R$ 8.000/mês em receita não realizada\n\n2. Gestão manual de confirmação de consultas (alta)\n   - Recepcionistas ligam ou mandam WhatsApp manualmente\n   - 20-30% de taxa de não comparecimento sem confirmação prévia\n\n3. Falta de histórico de comunicação com pacientes (alta)\n   - Não sabem quando foi o último contato com cada paciente\n   - Dependem da memória da equipe\n\n4. Turnover de recepcionistas (média)\n   - Ao trocar de recepcionista, o histórico informal se perde\n\n## Concorrentes mapeados\n\nOdontoSoft: prontuário eletrônico / não tem follow-up automatizado\nClínica nas Nuvens: gestão geral / caro para clínicas pequenas (R$ 300-600/mês)\niClinic: gestão médica geral / complexo, curva de aprendizado alta\nWhatsApp manual: comunicação / não escala, depende de pessoa\n\n## Lacuna identificada\nNenhuma solução oferece follow-up automático e inteligente focado em \nreengajamento de pacientes, com custo acessível (< R$ 150/mês) e \nsetup em menos de 1 hora para clínicas sem equipe de TI.')">Copiar</button><span class="label">pesquisa-mercado.md</span># Pesquisa de Mercado — OdontoFlow
+
+## Dados do mercado
+- 336.000 cirurgiões-dentistas registrados no CFO (2024)
+- ~120.000 clínicas odontológicas ativas no Brasil
+- 70% são de pequeno porte (1 a 3 dentistas)
+- Ticket médio de consulta de retorno: R$ 180 a R$ 400
+- Frequência recomendada de retorno: a cada 6 meses
+
+## Dores mais relatadas pelos usuários
+
+1. Perda de pacientes por falta de follow-up (muito alta)
+   - 40-60% dos pacientes não retornam sem contato ativo
+   - Impacto: R$ 4.000 a R$ 8.000/mês em receita não realizada
+
+2. Gestão manual de confirmação de consultas (alta)
+   - Recepcionistas ligam ou mandam WhatsApp manualmente
+   - 20-30% de taxa de não comparecimento sem confirmação prévia
+
+3. Falta de histórico de comunicação com pacientes (alta)
+   - Não sabem quando foi o último contato com cada paciente
+   - Dependem da memória da equipe
+
+4. Turnover de recepcionistas (média)
+   - Ao trocar de recepcionista, o histórico informal se perde
+
+## Concorrentes mapeados
+
+OdontoSoft: prontuário eletrônico / não tem follow-up automatizado
+Clínica nas Nuvens: gestão geral / caro para clínicas pequenas (R$ 300-600/mês)
+iClinic: gestão médica geral / complexo, curva de aprendizado alta
+WhatsApp manual: comunicação / não escala, depende de pessoa
+
+## Lacuna identificada
+Nenhuma solução oferece follow-up automático e inteligente focado em
+reengajamento de pacientes, com custo acessível (< R$ 150/mês) e
+setup em menos de 1 hora para clínicas sem equipe de TI.</div>
+      </div>
+
+      <div class="prep-file">
+        <div class="prep-file-name">roteiro-entrevistas-v1.md — fazer upload no Project (Demo 2)</div>
+        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '# Roteiro de Entrevistas — Validação do Problema\nVersão: 1.0\n\n## Objetivo\nValidar se a perda de pacientes por falta de follow-up é realmente \no maior problema de gestão para donos de clínicas odontológicas de pequeno porte.\n\n## Perfil do entrevistado\n- Dono de clínica odontológica com 1 a 3 dentistas\n- Atua há pelo menos 2 anos no mercado\n\n## Roteiro (30 minutos)\n\n### Abertura (5 min)\n\"Obrigado por aceitar conversar comigo. Estou pesquisando os desafios \nde gestão de clínicas odontológicas para um projeto acadêmico. \nNão vou apresentar nenhuma solução hoje — quero apenas entender \ncomo você trabalha. Pode ser sincero, não existe resposta certa ou errada.\"\n\n### Bloco 1 — Contexto da clínica (5 min)\n1. Me conta um pouco sobre sua clínica — quantos dentistas trabalham aqui, \n   há quanto tempo você está no mercado?\n2. Qual é o maior desafio de gestão que você enfrenta hoje no dia a dia?\n\n### Bloco 2 — Comportamento atual com pacientes (10 min)\n3. Me descreve como é o processo desde que um paciente faz a primeira consulta \n   até ele voltar para uma segunda — o que acontece no meio?\n4. O que você faz hoje para manter contato com pacientes entre as consultas?\n5. Me conta de uma vez recente em que tentou trazer um paciente de volta \n   que sumiu — o que aconteceu?\n\n### Bloco 3 — Impacto e frequência (8 min)\n6. Com que frequência você percebe que pacientes que deveriam voltar \n   simplesmente não aparecem mais?\n7. Quando isso acontece, qual é o impacto no seu negócio?\n8. Você já tentou resolver isso com alguma ferramenta ou processo? O que funcionou?\n\n### Encerramento (2 min)\n\"Tem alguma coisa sobre gestão de pacientes que você queria ter me contado \ne eu não perguntei?\"\n\n## Instruções para o entrevistador\n- Não mencione softwares ou soluções tecnológicas\n- Anote citações diretas sempre que possível\n- Se o entrevistado mencionar uma dor espontaneamente, aprofunde antes de avançar')">Copiar</button><span class="label">roteiro-entrevistas-v1.md</span># Roteiro de Entrevistas — Validação do Problema
+Versão: 1.0
+
+## Objetivo
+Validar se a perda de pacientes por falta de follow-up é realmente
+o maior problema de gestão para donos de clínicas odontológicas de pequeno porte.
+
+## Perfil do entrevistado
+- Dono de clínica odontológica com 1 a 3 dentistas
+- Atua há pelo menos 2 anos no mercado
+
+## Roteiro (30 minutos)
+
+### Abertura (5 min)
+"Obrigado por aceitar conversar comigo. Estou pesquisando os desafios
+de gestão de clínicas odontológicas para um projeto acadêmico.
+Não vou apresentar nenhuma solução hoje — quero apenas entender
+como você trabalha. Pode ser sincero, não existe resposta certa ou errada."
+
+### Bloco 1 — Contexto da clínica (5 min)
+1. Me conta um pouco sobre sua clínica — quantos dentistas trabalham aqui,
+   há quanto tempo você está no mercado?
+2. Qual é o maior desafio de gestão que você enfrenta hoje no dia a dia?
+
+### Bloco 2 — Comportamento atual com pacientes (10 min)
+3. Me descreve como é o processo desde que um paciente faz a primeira consulta
+   até ele voltar para uma segunda — o que acontece no meio?
+4. O que você faz hoje para manter contato com pacientes entre as consultas?
+5. Me conta de uma vez recente em que tentou trazer um paciente de volta
+   que sumiu — o que aconteceu?
+
+### Bloco 3 — Impacto e frequência (8 min)
+6. Com que frequência você percebe que pacientes que deveriam voltar
+   simplesmente não aparecem mais?
+7. Quando isso acontece, qual é o impacto no seu negócio?
+8. Você já tentou resolver isso com alguma ferramenta ou processo? O que funcionou?
+
+### Encerramento (2 min)
+"Tem alguma coisa sobre gestão de pacientes que você queria ter me contado
+e eu não perguntei?"
+
+## Instruções para o entrevistador
+- Não mencione softwares ou soluções tecnológicas
+- Anote citações diretas sempre que possível
+- Se o entrevistado mencionar uma dor espontaneamente, aprofunde antes de avançar</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 04 DEMO 1 -->
+  <div class="section" id="sec-step4">
+    <div class="sec-title"><span class="snum">04.</span> Demo 1 — Criando o Project do zero</div>
+    <div class="sec-desc">Configuração completa ao vivo — nome, instruções, primeiro teste</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 1</span>
+        <span class="demo-title">Criando e configurando o Project</span>
+        <span class="demo-time">10 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Crie o Project</div>
+      <p class="intro-text" style="margin-bottom:6px">Acesse <strong>Projects → Novo Project</strong>. No campo de nome, digite:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'OdontoFlow — Micro-SaaS para Clínicas Odontológicas')">Copiar</button>OdontoFlow — Micro-SaaS para Clínicas Odontológicas</div>
+
+      <div class="demo-step">Passo 2 — Cole as instruções</div>
+      <p class="intro-text" style="margin-bottom:6px">Na aba <strong>"Instruções do projeto"</strong>, cole o conteúdo completo do arquivo <code>instrucoes-projeto.md</code> da seção anterior.</p>
+
+      <div class="demo-step">Passo 3 — Teste o contexto</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa dentro do Project e envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Quem sou eu e o que estou desenvolvendo?')">Copiar</button>Quem sou eu e o que estou desenvolvendo?</div>
+
+      <div class="speaker-box" style="margin-top:10px"><strong>🎙️ Fala para a turma:</strong> <em>"Sem eu ter enviado nenhuma explicação, o Claude já sabe tudo sobre o projeto. Agora compare: se eu abrisse uma conversa comum fora do Project e fizesse a mesma pergunta, ele não saberia nada."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 05 DEMO 2 -->
+  <div class="section" id="sec-step5">
+    <div class="sec-title"><span class="snum">05.</span> Demo 2 — Upload de arquivos e consulta</div>
+    <div class="sec-desc">Arquivos de referência sempre disponíveis — sem copiar e colar</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 2</span>
+        <span class="demo-title">Arquivos persistentes no Project</span>
+        <span class="demo-time">10 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Faça upload dos arquivos</div>
+      <p class="intro-text" style="margin-bottom:6px">No Project criado, faça upload dos dois arquivos: <code>pesquisa-mercado.md</code> e <code>roteiro-entrevistas-v1.md</code> (conteúdo disponível na seção anterior).</p>
+
+      <div class="demo-step">Passo 2 — Consulte a pesquisa de mercado</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa dentro do Project. Envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Com base nos documentos do projeto, me diga: \nqual é a lacuna de mercado que o OdontoFlow está tentando preencher \ne qual concorrente chega mais perto de resolver o mesmo problema?')">Copiar</button>Com base nos documentos do projeto, me diga:
+qual é a lacuna de mercado que o OdontoFlow está tentando preencher
+e qual concorrente chega mais perto de resolver o mesmo problema?</div>
+
+      <div class="demo-step">Passo 3 — Avalie criticamente o roteiro</div>
+      <p class="intro-text" style="margin-bottom:6px">Após a resposta, envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Acesse o roteiro de entrevistas. Na sua avaliação, alguma das perguntas \npode estar levando o entrevistado a confirmar a hipótese em vez de \ntestar se ela é verdadeira? Se sim, reescreva essas perguntas.')">Copiar</button>Acesse o roteiro de entrevistas. Na sua avaliação, alguma das perguntas
+pode estar levando o entrevistado a confirmar a hipótese em vez de
+testar se ela é verdadeira? Se sim, reescreva essas perguntas.</div>
+
+      <div class="speaker-box" style="margin-top:10px"><strong>🎙️ Fala para a turma:</strong> <em>"O Claude acessou um arquivo que eu fiz upload há 5 minutos e está avaliando criticamente a qualidade do roteiro — isso é algo que levaria horas fazer manualmente com um revisor humano."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 06 DEMO 3 -->
+  <div class="section" id="sec-step6">
+    <div class="sec-title"><span class="snum">06.</span> Demo 3 — Antes vs. depois do Project</div>
+    <div class="sec-desc">A diferença de qualidade com e sem contexto persistente</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 3</span>
+        <span class="demo-title">Comparação direta: conversa comum x Project</span>
+        <span class="demo-time">8 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Fora do Project (conversa comum)</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma <strong>conversa comum</strong> — fora de qualquer Project. Envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Quais são os próximos passos mais importantes para o meu projeto?')">Copiar</button>Quais são os próximos passos mais importantes para o meu projeto?</div>
+      <p class="intro-text" style="margin-top:8px;margin-bottom:6px">A resposta será genérica — o Claude vai pedir mais contexto ou dar recomendações universais.</p>
+
+      <div class="demo-step">Passo 2 — Dentro do Project</div>
+      <p class="intro-text" style="margin-bottom:6px">Volte para uma conversa dentro do Project e envie a <strong>mesma pergunta</strong>:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Quais são os próximos passos mais importantes para o meu projeto?')">Copiar</button>Quais são os próximos passos mais importantes para o meu projeto?</div>
+
+      <div class="speaker-box" style="margin-top:10px"><strong>🎙️ Fala para a turma:</strong> <em>"Mesma pergunta, resultado completamente diferente. O Project não é só conveniência — ele muda a qualidade das respostas porque o Claude tem o contexto para ser específico e relevante."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 07 DEMO 4 -->
+  <div class="section" id="sec-step7">
+    <div class="sec-title"><span class="snum">07.</span> Demo 4 — Evoluindo as instruções</div>
+    <div class="sec-desc">O Project cresce junto com o projeto ao longo do semestre</div>
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 4</span>
+        <span class="demo-title">Atualizando a fase do projeto nas instruções</span>
+        <span class="demo-time">5 min</span>
+      </div>
+
+      <div class="demo-step">Passo 1 — Acesse as instruções e atualize a fase</div>
+      <p class="intro-text" style="margin-bottom:6px">Nas instruções do Project, substitua a seção <code>## Fase atual</code> pelo texto abaixo:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '## Fase atual\nPriorização da proposta de valor — entrevistas concluídas (5 dentistas entrevistados).\nDores validadas: follow-up manual e falta de histórico de comunicação.\nPróxima decisão: qual funcionalidade construir primeiro no MVP.')">Copiar</button>## Fase atual
+Priorização da proposta de valor — entrevistas concluídas (5 dentistas entrevistados).
+Dores validadas: follow-up manual e falta de histórico de comunicação.
+Próxima decisão: qual funcionalidade construir primeiro no MVP.</div>
+
+      <div class="demo-step">Passo 2 — Teste a nova fase</div>
+      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa no Project. Envie:</p>
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Com base na fase atual do projeto, qual é a pergunta mais importante \nque precisamos responder antes de começar a construir o MVP?')">Copiar</button>Com base na fase atual do projeto, qual é a pergunta mais importante
+que precisamos responder antes de começar a construir o MVP?</div>
+
+      <div class="speaker-box" style="margin-top:10px"><strong>🎙️ Fala para a turma:</strong> <em>"Ao longo do semestre, vocês vão atualizar as instruções toda vez que o projeto evoluir. O Project não é estático — ele cresce junto com o projeto."</em></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step8')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 08 PRÁTICA + ENTREGÁVEL -->
+  <div class="section" id="sec-step8">
+    <div class="sec-title"><span class="snum">08.</span> Prática + Entregável</div>
+    <div class="sec-desc">Crie o seu próprio Project agora</div>
+
+    <div class="subsec">Passo 1 — Crie o Project</div>
+    <p class="intro-text">Acesse <strong>Projects → Novo Project</strong> e nomeie: <em>"Micro-SaaS — [seu tema]"</em>.</p>
+
+    <div class="subsec">Passo 2 — Escreva as instruções</div>
+    <p class="intro-text" style="margin-bottom:6px">Cole nas instruções do projeto:</p>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '## Quem sou eu\n[seu perfil e contexto acadêmico]\n\n## O que é o projeto\nNome: [nome do seu Micro-SaaS]\nProblema: [hipótese de problema da Aula 1, refinada na Aula 3]\nUsuário principal: [perfil do usuário]\nProposta de valor em validação: [descreva brevemente]\n\n## Fase atual\n[onde você está na jornada agora]\n\n## Como quero que o Claude se comporte\n- Respostas diretas e objetivas\n- [adicione suas preferências específicas]')">Copiar</button>## Quem sou eu
+[seu perfil e contexto acadêmico]
+
+## O que é o projeto
+Nome: [nome do seu Micro-SaaS]
+Problema: [hipótese de problema da Aula 1, refinada na Aula 3]
+Usuário principal: [perfil do usuário]
+Proposta de valor em validação: [descreva brevemente]
+
+## Fase atual
+[onde você está na jornada agora]
+
+## Como quero que o Claude se comporte
+- Respostas diretas e objetivas
+- [adicione suas preferências específicas]</div>
+
+    <div class="subsec">Passo 3 — Faça upload dos documentos</div>
+    <p class="intro-text">Faça upload dos arquivos produzidos nas aulas anteriores:</p>
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">📄</span><span>Hipótese de problema (Aula 1)</span></div>
+      <div class="check-item"><span class="ci-icon">📄</span><span>Relatório de pesquisa de mercado (Aula 3)</span></div>
+      <div class="check-item"><span class="ci-icon">📄</span><span>Mapeamento de concorrentes (Aula 3)</span></div>
+      <div class="check-item"><span class="ci-icon">📄</span><span>Roteiro de entrevistas inicial (Aula 3)</span></div>
+    </div>
+
+    <div class="subsec">Passo 4 — Teste o Project</div>
+    <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa dentro do Project e envie:</p>
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Com base no que você sabe sobre o projeto, quais são as 3 hipóteses \nmais importantes que ainda preciso validar nas entrevistas?')">Copiar</button>Com base no que você sabe sobre o projeto, quais são as 3 hipóteses
+mais importantes que ainda preciso validar nas entrevistas?</div>
+    <div class="tip-box" style="margin-top:10px"><strong>💡 Se a resposta ficou genérica:</strong> volte nas instruções e adicione mais contexto sobre o problema e o usuário. A especificidade das instruções define a especificidade das respostas.</div>
+
+    <div class="subsec">Entregável da aula</div>
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Project criado</strong> com nome claro e instruções persistentes</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Pelo menos 3 arquivos</strong> com upload feito no Project</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Instruções testadas</strong> — o Claude responde com o contexto correto sem explicação adicional</span></div>
+    </div>
+    <div class="next-teaser"><strong>Próxima aula — A05: Artifacts</strong><br>Como transformar conversas em entregáveis reais — tabelas, gráficos, componentes interativos e documentos exportáveis.</div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
+      <button class="nav-btn primary" onclick="goHome()">↩ Recomeçar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="right-sidebar">
+  <div class="rs-section-title">3 componentes do Project</div>
+  <table class="rs-table">
+    <tr><td>Instruções</td><td>Briefing permanente</td></tr>
+    <tr><td>Arquivos</td><td>Documentos sempre disponíveis</td></tr>
+    <tr><td>Histórico</td><td>Conversas organizadas</td></tr>
+  </table>
+  <div class="rs-section-title">4 perguntas das instruções</div>
+  <table class="rs-table">
+    <tr><td>Quem</td><td>Seu perfil</td></tr>
+    <tr><td>O quê</td><td>O projeto</td></tr>
+    <tr><td>Fase</td><td>Onde você está</td></tr>
+    <tr><td>Como</td><td>Tom e restrições</td></tr>
+  </table>
+  <div class="rs-section-title">Demos desta aula</div>
+  <table class="rs-table">
+    <tr><td>Demo 1</td><td>Criar Project</td></tr>
+    <tr><td>Demo 2</td><td>Upload + consulta</td></tr>
+    <tr><td>Demo 3</td><td>Antes vs. depois</td></tr>
+    <tr><td>Demo 4</td><td>Evoluir instruções</td></tr>
+  </table>
+  <div class="rs-section-title">Entregáveis</div>
+  <table class="rs-table">
+    <tr><td>✅</td><td>Project criado</td></tr>
+    <tr><td>✅</td><td>3+ arquivos upados</td></tr>
+    <tr><td>✅</td><td>Instruções testadas</td></tr>
+  </table>
+  <div class="rs-section-title">Arquivos sintéticos</div>
+  <table class="rs-table">
+    <tr><td>instrucoes</td><td>Colar nas instruções</td></tr>
+    <tr><td>pesquisa</td><td>Upload no Project</td></tr>
+    <tr><td>roteiro</td><td>Upload no Project</td></tr>
+  </table>
+</div>
+
+</div>
+
+<script>
+const stepToFlow = {
+  'sec-home':  'home',
+  'sec-step1': 'projeto',
+  'sec-step2': 'instrucoes',
+  'sec-step3': 'prep',
+  'sec-step4': 'demo1',
+  'sec-step5': 'demo2',
+  'sec-step6': 'demo3',
+  'sec-step7': 'demo4',
+  'sec-step8': 'pratica'
+}
+const flowOrder = ['home','projeto','instrucoes','prep','demo1','demo2','demo3','demo4','pratica']
+const visited = new Set(['sec-home'])
+const completedFlows = new Set()
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.section === id)
+    if (visited.has(n.dataset.section)) n.classList.add('completed')
+  })
+  visited.add(id)
+  const flow = stepToFlow[id]
+  if (flow) {
+    const idx = flowOrder.indexOf(flow)
+    if (idx > 0) completedFlows.add(flowOrder[idx-1])
+  }
+  updateStepper(flow)
+  updateProgress()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function updateStepper(activeFlow) {
+  document.querySelectorAll('.stepper-node').forEach(n => {
+    const f = n.id.replace('sn-','')
+    const idx = flowOrder.indexOf(f)
+    const activeIdx = flowOrder.indexOf(activeFlow)
+    n.classList.remove('active','completed','future')
+    if (f === activeFlow) n.classList.add('active')
+    else if (completedFlows.has(f) || idx < activeIdx) n.classList.add('completed')
+    else n.classList.add('future')
+  })
+}
+
+function updateProgress() {
+  const pct = Math.round((visited.size / document.querySelectorAll('.section').length) * 100)
+  document.getElementById('pct').textContent = pct
+  document.getElementById('sp-fill').style.width = pct + '%'
+}
+
+function goHome() { showSection('sec-home') }
+
+function copyText(btn, text) {
+  navigator.clipboard?.writeText(text).then(() => {
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  }).catch(() => {
+    const ta = document.createElement('textarea')
+    ta.value = text; document.body.appendChild(ta)
+    ta.select(); document.execCommand('copy')
+    document.body.removeChild(ta)
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  })
+}
+
+updateStepper('home')
+updateProgress()
+</script>
+</body>
+</html>

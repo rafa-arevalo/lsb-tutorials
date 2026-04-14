@@ -137,7 +137,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .demo-time{font-size:0.65rem;color:var(--text3);margin-left:auto;flex-shrink:0;font-weight:500}
 .demo-step{font-size:0.76rem;font-weight:700;color:var(--text);margin:12px 0 5px}
 
-/* Skill card — visually shows the anatomy */
+/* Skill card */
 .skill-card{background:var(--white);border:1px solid var(--accent-border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
 .skill-card-field{margin-bottom:12px}
 .skill-card-field:last-child{margin-bottom:0}
@@ -214,35 +214,35 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
     <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
   </div>
   <span class="stepper-arrow">›</span>
-  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-conceito">
     <span class="sn-check">✓</span><span class="sn-label">O que é Skill</span>
   </div>
   <span class="stepper-arrow">›</span>
-  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-quando">
+    <span class="sn-check">✓</span><span class="sn-label">Quando criar</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-anatomia">
     <span class="sn-check">✓</span><span class="sn-label">Anatomia</span>
   </div>
   <span class="stepper-arrow">›</span>
-  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
-    <span class="sn-check">✓</span><span class="sn-label">Dados da Demo</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-criacao">
+    <span class="sn-check">✓</span><span class="sn-label">Como criar</span>
   </div>
   <span class="stepper-arrow">›</span>
-  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
-    <span class="sn-check">✓</span><span class="sn-label">Demo 1</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-skill1">
+    <span class="sn-check">✓</span><span class="sn-label">Skill 1</span>
   </div>
   <span class="stepper-arrow">›</span>
-  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
-    <span class="sn-check">✓</span><span class="sn-label">Demo 2</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-skill2">
+    <span class="sn-check">✓</span><span class="sn-label">Skill 2</span>
   </div>
   <span class="stepper-arrow">›</span>
-  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
-    <span class="sn-check">✓</span><span class="sn-label">Demo 3</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-dados">
+    <span class="sn-check">✓</span><span class="sn-label">Dados Demo</span>
   </div>
   <span class="stepper-arrow">›</span>
-  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
-    <span class="sn-check">✓</span><span class="sn-label">Demo 4</span>
-  </div>
-  <span class="stepper-arrow">›</span>
-  <div class="stepper-node future" onclick="showSection('sec-step8')" id="sn-step8">
+  <div class="stepper-node future" onclick="showSection('sec-step8')" id="sn-pratica">
     <span class="sn-check">✓</span><span class="sn-label">Prática</span>
   </div>
 </div>
@@ -268,31 +268,31 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
         <span class="ni-num">01</span>O que é uma Skill<span class="ni-check">✓</span>
       </div>
       <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
-        <span class="ni-num">02</span>Anatomia e criação<span class="ni-check">✓</span>
+        <span class="ni-num">02</span>Quando criar<span class="ni-check">✓</span>
       </div>
       <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
-        <span class="ni-num">03</span>Dados da Demo<span class="ni-check">✓</span>
+        <span class="ni-num">03</span>Anatomia da Skill<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Como criar<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Skills do Projeto</div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>Skill 1 — Análise de Entrevista<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>Skill 2 — Proposta de Valor<span class="ni-check">✓</span>
       </div>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">Demonstrações</div>
-      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
-        <span class="ni-num">04</span>Demo 1 — Criar Skill ao vivo<span class="ni-check">✓</span>
-      </div>
-      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
-        <span class="ni-num">05</span>Demo 2 — Com vs. sem Skill<span class="ni-check">✓</span>
-      </div>
-      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
-        <span class="ni-num">06</span>Demo 3 — Claude cria a Skill<span class="ni-check">✓</span>
-      </div>
       <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
-        <span class="ni-num">07</span>Demo 4 — Testar e ajustar<span class="ni-check">✓</span>
+        <span class="ni-num">07</span>Dados das Demos<span class="ni-check">✓</span>
       </div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-group-title">Prática</div>
       <div class="nav-item" onclick="showSection('sec-step8')" data-section="sec-step8">
-        <span class="ni-num">08</span>Prática + Entregável<span class="ni-check">✓</span>
+        <span class="ni-num">08</span>Demos + Prática + Entregável<span class="ni-check">✓</span>
       </div>
     </div>
   </nav>
@@ -305,506 +305,717 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <!-- MAIN -->
 <div class="main">
 
-  <!-- 00 VISÃO GERAL -->
-  <div class="section active" id="sec-home">
-    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
-    <div class="sec-desc">Skills · AI for Business</div>
-    <div class="overview-card">
-      <div class="oc-title">Sobre esta aula</div>
-      <div class="oc-row"><span class="oc-label">Curso</span><span class="oc-value">AI for Business</span></div>
-      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">60 minutos</span></div>
-      <div class="oc-row"><span class="oc-label">Tema</span><span class="oc-value">Skills</span></div>
-      <div class="oc-row"><span class="oc-label">Contexto</span><span class="oc-value">Padronização de fluxos recorrentes do Micro-SaaS</span></div>
-    </div>
-    <p class="intro-text">Você já percebeu que certas tarefas do projeto se repetem toda semana: analisar entrevistas, avaliar propostas de valor, documentar o progresso. Para cada uma você reescreveu um prompt longo — e vai continuar reescrevendo até o final do semestre.</p>
-    <p class="intro-text">As <strong>Skills</strong> eliminam esse retrabalho. Uma Skill é um conjunto de instruções salvas que ensina ao Claude como executar uma tarefa específica. <strong>Você escreve uma vez. O Claude reproduz o padrão toda vez</strong>, sem variações indesejadas.</p>
-    <div class="subsec">Objetivos de aprendizagem</div>
-    <div class="instructions">
-      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que é uma Skill e <strong>quando faz sentido criar uma</strong></span></div>
-      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Escrever instruções com <strong>gatilho claro e output definido</strong></span></div>
-      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Criar pelo menos <strong>3 Skills</strong> aplicadas ao projeto Micro-SaaS</span></div>
-      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Testar, identificar problemas e <strong>ajustar uma Skill</strong></span></div>
-      <div class="inst"><span class="inst-num">5</span><span class="inst-text">Pedir ao Claude para <strong>criar ou melhorar uma Skill</strong> a partir de um prompt existente</span></div>
-    </div>
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
-      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
-    </div>
+<!-- 00 — VISÃO GERAL -->
+<div class="section active" id="sec-home">
+  <h2 class="sec-title"><span class="snum">00.</span> Visão Geral</h2>
+  <p class="sec-desc">O que você vai aprender e o que vai criar nesta aula.</p>
+
+  <div class="overview-card">
+    <div class="oc-title">Sobre esta aula</div>
+    <div class="oc-row"><span class="oc-label">Aula</span><span class="oc-value">A06 — O Claude que trabalha no seu estilo</span></div>
+    <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">~60 minutos</span></div>
+    <div class="oc-row"><span class="oc-label">Entregável</span><span class="oc-value">2 Skills configuradas e testadas no seu Project</span></div>
   </div>
 
-  <!-- 01 O QUE É UMA SKILL -->
-  <div class="section" id="sec-step1">
-    <div class="sec-title"><span class="snum">01.</span> O que é uma Skill</div>
-    <div class="sec-desc">A diferença entre prompt e fluxo padronizado</div>
-    <table class="content-table">
-      <thead>
-        <tr><th>Sem Skill</th><th>Com Skill</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Reescreve o mesmo prompt toda vez</td><td><strong>Escreve uma vez, reutiliza sempre</strong></td></tr>
-        <tr><td>Resultados inconsistentes</td><td><strong>Output padronizado toda vez</strong></td></tr>
-        <tr><td>Prompt se perde no histórico</td><td><strong>Skill salva em Configurações</strong></td></tr>
-        <tr><td>Para tarefas pontuais</td><td><strong>Para tarefas recorrentes</strong></td></tr>
-      </tbody>
-    </table>
-    <div class="tip-box"><strong>💡 Regra prática:</strong> se você já usou o mesmo prompt mais de duas vezes, vale transformá-lo numa Skill.</div>
-    <p class="intro-text" style="margin-top:14px">Skills não substituem bons prompts — elas <strong>preservam</strong> bons prompts e os tornam disponíveis em qualquer conversa, a qualquer momento, sem precisar lembrar como você escreveu da última vez.</p>
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
-      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
-    </div>
+  <p class="intro-text">Uma <strong>Skill</strong> é um atalho de comportamento que você configura uma vez e aciona com uma frase. Sem reescrever prompt. Sem repetir instruções. O Claude reconhece o gatilho e executa — sempre da mesma forma, sempre com o mesmo padrão.</p>
+  <p class="intro-text">Nesta aula você vai entender quando faz sentido criar uma Skill, como calibrar o gatilho certo e vai sair com as duas Skills que vão acompanhar seu projeto pelo resto do semestre.</p>
+
+  <p class="subsec">O que você vai aprender</p>
+  <div class="checklist">
+    <div class="check-item"><span class="ci-icon">✓</span><div>Entender o que é uma Skill — e o que ela <strong>não é</strong></div></div>
+    <div class="check-item"><span class="ci-icon">✓</span><div>Saber quando vale criar uma Skill (e quando não vale)</div></div>
+    <div class="check-item"><span class="ci-icon">✓</span><div>Conhecer os 3 campos e aprender a <strong>calibrar o gatilho</strong></div></div>
+    <div class="check-item"><span class="ci-icon">✓</span><div>Criar a <strong>Skill 1</strong> — Análise de Entrevista com Cliente</div></div>
+    <div class="check-item"><span class="ci-icon">✓</span><div>Criar a <strong>Skill 2</strong> — Avaliação de Proposta de Valor</div></div>
+    <div class="check-item"><span class="ci-icon">✓</span><div>Testar a generalização das Skills e fazer o ciclo de ajuste</div></div>
   </div>
 
-  <!-- 02 ANATOMIA E CRIAÇÃO -->
-  <div class="section" id="sec-step2">
-    <div class="sec-title"><span class="snum">02.</span> Anatomia e como criar</div>
-    <div class="sec-desc">Os três campos que definem uma Skill</div>
-    <p class="intro-text">Toda Skill tem três componentes. A qualidade de cada um determina se a Skill vai funcionar ou não.</p>
-
-    <div class="subsec">1. Nome</div>
-    <p class="intro-text">Claro e descritivo. Você vai precisar reconhecer para o que serve olhando só o nome.</p>
-    <div class="compare-grid">
-      <div class="compare-card">
-        <div class="compare-card-title"><span>Fraco</span></div>
-        <ul><li>"Análise"</li><li>"Avaliação"</li></ul>
-      </div>
-      <div class="compare-card">
-        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
-        <ul><li>"Análise de entrevista de cliente — OdontoFlow"</li><li>"Avaliação de proposta de valor"</li></ul>
-      </div>
-    </div>
-
-    <div class="subsec">2. Gatilho (Descrição)</div>
-    <p class="intro-text">Define <strong>quando</strong> ativar. Começa com "Use quando...".</p>
-    <div class="compare-grid">
-      <div class="compare-card">
-        <div class="compare-card-title"><span>Fraco</span></div>
-        <ul><li>"Use quando eu pedir uma análise."</li></ul>
-      </div>
-      <div class="compare-card">
-        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
-        <ul><li>"Use quando eu colar notas ou transcrição de uma entrevista com dentista."</li></ul>
-      </div>
-    </div>
-
-    <div class="subsec">3. Instruções de output</div>
-    <p class="intro-text">O que produzir, em quais seções, com qual formato.</p>
-    <div class="compare-grid">
-      <div class="compare-card">
-        <div class="compare-card-title"><span>Fraco</span></div>
-        <ul><li>"Analise e dê um resumo."</li></ul>
-      </div>
-      <div class="compare-card">
-        <div class="compare-card-title"><span style="background:var(--green-bg);color:var(--green-text)">Forte</span></div>
-        <ul><li>"Estruture em 4 seções: dores identificadas, comportamento atual, citações diretas, hipóteses levantadas."</li></ul>
-      </div>
-    </div>
-
-    <div class="subsec">Como criar</div>
-    <div class="instructions">
-      <div class="inst"><span class="inst-num">A</span><span class="inst-text"><strong>Pelo painel:</strong> <code>Configurações → Skills → Nova Skill</code></span></div>
-      <div class="inst"><span class="inst-num">B</span><span class="inst-text"><strong>Pedindo ao Claude:</strong> cole um prompt que já funciona e peça para transformar em Skill — a Demo 3 mostra isso ao vivo</span></div>
-    </div>
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
-      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
-    </div>
+  <div class="nav-buttons">
+    <button class="nav-btn primary" onclick="showSection('sec-step1')">Começar →</button>
   </div>
-
-  <!-- 03 DADOS DA DEMO -->
-  <div class="section" id="sec-step3">
-    <div class="sec-title"><span class="snum">03.</span> Dados da demonstração</div>
-    <div class="sec-desc">Materiais reutilizados da Aula 5 — prontos para copiar</div>
-    <div class="note-box"><strong>📋 Nota para o professor:</strong> esses materiais são os mesmos da Aula 5. A turma já os conhece — o objetivo é mostrar que a Skill transforma o mesmo input num output mais consistente do que uma conversa sem Skill.</div>
-
-    <div class="prep-block">
-      <div class="prep-header">
-        <span class="prep-badge">Prep</span>
-        <span class="prep-title">3 materiais para testar as Skills ao vivo</span>
-      </div>
-
-      <div class="prep-file">
-        <div class="prep-file-name">Material 1 — Transcrição (para testar Skill 1)</div>
-        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '--- TRANSCRIÇÃO — DR. MARCOS OLIVEIRA ---\n\n\"Meu maior problema é que a gente trabalha muito e não tem tempo de ficar \nligando pra paciente. A recepcionista manda WhatsApp quando lembra, mas é \nmuita coisa pra fazer. Semana passada mesmo, eu olhei a agenda e tinha 4 \nburacos que poderiam ter sido preenchidos se a gente tivesse acionado \npacientes que estão sumidos há mais de 6 meses.\"\n\n\"Já tentei uma vez usar uma planilha de Excel pra controlar quem precisava \nvoltar. Funcionou por 3 semanas. Aí minha recepcionista tirou férias, a \nsubstituta não sabia usar e perdemos o controle.\"\n\n\"O que me faz perder mais sono é a fidelização. Você faz um trabalho excelente, \no paciente sai satisfeito, e aí some. Vai pra outra clínica porque aquela \nficou na cabeça dele.\"')">Copiar</button>--- TRANSCRIÇÃO — DR. MARCOS OLIVEIRA ---
-
-"Meu maior problema é que a gente trabalha muito e não tem tempo de ficar
-ligando pra paciente. A recepcionista manda WhatsApp quando lembra, mas é
-muita coisa pra fazer. Semana passada mesmo, eu olhei a agenda e tinha 4
-buracos que poderiam ter sido preenchidos se a gente tivesse acionado
-pacientes que estão sumidos há mais de 6 meses."
-
-"Já tentei uma vez usar uma planilha de Excel pra controlar quem precisava
-voltar. Funcionou por 3 semanas. Aí minha recepcionista tirou férias, a
-substituta não sabia usar e perdemos o controle."
-
-"O que me faz perder mais sono é a fidelização. Você faz um trabalho excelente,
-o paciente sai satisfeito, e aí some. Vai pra outra clínica porque aquela
-ficou na cabeça dele."</div>
-      </div>
-
-      <div class="prep-file">
-        <div class="prep-file-name">Material 2 — Proposta de valor (para testar Skill 2)</div>
-        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'OdontoFlow é um software simples de follow-up automático para clínicas \nodontológicas. Ele envia mensagens personalizadas de reengajamento para \npacientes que estão há mais de 90 dias sem consulta, usando WhatsApp e \nintegrando com a agenda da clínica. Setup em menos de 1 hora, sem equipe de TI.')">Copiar</button>OdontoFlow é um software simples de follow-up automático para clínicas
-odontológicas. Ele envia mensagens personalizadas de reengajamento para
-pacientes que estão há mais de 90 dias sem consulta, usando WhatsApp e
-integrando com a agenda da clínica. Setup em menos de 1 hora, sem equipe de TI.</div>
-      </div>
-
-      <div class="prep-file">
-        <div class="prep-file-name">Material 3 — Atualização semanal (para testar Skill de relatório)</div>
-        <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Essa semana concluí 3 entrevistas — Dr. Marcos, Dra. Carla e Dr. Paulo. \nValidei que a dor de falta de follow-up é real para os 3. Criei a matriz \nde priorização na Aula 5. Ainda preciso entrevistar mais 2 dentistas para \natingir as 5 entrevistas planejadas. Estou bloqueado para marcar as entrevistas \nrestantes porque os contatos ainda não responderam.')">Copiar</button>Essa semana concluí 3 entrevistas — Dr. Marcos, Dra. Carla e Dr. Paulo.
-Validei que a dor de falta de follow-up é real para os 3. Criei a matriz
-de priorização na Aula 5. Ainda preciso entrevistar mais 2 dentistas para
-atingir as 5 entrevistas planejadas. Estou bloqueado para marcar as entrevistas
-restantes porque os contatos ainda não responderam.</div>
-      </div>
-    </div>
-
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
-      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
-    </div>
-  </div>
-
-  <!-- 04 DEMO 1 -->
-  <div class="section" id="sec-step4">
-    <div class="sec-title"><span class="snum">04.</span> Demo 1 — Criando a Skill ao vivo</div>
-    <div class="sec-desc">Skill de análise de entrevista — do zero ao teste em 12 minutos</div>
-    <div class="demo-block">
-      <div class="demo-header">
-        <span class="demo-num">Demo 1</span>
-        <span class="demo-title">Criar e testar a Skill de análise de entrevista</span>
-        <span class="demo-time">12 min</span>
-      </div>
-
-      <div class="demo-step">Passo 1 — Acesse o painel de Skills</div>
-      <p class="intro-text" style="margin-bottom:6px">Navegue até <strong>Configurações → Skills → Nova Skill</strong>. Preencha os três campos:</p>
-
-      <div class="skill-card">
-        <div class="skill-card-field">
-          <div class="skill-field-label">Nome</div>
-          <div class="skill-field-value" style="font-family:'Inter',system-ui,sans-serif;font-size:0.76rem">Análise de entrevista de cliente — OdontoFlow</div>
-        </div>
-        <div class="skill-card-field">
-          <div class="skill-field-label">Descrição (Gatilho)</div>
-          <div class="skill-field-value">Use quando eu colar notas ou transcrição de uma entrevista com
-dono de clínica odontológica para o projeto OdontoFlow.</div>
-        </div>
-        <div class="skill-card-field">
-          <div class="skill-field-label">Instruções</div>
-          <div class="skill-field-value">Ao receber notas ou transcrição de entrevista, gere um Artifact
-estruturado com as seguintes seções:
-
-1. DORES IDENTIFICADAS
-   - Nome da dor (em negrito)
-   - Frequência: 1 vez, repetidamente ou com ênfase
-   - Impacto: alto / médio / baixo
-   - Evidência: o que no texto indica esse impacto
-
-2. COMPORTAMENTO ATUAL
-   - Como resolve (ou tenta) o problema hoje
-   - Ferramentas, processos ou gambiarras mencionadas
-   - Por que a solução atual falha ou é insuficiente
-
-3. CITAÇÕES DIRETAS
-   - Mínimo 3, máximo 5 trechos exatos
-   - Selecione os que melhor evidenciam as dores principais
-
-4. HIPÓTESES PARA O PROJETO
-   - O que confirma sobre o problema central do OdontoFlow
-   - O que contradiz ou nuança a hipótese atual
-   - Uma pergunta que essa entrevista levanta
-
-Finalize com: "Essa entrevista [confirma/contradiz/nuança] a hipótese
-principal porque [razão em 1 frase]."</div>
-        </div>
-      </div>
-      <div class="copy-block" style="margin-top:8px"><button class="copy-btn" onclick="copyText(this, 'Ao receber notas ou transcrição de entrevista, gere um Artifact \nestruturado com as seguintes seções:\n\n1. DORES IDENTIFICADAS\n   - Nome da dor (em negrito)\n   - Frequência: 1 vez, repetidamente ou com ênfase\n   - Impacto: alto / médio / baixo\n   - Evidência: o que no texto indica esse impacto\n\n2. COMPORTAMENTO ATUAL\n   - Como resolve (ou tenta) o problema hoje\n   - Ferramentas, processos ou gambiarras mencionadas\n   - Por que a solução atual falha ou é insuficiente\n\n3. CITAÇÕES DIRETAS\n   - Mínimo 3, máximo 5 trechos exatos\n   - Selecione os que melhor evidenciam as dores principais\n\n4. HIPÓTESES PARA O PROJETO\n   - O que confirma sobre o problema central do OdontoFlow\n   - O que contradiz ou nuança a hipótese atual\n   - Uma pergunta que essa entrevista levanta\n\nFinalize com: \"Essa entrevista [confirma/contradiz/nuança] a hipótese\nprincipal porque [razão em 1 frase].\"')">Copiar instruções</button><span class="label">instruções completas — colar no campo da Skill</span>Ao receber notas ou transcrição de entrevista, gere um Artifact
-estruturado com as seguintes seções:
-
-1. DORES IDENTIFICADAS
-   - Nome da dor (em negrito)
-   - Frequência: 1 vez, repetidamente ou com ênfase
-   - Impacto: alto / médio / baixo
-   - Evidência: o que no texto indica esse impacto
-
-2. COMPORTAMENTO ATUAL
-   - Como resolve (ou tenta) o problema hoje
-   - Ferramentas, processos ou gambiarras mencionadas
-   - Por que a solução atual falha ou é insuficiente
-
-3. CITAÇÕES DIRETAS
-   - Mínimo 3, máximo 5 trechos exatos
-   - Selecione os que melhor evidenciam as dores principais
-
-4. HIPÓTESES PARA O PROJETO
-   - O que confirma sobre o problema central do OdontoFlow
-   - O que contradiz ou nuança a hipótese atual
-   - Uma pergunta que essa entrevista levanta
-
-Finalize com: "Essa entrevista [confirma/contradiz/nuança] a hipótese
-principal porque [razão em 1 frase]."</div>
-
-      <div class="demo-step">Passo 2 — Teste imediatamente</div>
-      <p class="intro-text" style="margin-bottom:6px">Abra uma nova conversa dentro do Project. Envie <strong>apenas a transcrição do Dr. Marcos</strong> — sem nenhuma instrução adicional (disponível na seção "Dados da Demo").</p>
-
-      <div class="speaker-box" style="margin-top:4px"><strong>🗣️ Nota do instrutor:</strong> <em>"Não dei nenhuma instrução — só colei a transcrição. O Claude reconheceu o gatilho da Skill e aplicou a estrutura automaticamente. Compare com a Aula 5: precisaríamos de um prompt longo toda vez."</em></div>
-    </div>
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
-      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
-    </div>
-  </div>
-
-  <!-- 05 DEMO 2 -->
-  <div class="section" id="sec-step5">
-    <div class="sec-title"><span class="snum">05.</span> Demo 2 — Com Skill vs. sem Skill</div>
-    <div class="sec-desc">Tornando visível a diferença de consistência</div>
-    <div class="demo-block">
-      <div class="demo-header">
-        <span class="demo-num">Demo 2</span>
-        <span class="demo-title">Comparação direta — mesmo input, resultados diferentes</span>
-        <span class="demo-time">8 min</span>
-      </div>
-
-      <div class="demo-step">Passo 1 — Sem Skill (conversa comum)</div>
-      <p class="intro-text" style="margin-bottom:6px">Abra uma conversa <strong>fora do Project</strong>, sem nenhuma Skill configurada. Envie a mesma transcrição do Dr. Marcos sem nenhuma instrução.</p>
-      <p class="intro-text" style="margin-bottom:6px">A resposta será texto corrido, sem as 4 seções e provavelmente sem Artifact.</p>
-
-      <div class="demo-step">Passo 2 — Com Skill (dentro do Project)</div>
-      <p class="intro-text" style="margin-bottom:6px">Volte para uma conversa dentro do Project com a Skill ativada. Envie o mesmo input.</p>
-      <p class="intro-text" style="margin-bottom:6px">Mostre os dois resultados lado a lado.</p>
-
-      <div class="speaker-box" style="margin-top:4px"><strong>🗣️ Nota do instrutor:</strong> <em>"Mesma transcrição, dois resultados completamente diferentes. A Skill garante que toda análise de entrevista — independente de quando você fizer ou em qual conversa — vai seguir o mesmo padrão. Isso é especialmente útil quando você tem 5, 8, 10 entrevistas para analisar."</em></div>
-    </div>
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
-      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
-    </div>
-  </div>
-
-  <!-- 06 DEMO 3 -->
-  <div class="section" id="sec-step6">
-    <div class="sec-title"><span class="snum">06.</span> Demo 3 — Claude cria a Skill</div>
-    <div class="sec-desc">Transformar um prompt existente em Skill em 2 minutos</div>
-    <div class="demo-block">
-      <div class="demo-header">
-        <span class="demo-num">Demo 3</span>
-        <span class="demo-title">De prompt recorrente a Skill estruturada</span>
-        <span class="demo-time">8 min</span>
-      </div>
-
-      <div class="demo-step">Passo 1 — Peça ao Claude para criar a Skill</div>
-      <p class="intro-text" style="margin-bottom:6px">Abra uma conversa dentro do Project. Envie:</p>
-      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Tenho usado este prompt repetidamente para avaliar a proposta de valor \ndo OdontoFlow:\n\n"Avalie esta proposta de valor considerando: \n(1) clareza para o usuário de 1 a 5, \n(2) diferenciação em relação a OdontoSoft e iClinic de 1 a 5, \n(3) alinhamento com a dor de follow-up manual de 1 a 5, \n(4) viabilidade para um estudante construir em 3 meses de 1 a 5.\nDê nota, justificativa de 1 linha para cada critério, \ne reescreva a proposta incorporando as melhorias sugeridas."\n\nTransforme esse prompt em uma Skill estruturada com:\n- Nome claro e descritivo\n- Gatilho específico de quando deve ser ativada\n- Instruções de output com seções definidas\n\nFormate pronto para colar no painel de Skills do Claude.')">Copiar</button>Tenho usado este prompt repetidamente para avaliar a proposta de valor
-do OdontoFlow:
-
-"Avalie esta proposta de valor considerando:
-(1) clareza para o usuário de 1 a 5,
-(2) diferenciação em relação a OdontoSoft e iClinic de 1 a 5,
-(3) alinhamento com a dor de follow-up manual de 1 a 5,
-(4) viabilidade para um estudante construir em 3 meses de 1 a 5.
-Dê nota, justificativa de 1 linha para cada critério,
-e reescreva a proposta incorporando as melhorias sugeridas."
-
-Transforme esse prompt em uma Skill estruturada com:
-- Nome claro e descritivo
-- Gatilho específico de quando deve ser ativada
-- Instruções de output com seções definidas
-
-Formate pronto para colar no painel de Skills do Claude.</div>
-
-      <div class="demo-step">Passo 2 — Cole no painel e teste</div>
-      <p class="intro-text" style="margin-bottom:6px">Copie o resultado gerado → cole em <strong>Configurações → Skills → Nova Skill</strong>. Depois teste enviando a proposta de valor do OdontoFlow (disponível na seção "Dados da Demo").</p>
-
-      <div class="speaker-box" style="margin-top:4px"><strong>🗣️ Nota do instrutor:</strong> <em>"Transformei um prompt que já usava em uma Skill em menos de 2 minutos. Daqui pra frente, toda vez que reformular a proposta de valor — o que vai acontecer várias vezes ao longo do semestre — recebo a avaliação com a mesma estrutura."</em></div>
-    </div>
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
-      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
-    </div>
-  </div>
-
-  <!-- 07 DEMO 4 -->
-  <div class="section" id="sec-step7">
-    <div class="sec-title"><span class="snum">07.</span> Demo 4 — Testar e ajustar uma Skill</div>
-    <div class="sec-desc">A primeira versão raramente é perfeita — o ciclo de melhoria</div>
-    <div class="demo-block">
-      <div class="demo-header">
-        <span class="demo-num">Demo 4</span>
-        <span class="demo-title">Ciclo: criar → testar → identificar → corrigir</span>
-        <span class="demo-time">7 min</span>
-      </div>
-
-      <div class="demo-step">Passo 1 — Criar a Skill de relatório semanal (antes da aula)</div>
-      <p class="intro-text" style="margin-bottom:6px">Crie essa Skill antes da aula ou ao vivo, colando as instruções abaixo:</p>
-      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Nome: Relatório semanal — OdontoFlow\n\nGatilho:\nUse quando eu descrever o que aconteceu durante a semana no projeto.\n\nInstruções:\nGere um Artifact de relatório com:\n- Resumo executivo (3 linhas)\n- O que foi feito\n- Decisões tomadas\n- Próximos passos priorizados\n- Bloqueios')">Copiar</button><span class="label">instruções da Skill de relatório semanal</span>Nome: Relatório semanal — OdontoFlow
-
-Gatilho:
-Use quando eu descrever o que aconteceu durante a semana no projeto.
-
-Instruções:
-Gere um Artifact de relatório com:
-- Resumo executivo (3 linhas)
-- O que foi feito
-- Decisões tomadas
-- Próximos passos priorizados
-- Bloqueios</div>
-
-      <div class="demo-step">Passo 2 — Teste com a atualização semanal</div>
-      <p class="intro-text" style="margin-bottom:6px">Abra uma conversa no Project e envie o Material 3 da seção "Dados da Demo" (atualização semanal sintética) sem nenhuma instrução adicional.</p>
-
-      <div class="demo-step">Passo 3 — Identifique um problema no output</div>
-      <p class="intro-text" style="margin-bottom:6px">Por exemplo: os próximos passos foram listados sem prazo nem dependências. Use o prompt abaixo para corrigir:</p>
-      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'A Skill de relatório semanal gerou esse output:\n[cole o output]\n\nO problema: os próximos passos não têm prazo nem indicação de dependências.\nReescreva as instruções da Skill para que os próximos passos sempre incluam:\n(1) descrição da tarefa, (2) prazo estimado e (3) dependências (se existirem).\nMantenha o restante da estrutura.')">Copiar</button>A Skill de relatório semanal gerou esse output:
-[cole o output]
-
-O problema: os próximos passos não têm prazo nem indicação de dependências.
-Reescreva as instruções da Skill para que os próximos passos sempre incluam:
-(1) descrição da tarefa, (2) prazo estimado e (3) dependências (se existirem).
-Mantenha o restante da estrutura.</div>
-
-      <div class="demo-step">Passo 4 — Cole as instruções atualizadas e teste novamente</div>
-      <p class="intro-text">Substitua as instruções da Skill no painel e envie o mesmo input. A saída deve incluir prazo e dependências nos próximos passos.</p>
-
-      <div class="speaker-box" style="margin-top:4px"><strong>🗣️ Nota do instrutor:</strong> <em>"O ciclo é: criar → testar → identificar o problema → corrigir com ajuda do Claude → testar de novo. Skills raramente ficam perfeitas na primeira versão — mas melhoram rápido."</em></div>
-    </div>
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
-      <button class="nav-btn primary" onclick="showSection('sec-step8')">Próximo →</button>
-    </div>
-  </div>
-
-  <!-- 08 PRÁTICA + ENTREGÁVEL -->
-  <div class="section" id="sec-step8">
-    <div class="sec-title"><span class="snum">08.</span> Prática + Entregável</div>
-    <div class="sec-desc">Crie as 3 Skills do seu projeto agora</div>
-
-    <div class="subsec">Skill 1 — Análise de entrevista</div>
-    <p class="intro-text" style="margin-bottom:6px">Acesse <strong>Configurações → Skills → Nova Skill</strong>. Cole e adapte para o seu projeto:</p>
-    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Nome: Análise de entrevista de cliente — [nome do projeto]\n\nGatilho:\nUse quando eu colar notas ou transcrição de uma entrevista \ncom usuário potencial do meu Micro-SaaS.\n\nInstruções:\nGere um Artifact com 4 seções:\n\n1. DORES IDENTIFICADAS\n   - Nome da dor, frequência, impacto (alto/médio/baixo), evidência\n\n2. COMPORTAMENTO ATUAL\n   - Como resolve hoje, ferramentas usadas, por que falha\n\n3. CITAÇÕES DIRETAS\n   - 3 a 5 trechos exatos que evidenciam as dores principais\n\n4. HIPÓTESES PARA O PROJETO\n   - O que confirma, contradiz ou nuança a hipótese central\n   - Uma pergunta que vale investigar nas próximas entrevistas\n\nFinalize com: \"Essa entrevista [confirma/contradiz/nuança] a hipótese\nprincipal porque [razão].\"')">Copiar</button><span class="label">Skill 1 — análise de entrevista (adaptar para seu projeto)</span>Nome: Análise de entrevista de cliente — [nome do projeto]
-
-Gatilho:
-Use quando eu colar notas ou transcrição de uma entrevista
-com usuário potencial do meu Micro-SaaS.
-
-Instruções:
-Gere um Artifact com 4 seções:
-
-1. DORES IDENTIFICADAS
-   - Nome da dor, frequência, impacto (alto/médio/baixo), evidência
-
-2. COMPORTAMENTO ATUAL
-   - Como resolve hoje, ferramentas usadas, por que falha
-
-3. CITAÇÕES DIRETAS
-   - 3 a 5 trechos exatos que evidenciam as dores principais
-
-4. HIPÓTESES PARA O PROJETO
-   - O que confirma, contradiz ou nuança a hipótese central
-   - Uma pergunta que vale investigar nas próximas entrevistas
-
-Finalize com: "Essa entrevista [confirma/contradiz/nuança] a hipótese
-principal porque [razão]."</div>
-
-    <div class="subsec">Skill 2 — Avaliação de proposta de valor</div>
-    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Nome: Avaliação de proposta de valor — [nome do projeto]\n\nGatilho:\nUse quando eu descrever ou pedir feedback sobre a proposta de valor.\n\nInstruções:\nAvalie em Artifact com:\n1. Notas por critério (1–5 com justificativa de 1 linha):\n   - Clareza para o usuário\n   - Diferenciação em relação a concorrentes\n   - Alinhamento com as dores validadas\n   - Viabilidade técnica para um estudante\n2. Pontos fortes (até 3)\n3. Gaps críticos (até 3)\n4. Sugestão de reformulação em até 2 frases')">Copiar</button><span class="label">Skill 2 — avaliação de proposta de valor</span>Nome: Avaliação de proposta de valor — [nome do projeto]
-
-Gatilho:
-Use quando eu descrever ou pedir feedback sobre a proposta de valor.
-
-Instruções:
-Avalie em Artifact com:
-1. Notas por critério (1–5 com justificativa de 1 linha):
-   - Clareza para o usuário
-   - Diferenciação em relação a concorrentes
-   - Alinhamento com as dores validadas
-   - Viabilidade técnica para um estudante
-2. Pontos fortes (até 3)
-3. Gaps críticos (até 3)
-4. Sugestão de reformulação em até 2 frases</div>
-
-    <div class="subsec">Skill 3 — A partir de um prompt seu</div>
-    <p class="intro-text" style="margin-bottom:6px">Pense num prompt que você já usou mais de uma vez. Cole e envie:</p>
-    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Tenho usado este prompt com frequência:\n[cole seu prompt]\n\nTransforme em Skill com nome, gatilho e instruções detalhadas.\nFormate pronto para colar no painel de Skills.')">Copiar</button>Tenho usado este prompt com frequência:
-[cole seu prompt]
-
-Transforme em Skill com nome, gatilho e instruções detalhadas.
-Formate pronto para colar no painel de Skills.</div>
-
-    <div class="subsec">Testar e ajustar</div>
-    <p class="intro-text" style="margin-bottom:6px">Para qualquer Skill que não ficou satisfatória:</p>
-    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Esta é minha Skill: [instruções]\nTestei com: [input]\nO output foi: [output]\nProblema: [o que ficou errado]\n\nReescreva as instruções para corrigir, mantendo o que já funcionava.')">Copiar</button>Esta é minha Skill: [instruções]
-Testei com: [input]
-O output foi: [output]
-Problema: [o que ficou errado]
-
-Reescreva as instruções para corrigir, mantendo o que já funcionava.</div>
-
-    <div class="subsec">Entregável da aula</div>
-    <div class="checklist">
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Skill de análise de entrevista</strong> criada, testada e funcionando</span></div>
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Skill de avaliação de proposta de valor</strong> criada e testada</span></div>
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Skill adicional</strong> criada a partir de um prompt recorrente seu</span></div>
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Pelo menos uma Skill ajustada</strong> após ciclo de teste e melhoria</span></div>
-    </div>
-    <div class="next-teaser"><strong>Próxima aula — A07: Claude Cowork</strong><br>Como delegar tarefas com arquivos locais do seu computador — sem copiar e colar manualmente.</div>
-    <div class="nav-buttons">
-      <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
-      <button class="nav-btn primary" onclick="goHome()">↩ Recomeçar</button>
-    </div>
-  </div>
-
 </div>
+
+<!-- 01 — O QUE É UMA SKILL -->
+<div class="section" id="sec-step1">
+  <h2 class="sec-title"><span class="snum">01.</span> O que é uma Skill — e o que ela não é</h2>
+  <p class="sec-desc">Entenda o conceito antes de criar.</p>
+
+  <p class="intro-text">Uma <strong>Skill</strong> é um atalho de comportamento persistente. Você define uma vez: um nome, uma condição de disparo (o gatilho) e o que o Claude deve fazer. Quando você envia uma mensagem que corresponde ao gatilho, o Claude executa automaticamente — sem você precisar repetir as instruções.</p>
+
+  <p class="subsec">Analogia</p>
+  <p class="intro-text">Pense em uma <strong>macro no Excel</strong>. Você grava o padrão uma vez. Depois, basta um atalho de teclado para executar. A Skill funciona igual: você configura o comportamento uma vez, e o gatilho é o atalho.</p>
+
+  <p class="subsec">O que uma Skill NÃO é</p>
+  <div class="instructions">
+    <div class="inst">
+      <div class="inst-num" style="background:var(--red)">✕</div>
+      <div class="inst-text"><strong>Não é uma conversa salva.</strong> Skills não guardam histórico de mensagens anteriores. Cada conversa ainda começa do zero — a Skill só define como o Claude se comporta dentro da conversa.</div>
+    </div>
+    <div class="inst">
+      <div class="inst-num" style="background:var(--red)">✕</div>
+      <div class="inst-text"><strong>Não é um Project.</strong> Skills não armazenam documentos nem criam memória permanente sobre o seu projeto. Para isso você usa o Project com instruções e arquivos (Aula 04).</div>
+    </div>
+    <div class="inst">
+      <div class="inst-num" style="background:var(--red)">✕</div>
+      <div class="inst-text"><strong>Não é um prompt que você cola toda vez.</strong> A diferença é que você não precisa escrever as instruções a cada conversa — o Claude já sabe o que fazer assim que reconhece o gatilho.</div>
+    </div>
+  </div>
+
+  <p class="subsec">Skill vs. Instrução no Project</p>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-title"><span>Instrução no Project</span>Comportamento geral</div>
+      <ul>
+        <li>Sempre responder em português</li>
+        <li>Usar formato de lista com múltiplos itens</li>
+        <li>Adotar tom direto e objetivo</li>
+        <li>Aplicado em toda e qualquer conversa</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-title"><span>Skill</span>Comportamento específico</div>
+      <ul>
+        <li>Acionado por um gatilho definido</li>
+        <li>Executa estrutura específica de análise</li>
+        <li>Pode existir múltiplas Skills paralelas</li>
+        <li>Só dispara quando o gatilho aparece</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+    <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+  </div>
+</div>
+
+<!-- 02 — QUANDO CRIAR -->
+<div class="section" id="sec-step2">
+  <h2 class="sec-title"><span class="snum">02.</span> Quando criar — e quando não criar</h2>
+  <p class="sec-desc">Três perguntas para decidir se vale o esforço de configurar.</p>
+
+  <p class="intro-text">Antes de criar uma Skill, passe pelas três perguntas abaixo. Se responder <strong>sim</strong> para pelo menos duas, vale a pena criar.</p>
+
+  <div class="instructions">
+    <div class="inst">
+      <div class="inst-num">1</div>
+      <div class="inst-text"><strong>Você repete essa tarefa mais de uma vez por semana?</strong><br><em>Se for uma tarefa rara ou única, um bom prompt direto na hora resolve melhor e com menos configuração.</em></div>
+    </div>
+    <div class="inst">
+      <div class="inst-num">2</div>
+      <div class="inst-text"><strong>A tarefa tem um padrão claro de entrada e saída?</strong><br><em>Se a estrutura da resposta esperada varia muito a cada vez, a Skill fica rígida demais — você vai precisar reescrever de qualquer forma.</em></div>
+    </div>
+    <div class="inst">
+      <div class="inst-num">3</div>
+      <div class="inst-text"><strong>Você já tem um prompt que copia em conversas diferentes?</strong><br><em>Esse é o sinal mais direto. Se você já tem um prompt que funciona e só copia ele, esse prompt deve virar Skill.</em></div>
+    </div>
+  </div>
+
+  <p class="subsec">Quando NÃO criar uma Skill</p>
+  <div class="warning-box">
+    <strong>Evite criar Skills quando:</strong><br>
+    · A tarefa é esporádica ou única — prefira um prompt direto<br>
+    · O pedido é vago demais ("me ajude com meu projeto") — sem padrão de entrada definido, o gatilho não pode ser calibrado<br>
+    · Você ainda está descobrindo o formato ideal da resposta — espere estabilizar antes de configurar
+  </div>
+
+  <p class="subsec">Exemplos do projeto</p>
+  <table class="content-table">
+    <thead>
+      <tr><th>Tarefa</th><th>Criar Skill?</th><th>Por quê</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Analisar transcrição de entrevista</td>
+        <td><strong>✅ Sim</strong></td>
+        <td><em>Repetitiva, padrão claro, mesmas seções toda vez</em></td>
+      </tr>
+      <tr>
+        <td>Avaliar proposta de valor</td>
+        <td><strong>✅ Sim</strong></td>
+        <td><em>Critérios fixos, reutiliza em múltiplos rascunhos</em></td>
+      </tr>
+      <tr>
+        <td>Responder e-mail pontual do grupo</td>
+        <td><strong>❌ Não</strong></td>
+        <td><em>Contexto único, não generaliza para outros e-mails</em></td>
+      </tr>
+      <tr>
+        <td>"Me ajude a pensar no problema"</td>
+        <td><strong>❌ Não</strong></td>
+        <td><em>Sem padrão de entrada — gatilho impossível de calibrar</em></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="nav-buttons">
+    <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+    <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+  </div>
+</div>
+
+<!-- 03 — ANATOMIA DA SKILL -->
+<div class="section" id="sec-step3">
+  <h2 class="sec-title"><span class="snum">03.</span> Anatomia da Skill</h2>
+  <p class="sec-desc">Os três campos e como calibrar o gatilho certo.</p>
+
+  <p class="intro-text">Toda Skill tem exatamente <strong>três campos</strong>. O mais crítico é o Gatilho — é ele que determina se a Skill vai disparar no momento certo ou nunca disparar.</p>
+
+  <div class="skill-card">
+    <div class="skill-card-field">
+      <div class="skill-field-label">Campo 1 — Nome</div>
+      <div class="skill-field-value">Identificação interna da Skill. Use um nome descritivo que você vai reconhecer na lista.
+Ex: "Análise de Entrevista com Cliente"</div>
+    </div>
+    <div class="skill-card-field">
+      <div class="skill-field-label">Campo 2 — Gatilho</div>
+      <div class="skill-field-value">A condição que aciona a Skill. O Claude monitora suas mensagens e, ao identificar o gatilho, executa as instruções automaticamente.
+Ex: "Quando eu enviar uma transcrição de entrevista com potencial cliente"</div>
+    </div>
+    <div class="skill-card-field">
+      <div class="skill-field-label">Campo 3 — Instruções</div>
+      <div class="skill-field-value">O que o Claude deve fazer quando o gatilho é ativado: o comportamento esperado, o formato de resposta e o nível de detalhe.
+Ex: "Identifique as principais dores, jobs-to-be-done, objeções, disposição para contratar e gere 3 insights..."</div>
+    </div>
+  </div>
+
+  <p class="subsec">Calibrando o gatilho</p>
+  <p class="intro-text">O gatilho precisa ser específico o suficiente para não disparar por acidente, mas genérico o suficiente para generalizar para casos futuros. Veja a diferença:</p>
+
+  <table class="content-table">
+    <thead>
+      <tr><th>Tipo</th><th>Exemplo</th><th>Por que não funciona</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Vago</strong></td>
+        <td>"análise"</td>
+        <td><em>Claude não sabe quando acionar — pode disparar em qualquer pedido de análise, mesmo sem ser entrevista</em></td>
+      </tr>
+      <tr>
+        <td><strong>Específico demais</strong></td>
+        <td>"Analise a entrevista do Dr. Marcos Silva feita em 12/04"</td>
+        <td><em>Nunca vai disparar para outros entrevistados ou outras datas — inutilizável</em></td>
+      </tr>
+      <tr>
+        <td><strong>✅ Bem calibrado</strong></td>
+        <td>"Quando eu enviar uma transcrição de entrevista com potencial cliente"</td>
+        <td><em>Generaliza para qualquer entrevista futura do projeto — exatamente o que queremos</em></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip-box">
+    <strong>Regra prática:</strong> escreva o gatilho pensando em "para quais casos futuros eu quero que isso dispare?" Se a resposta cobrir os próximos 10 usos com natureza similar, o gatilho está bem calibrado.
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+    <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+  </div>
+</div>
+
+<!-- 04 — COMO CRIAR -->
+<div class="section" id="sec-step4">
+  <h2 class="sec-title"><span class="snum">04.</span> Como criar uma Skill</h2>
+  <p class="sec-desc">Dois caminhos: manual ou gerando via Claude.</p>
+
+  <p class="subsec">Caminho 1 — Criar manualmente</p>
+  <div class="instructions">
+    <div class="inst">
+      <div class="inst-num">1</div>
+      <div class="inst-text">Abra o Claude.ai e clique no seu <strong>nome ou avatar</strong> no canto inferior esquerdo da tela.</div>
+    </div>
+    <div class="inst">
+      <div class="inst-num">2</div>
+      <div class="inst-text">Acesse <strong>Settings → Skills</strong> (ou "Habilidades", dependendo do idioma da interface).</div>
+    </div>
+    <div class="inst">
+      <div class="inst-num">3</div>
+      <div class="inst-text">Clique em <strong>"Create new Skill"</strong> e preencha os três campos: Nome, Gatilho e Instruções.</div>
+    </div>
+    <div class="inst">
+      <div class="inst-num">4</div>
+      <div class="inst-text">Clique em <strong>Save</strong>. A Skill fica disponível em todas as conversas — inclusive dentro do seu Project.</div>
+    </div>
+  </div>
+
+  <p class="subsec">Caminho 2 — Pedir para o Claude gerar a Skill</p>
+  <p class="intro-text">Se você já tem um prompt que funciona, pode pedir para o Claude transformá-lo em uma Skill completa. Cole o prompt abaixo em uma conversa nova, substituindo <code>[COLE SEU PROMPT AQUI]</code>:</p>
+
+  <div class="copy-block">
+    <span class="label">Prompt — Caminho 2</span>
+    <button class="copy-btn" onclick="copyText(this, 'Quero criar uma Skill no Claude a partir do seguinte prompt que já uso:\n\n[COLE SEU PROMPT AQUI]\n\nPor favor, gere para mim:\n1. Um Nome para a Skill (curto e descritivo)\n2. Um Gatilho bem calibrado — específico o suficiente para não disparar por acidente, genérico o suficiente para funcionar em casos futuros similares\n3. Instruções completas — o que o Claude deve fazer, em qual formato e com qual nível de detalhe\n\nFormate a resposta nos três campos separados, prontos para eu copiar direto no formulário de criação da Skill.')">Copiar</button>
+Quero criar uma Skill no Claude a partir do seguinte prompt que já uso:
+
+[COLE SEU PROMPT AQUI]
+
+Por favor, gere para mim:
+1. Um Nome para a Skill (curto e descritivo)
+2. Um Gatilho bem calibrado — específico o suficiente para não
+   disparar por acidente, genérico o suficiente para funcionar
+   em casos futuros similares
+3. Instruções completas — o que o Claude deve fazer, em qual
+   formato e com qual nível de detalhe
+
+Formate a resposta nos três campos separados, prontos para eu
+copiar direto no formulário de criação da Skill.</div>
+
+  <div class="note-box">
+    <strong>Qual caminho usar?</strong> Se você já tem um prompt testado e funcionando, use o Caminho 2 — o Claude vai gerar um gatilho mais preciso do que você escreveria na mão. Se está criando do zero, use o Caminho 1 com os campos das seções 05 e 06 (já prontos para copiar).
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+    <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+  </div>
+</div>
+
+<!-- 05 — SKILL 1 -->
+<div class="section" id="sec-step5">
+  <h2 class="sec-title"><span class="snum">05.</span> Skill 1 — Análise de Entrevista</h2>
+  <p class="sec-desc">Campos prontos para copiar e configurar no Claude.</p>
+
+  <p class="intro-text">Esta Skill será acionada toda vez que você enviar uma transcrição de entrevista. Ela devolve uma análise estruturada no mesmo formato — sem você precisar reescrever o prompt a cada nova entrevista.</p>
+
+  <div class="speaker-box">
+    🗣️ <strong>Nota do instrutor:</strong> Você vai usar esta Skill nas Demos 1 e 2. Antes de criá-la, leia os campos abaixo e entenda cada parte — especialmente o gatilho e o que as instruções pedem nas 7 seções.
+  </div>
+
+  <p class="subsec">Campo 1 — Nome</p>
+  <div class="copy-block">
+    <button class="copy-btn" onclick="copyText(this, 'Análise de Entrevista com Cliente')">Copiar</button>
+Análise de Entrevista com Cliente</div>
+
+  <p class="subsec">Campo 2 — Gatilho</p>
+  <div class="copy-block">
+    <button class="copy-btn" onclick="copyText(this, 'Quando eu enviar uma transcrição de entrevista com potencial cliente')">Copiar</button>
+Quando eu enviar uma transcrição de entrevista com potencial cliente</div>
+
+  <p class="subsec">Campo 3 — Instruções</p>
+  <div class="copy-block">
+    <button class="copy-btn" onclick="copyText(this, 'Analise a transcrição de entrevista com potencial cliente e estruture a resposta nas seguintes seções:\n\n1. PERFIL DO ENTREVISTADO\nNome, cargo/área e contexto relevante identificado na conversa.\n\n2. DORES PRINCIPAIS\nListe as 3 a 5 principais dores mencionadas (explícitas ou implícitas). Para cada dor, indique se foi mencionada de forma direta ou inferida do contexto.\n\n3. JOBS-TO-BE-DONE\nO que o entrevistado está tentando realizar? Liste os trabalhos funcionais, emocionais e sociais identificados.\n\n4. OBJEÇÕES E BARREIRAS\nO que poderia impedir essa pessoa de adotar uma solução? Liste objeções explícitas e barreiras inferidas.\n\n5. DISPOSIÇÃO PARA CONTRATAR\nEscore de 1 a 5 (1 = muito baixa, 5 = muito alta) com justificativa baseada em evidências da transcrição.\n\n6. SÍNTESE EM UMA FRASE\nUma frase que captura o essencial desta entrevista para quem não a leu.\n\n7. TOP 3 INSIGHTS\nOs três insights mais importantes para o projeto, em ordem de relevância.')">Copiar</button>
+Analise a transcrição de entrevista com potencial cliente e estruture
+a resposta nas seguintes seções:
+
+1. PERFIL DO ENTREVISTADO
+   Nome, cargo/área e contexto relevante identificado na conversa.
+
+2. DORES PRINCIPAIS
+   Liste as 3 a 5 principais dores mencionadas (explícitas ou implícitas).
+   Para cada dor, indique se foi mencionada de forma direta ou inferida
+   do contexto.
+
+3. JOBS-TO-BE-DONE
+   O que o entrevistado está tentando realizar? Liste os trabalhos
+   funcionais, emocionais e sociais identificados.
+
+4. OBJEÇÕES E BARREIRAS
+   O que poderia impedir essa pessoa de adotar uma solução? Liste
+   objeções explícitas e barreiras inferidas.
+
+5. DISPOSIÇÃO PARA CONTRATAR
+   Escore de 1 a 5 (1 = muito baixa, 5 = muito alta) com justificativa
+   baseada em evidências da transcrição.
+
+6. SÍNTESE EM UMA FRASE
+   Uma frase que captura o essencial desta entrevista para quem
+   não a leu.
+
+7. TOP 3 INSIGHTS
+   Os três insights mais importantes para o projeto, em ordem de
+   relevância.</div>
+
+  <div class="tip-box">
+    <strong>Pronto para criar?</strong> Abra Claude.ai → Settings → Skills → Create new Skill. Cole cada campo acima. Na seção 07 (Dados Demo) você encontra as transcrições para testar após criar.
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+    <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+  </div>
+</div>
+
+<!-- 06 — SKILL 2 -->
+<div class="section" id="sec-step6">
+  <h2 class="sec-title"><span class="snum">06.</span> Skill 2 — Avaliação de Proposta de Valor</h2>
+  <p class="sec-desc">Campos prontos para copiar e configurar no Claude.</p>
+
+  <p class="intro-text">Esta Skill avalia qualquer proposta de valor que você escrever — com os mesmos critérios toda vez. Útil ao longo de todo o semestre, à medida que você itera e refina a proposta do projeto.</p>
+
+  <p class="subsec">Campo 1 — Nome</p>
+  <div class="copy-block">
+    <button class="copy-btn" onclick="copyText(this, 'Avaliação de Proposta de Valor')">Copiar</button>
+Avaliação de Proposta de Valor</div>
+
+  <p class="subsec">Campo 2 — Gatilho</p>
+  <div class="copy-block">
+    <button class="copy-btn" onclick="copyText(this, 'Quando eu pedir para avaliar uma proposta de valor')">Copiar</button>
+Quando eu pedir para avaliar uma proposta de valor</div>
+
+  <p class="subsec">Campo 3 — Instruções</p>
+  <div class="copy-block">
+    <button class="copy-btn" onclick="copyText(this, 'Avalie a proposta de valor fornecida usando os seguintes critérios:\n\n1. CLAREZA (1 a 10)\nA proposta é compreensível para alguém que não conhece o projeto? O problema resolvido fica claro em menos de 10 segundos de leitura?\n\n2. ALINHAMENTO COM DORES (1 a 10)\nA proposta se conecta com dores reais identificadas em entrevistas? Cite a dor específica que ela endereça.\n\n3. DIFERENCIAÇÃO (1 a 10)\nO que torna essa proposta diferente de soluções já existentes? Há um elemento de singularidade identificável?\n\n4. LINGUAGEM DO CLIENTE (1 a 10)\nA proposta usa as palavras que o cliente usaria para descrever seu próprio problema? Ou usa jargão interno do projeto?\n\n5. PONTUAÇÃO GERAL\nMédia dos quatro critérios com uma frase de justificativa.\n\n6. TOP 3 MELHORIAS SUGERIDAS\nAs três mudanças mais impactantes, da mais urgente para a menos urgente. Para cada uma: o problema identificado, a sugestão de mudança e um exemplo da frase reescrita.')">Copiar</button>
+Avalie a proposta de valor fornecida usando os seguintes critérios:
+
+1. CLAREZA (1 a 10)
+   A proposta é compreensível para alguém que não conhece o projeto?
+   O problema resolvido fica claro em menos de 10 segundos de leitura?
+
+2. ALINHAMENTO COM DORES (1 a 10)
+   A proposta se conecta com dores reais identificadas em entrevistas?
+   Cite a dor específica que ela endereça.
+
+3. DIFERENCIAÇÃO (1 a 10)
+   O que torna essa proposta diferente de soluções já existentes?
+   Há um elemento de singularidade identificável?
+
+4. LINGUAGEM DO CLIENTE (1 a 10)
+   A proposta usa as palavras que o cliente usaria para descrever
+   seu próprio problema? Ou usa jargão interno do projeto?
+
+5. PONTUAÇÃO GERAL
+   Média dos quatro critérios com uma frase de justificativa.
+
+6. TOP 3 MELHORIAS SUGERIDAS
+   As três mudanças mais impactantes, da mais urgente à menos urgente.
+   Para cada uma: o problema, a sugestão de mudança e um exemplo
+   da frase reescrita.</div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+    <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+  </div>
+</div>
+
+<!-- 07 — DADOS DAS DEMOS -->
+<div class="section" id="sec-step7">
+  <h2 class="sec-title"><span class="snum">07.</span> Dados das Demonstrações</h2>
+  <p class="sec-desc">Transcrições e propostas para usar nas demos ao vivo.</p>
+
+  <div class="speaker-box">
+    🗣️ <strong>Nota do instrutor:</strong> Estes são os dados que você vai usar nas 3 demonstrações da próxima seção. Leia rapidamente para entender o perfil de cada entrevistado antes das demos.
+  </div>
+
+  <div class="prep-block">
+    <div class="prep-header">
+      <span class="prep-badge">Transcrição 1</span>
+      <span class="prep-title">Dr. Marcos Oliveira — Gestor de Projetos</span>
+    </div>
+    <div class="prep-file">
+      <div class="prep-file-name">entrevista-marcos-oliveira.txt</div>
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this, 'Entrevistador: Obrigado por aceitar conversar com a gente, Dr. Marcos. Para começar, como você descreveria o maior desafio no seu dia a dia como gestor de projetos?\n\nDr. Marcos: Olha, o principal problema é o desalinhamento entre times. A gente começa um projeto com uma expectativa, e duas semanas depois cada área está interpretando o escopo de um jeito diferente. O cliente pede uma coisa, o dev entende outra, e o comercial vendeu uma terceira. Quando percebemos o desvio, já perdemos tempo e a confiança do cliente vai junto.\n\nEntrevistador: Com que frequência isso acontece?\n\nDr. Marcos: Mais do que eu gostaria de admitir. Diria que em uns 60% dos projetos temos pelo menos um episódio sério de desalinhamento. E o custo é alto — retrabalho, reuniões extras, às vezes atraso de entrega.\n\nEntrevistador: O que você já tentou para resolver isso?\n\nDr. Marcos: Já tentamos de tudo: Notion, Asana, reuniões de alinhamento semanais. O problema não é falta de ferramenta. É que ninguém tem tempo de atualizar o status em tempo real. A documentação vira um fantasma que todo mundo sabe que existe mas ninguém consulta.\n\nEntrevistador: Se você pudesse ter uma solução ideal, como ela seria?\n\nDr. Marcos: Algo que registrasse automaticamente o que foi decidido em reunião e mandasse um resumo para todos os envolvidos — sem eu precisar fazer ata. Se isso existisse e fosse confiável, eu pagaria por isso sem pensar.\n\nEntrevistador: Você já chegou a pesquisar soluções nesse sentido?\n\nDr. Marcos: Já vi algumas ferramentas de transcrição, mas o problema é que elas transcrevem tudo e jogam o texto bruto. Aí preciso de meia hora para extrair o que importa. Quero o resumo executivo, as decisões tomadas e os próximos passos — não a transcrição completa.')">Copiar</button>
+Entrevistador: Obrigado por aceitar conversar com a gente, Dr. Marcos.
+Para começar, como você descreveria o maior desafio no seu dia a dia
+como gestor de projetos?
+
+Dr. Marcos: Olha, o principal problema é o desalinhamento entre times.
+A gente começa um projeto com uma expectativa, e duas semanas depois
+cada área está interpretando o escopo de um jeito diferente. O cliente
+pede uma coisa, o dev entende outra, e o comercial vendeu uma terceira.
+Quando percebemos o desvio, já perdemos tempo e a confiança do
+cliente vai junto.
+
+Entrevistador: Com que frequência isso acontece?
+
+Dr. Marcos: Mais do que eu gostaria de admitir. Diria que em uns 60%
+dos projetos temos pelo menos um episódio sério de desalinhamento.
+E o custo é alto — retrabalho, reuniões extras, às vezes atraso.
+
+Entrevistador: O que você já tentou para resolver isso?
+
+Dr. Marcos: Já tentamos de tudo: Notion, Asana, reuniões semanais.
+O problema não é falta de ferramenta. É que ninguém tem tempo de
+atualizar o status em tempo real. A documentação vira um fantasma
+que todo mundo sabe que existe mas ninguém consulta.
+
+Entrevistador: Se você pudesse ter uma solução ideal, como seria?
+
+Dr. Marcos: Algo que registrasse automaticamente o que foi decidido
+em reunião e mandasse um resumo para todos os envolvidos — sem eu
+precisar fazer ata. Se isso existisse e fosse confiável, eu pagaria
+por isso sem pensar.
+
+Entrevistador: Você já pesquisou soluções nesse sentido?
+
+Dr. Marcos: Já vi algumas ferramentas de transcrição, mas elas
+transcrevem tudo e jogam o texto bruto. Aí preciso de meia hora
+para extrair o que importa. Quero o resumo executivo, as decisões
+e os próximos passos — não a transcrição completa.</div>
+    </div>
+  </div>
+
+  <div class="prep-block">
+    <div class="prep-header">
+      <span class="prep-badge">Transcrição 2</span>
+      <span class="prep-title">Dra. Carla Mendes — Head de Produto</span>
+    </div>
+    <div class="prep-file">
+      <div class="prep-file-name">entrevista-carla-mendes.txt</div>
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this, 'Entrevistador: Dra. Carla, qual é o maior ponto de atrito no seu trabalho hoje?\n\nDra. Carla: Priorização. Tenho dezenas de demandas chegando ao mesmo tempo — do comercial, do suporte, dos usuários, da liderança. O problema não é não ter dados; é que cada área apresenta seus dados de um jeito diferente e eu fico tentando comparar coisas incomparáveis.\n\nEntrevistador: Como você decide o que entra no sprint?\n\nDra. Carla: Honestamente? Na base da intuição e de quem gritou mais alto na última semana. Não é ideal. Já tentei criar frameworks de priorização com o time, mas ninguém preenche de forma consistente. Cada PM tem seu jeito e isso impossibilita a comparação.\n\nEntrevistador: O que mais te frustra nesse processo?\n\nDra. Carla: O tempo que gasto explicando para a liderança por que priorizamos X e não Y. Toda reunião de roadmap vira uma negociação política, não uma conversa baseada em evidência. Se eu tivesse um documento que consolidasse tudo automaticamente, com critérios transparentes, seria muito mais fácil defender as decisões.\n\nEntrevistador: Você pagaria por uma ferramenta que resolvesse isso?\n\nDra. Carla: Dependeria de quanto. Se economizasse umas 4 horas por semana, que é o que esse processo consome de mim hoje, certamente valeria. Mas teria que ser simples — qualquer coisa que exija mais de 10 minutos de configuração por semana morre na adoção.')">Copiar</button>
+Entrevistador: Dra. Carla, qual é o maior ponto de atrito no seu
+trabalho hoje?
+
+Dra. Carla: Priorização. Tenho dezenas de demandas chegando ao mesmo
+tempo — do comercial, do suporte, dos usuários, da liderança. O
+problema não é não ter dados; é que cada área apresenta seus dados
+de um jeito diferente e fico tentando comparar coisas incomparáveis.
+
+Entrevistador: Como você decide o que entra no sprint?
+
+Dra. Carla: Honestamente? Na base da intuição e de quem gritou mais
+alto na última semana. Não é ideal. Já tentei criar frameworks de
+priorização com o time, mas ninguém preenche de forma consistente.
+Cada PM tem seu jeito e isso impossibilita a comparação.
+
+Entrevistador: O que mais te frustra nesse processo?
+
+Dra. Carla: O tempo que gasto explicando para a liderança por que
+priorizamos X e não Y. Toda reunião de roadmap vira uma negociação
+política, não uma conversa baseada em evidência. Se eu tivesse um
+documento que consolidasse tudo automaticamente, com critérios
+transparentes, seria muito mais fácil defender as decisões.
+
+Entrevistador: Você pagaria por uma ferramenta que resolvesse isso?
+
+Dra. Carla: Dependeria de quanto. Se economizasse umas 4 horas por
+semana — que é o que esse processo consome de mim hoje — certamente
+valeria. Mas teria que ser simples — qualquer coisa que exija mais
+de 10 minutos de configuração por semana morre na adoção.</div>
+    </div>
+  </div>
+
+  <div class="prep-block">
+    <div class="prep-header">
+      <span class="prep-badge">Proposta Formal</span>
+      <span class="prep-title">Versão 1 — Linguagem técnica e corporativa</span>
+    </div>
+    <div class="prep-file">
+      <div class="prep-file-name">proposta-formal.txt</div>
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this, 'Nossa solução oferece uma plataforma integrada de gestão e rastreabilidade de decisões para equipes de produto e projetos, eliminando o desalinhamento comunicacional e otimizando o fluxo de informações entre stakeholders. Por meio de inteligência artificial aplicada ao processamento de linguagem natural, o sistema captura automaticamente os artefatos decisórios gerados em reuniões e os distribui de forma estruturada para os envolvidos, garantindo governança, rastreabilidade e redução de retrabalho.')">Copiar</button>
+Nossa solução oferece uma plataforma integrada de gestão e
+rastreabilidade de decisões para equipes de produto e projetos,
+eliminando o desalinhamento comunicacional e otimizando o fluxo
+de informações entre stakeholders. Por meio de inteligência
+artificial aplicada ao processamento de linguagem natural, o
+sistema captura automaticamente os artefatos decisórios gerados
+em reuniões e os distribui de forma estruturada para os
+envolvidos, garantindo governança, rastreabilidade e redução
+de retrabalho.</div>
+    </div>
+  </div>
+
+  <div class="prep-block">
+    <div class="prep-header">
+      <span class="prep-badge">Proposta Coloquial</span>
+      <span class="prep-title">Versão 2 — Linguagem simples e direta</span>
+    </div>
+    <div class="prep-file">
+      <div class="prep-file-name">proposta-coloquial.txt</div>
+      <div class="copy-block">
+        <button class="copy-btn" onclick="copyText(this, 'Chega de sair de reunião sem saber o que foi decidido. Nossa ferramenta escuta a reunião, identifica as decisões e os próximos passos e manda um resumo direto para quem precisa saber — sem ninguém precisar fazer ata. Em vez de ficar tentando lembrar o que foi combinado, você tem tudo registrado e acessível em segundos.')">Copiar</button>
+Chega de sair de reunião sem saber o que foi decidido. Nossa
+ferramenta escuta a reunião, identifica as decisões e os próximos
+passos e manda um resumo direto para quem precisa saber — sem
+ninguém precisar fazer ata. Em vez de ficar tentando lembrar o
+que foi combinado, você tem tudo registrado e acessível em
+segundos.</div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+    <button class="nav-btn primary" onclick="showSection('sec-step8')">Próximo →</button>
+  </div>
+</div>
+
+<!-- 08 — DEMOS + PRÁTICA + ENTREGÁVEL -->
+<div class="section" id="sec-step8">
+  <h2 class="sec-title"><span class="snum">08.</span> Demonstrações + Prática</h2>
+  <p class="sec-desc">3 demos ao vivo, atividade prática e entregável da aula.</p>
+
+  <!-- DEMO 1 -->
+  <div class="demo-block">
+    <div class="demo-header">
+      <span class="demo-num">Demo 1</span>
+      <span class="demo-title">Skill 1 em ação</span>
+      <span class="demo-time">~8 min</span>
+    </div>
+    <p class="intro-text" style="margin-bottom:10px">Objetivo: mostrar a Skill 1 sendo acionada automaticamente com a transcrição do Dr. Marcos. Os alunos devem ter a Skill criada antes desta demo.</p>
+    <div class="demo-step">Passo 1 — Abra uma conversa nova (fora do Project)</div>
+    <p class="intro-text" style="margin-bottom:8px">Começar fora do Project isola o teste — confirma que a Skill funciona em qualquer conversa.</p>
+    <div class="demo-step">Passo 2 — Cole a transcrição do Dr. Marcos</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyText(this, 'Segue a transcrição da entrevista com o Dr. Marcos Oliveira, gestor de projetos.\n\n[cole aqui o conteúdo de entrevista-marcos-oliveira.txt da seção 07]')">Copiar</button>
+Segue a transcrição da entrevista com o Dr. Marcos Oliveira,
+gestor de projetos.
+
+[cole aqui o conteúdo de entrevista-marcos-oliveira.txt da seção 07]</div>
+    <div class="demo-step">Passo 3 — Observe</div>
+    <p class="intro-text" style="margin-bottom:8px">O Claude deve reconhecer o gatilho e iniciar a análise estruturada automaticamente — 7 seções, sem você pedir explicitamente.</p>
+    <div class="speaker-box">
+      🗣️ <strong>Nota do instrutor:</strong> Aponte para a ausência do prompt de análise na mensagem enviada. O aluno só colou a transcrição. A Skill fez o resto.
+    </div>
+  </div>
+
+  <!-- DEMO 2 -->
+  <div class="demo-block">
+    <div class="demo-header">
+      <span class="demo-num">Demo 2</span>
+      <span class="demo-title">Com vs. sem Skill — teste de generalização</span>
+      <span class="demo-time">~10 min</span>
+    </div>
+    <p class="intro-text" style="margin-bottom:10px">Objetivo: mostrar a diferença entre ter e não ter a Skill, e confirmar que ela generaliza para uma segunda entrevista (Dra. Carla) sem ajuste.</p>
+    <div class="demo-step">Parte A — Sem Skill</div>
+    <p class="intro-text" style="margin-bottom:8px">Abra uma conversa em uma conta que não tenha a Skill configurada (ou peça para um aluno abrir no próprio computador). Cole a transcrição da Dra. Carla sem nenhum prompt. Mostre o resultado: o Claude responde de qualquer jeito, sem estrutura definida.</p>
+    <div class="demo-step">Parte B — Com Skill</div>
+    <p class="intro-text" style="margin-bottom:8px">Agora cole a mesma transcrição da Dra. Carla em uma conversa com a Skill ativa.</p>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyText(this, 'Segue a transcrição da entrevista com a Dra. Carla Mendes, head de produto.\n\n[cole aqui o conteúdo de entrevista-carla-mendes.txt da seção 07]')">Copiar</button>
+Segue a transcrição da entrevista com a Dra. Carla Mendes,
+head de produto.
+
+[cole aqui o conteúdo de entrevista-carla-mendes.txt da seção 07]</div>
+    <div class="speaker-box">
+      🗣️ <strong>Nota do instrutor:</strong> O ponto central desta demo é o teste de generalização. A Skill foi criada com a transcrição do Dr. Marcos em mente — mas ela disparou igualmente para uma entrevistada diferente, de área diferente, com problemas diferentes. É isso que torna uma Skill útil: ela generaliza.
+    </div>
+  </div>
+
+  <!-- DEMO 3 -->
+  <div class="demo-block">
+    <div class="demo-header">
+      <span class="demo-num">Demo 3</span>
+      <span class="demo-title">Criar Skill 2 via Claude + teste de generalização</span>
+      <span class="demo-time">~12 min</span>
+    </div>
+    <p class="intro-text" style="margin-bottom:10px">Objetivo: criar a Skill 2 ao vivo usando o Caminho 2 (Claude gera os campos), depois testar com as duas propostas — formal e coloquial.</p>
+    <div class="demo-step">Passo 1 — Gerar a Skill 2 via Claude</div>
+    <p class="intro-text" style="margin-bottom:8px">Cole o prompt do Caminho 2 (seção 04) em uma conversa nova, substituindo o placeholder pelas instruções da Skill 2 (seção 06). Mostre os campos gerados.</p>
+    <div class="demo-step">Passo 2 — Criar a Skill no Settings</div>
+    <p class="intro-text" style="margin-bottom:8px">Copie os campos gerados e crie a Skill no Settings → Skills → Create new Skill.</p>
+    <div class="demo-step">Passo 3 — Teste com Proposta Formal</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyText(this, 'Por favor, avalie a seguinte proposta de valor:\n\n[cole aqui o conteúdo de proposta-formal.txt da seção 07]')">Copiar</button>
+Por favor, avalie a seguinte proposta de valor:
+
+[cole aqui o conteúdo de proposta-formal.txt da seção 07]</div>
+    <div class="demo-step">Passo 4 — Teste com Proposta Coloquial</div>
+    <div class="copy-block">
+      <button class="copy-btn" onclick="copyText(this, 'Por favor, avalie a seguinte proposta de valor:\n\n[cole aqui o conteúdo de proposta-coloquial.txt da seção 07]')">Copiar</button>
+Por favor, avalie a seguinte proposta de valor:
+
+[cole aqui o conteúdo de proposta-coloquial.txt da seção 07]</div>
+    <div class="speaker-box">
+      🗣️ <strong>Nota do instrutor:</strong> Compare as duas avaliações lado a lado. A proposta formal deve pontuar baixo em Linguagem do Cliente e a coloquial deve pontuar mais alto. Isso mostra que a Skill não é uma ferramenta genérica — ela avalia com critérios reais do projeto.
+    </div>
+  </div>
+
+  <!-- ATIVIDADE PRÁTICA -->
+  <p class="subsec">Atividade Prática</p>
+  <div class="instructions">
+    <div class="inst">
+      <div class="inst-num">1</div>
+      <div class="inst-text"><strong>Ative a Skill 1</strong> na sua conta (Settings → Skills). Use os campos da seção 05. Se já criou durante a demo, confirme que está ativa.</div>
+    </div>
+    <div class="inst">
+      <div class="inst-num">2</div>
+      <div class="inst-text"><strong>Ative a Skill 2</strong> usando o Caminho que preferir — manual (seção 06) ou via Claude (prompt do Caminho 2, seção 04).</div>
+    </div>
+    <div class="inst">
+      <div class="inst-num">3</div>
+      <div class="inst-text"><strong>Teste a generalização:</strong> cole uma das transcrições do seu próprio projeto (se já tiver) ou use as da seção 07. Verifique se as 7 seções aparecem e se fazem sentido para o perfil do entrevistado.</div>
+    </div>
+    <div class="inst">
+      <div class="inst-num">4</div>
+      <div class="inst-text"><strong>Faça o ciclo de ajuste:</strong> se alguma seção da análise ficou vaga ou incompleta, use o prompt abaixo para refinar as instruções da Skill sem recriar do zero.</div>
+    </div>
+  </div>
+
+  <div class="copy-block">
+    <span class="label">Prompt — Ciclo de ajuste</span>
+    <button class="copy-btn" onclick="copyText(this, 'Estou ajustando as instruções de uma Skill de análise de entrevistas. O problema que identifiquei foi:\n\n[descreva o que ficou incompleto ou vago na análise]\n\nAs instruções atuais são:\n\n[cole as instruções atuais da Skill]\n\nPor favor, reescreva apenas a seção problemática das instruções para corrigir o ponto identificado, mantendo o restante intacto.')">Copiar</button>
+    <span class="label">Ciclo de ajuste</span>
+Estou ajustando as instruções de uma Skill de análise de entrevistas.
+O problema que identifiquei foi:
+
+[descreva o que ficou incompleto ou vago na análise]
+
+As instruções atuais são:
+
+[cole as instruções atuais da Skill]
+
+Por favor, reescreva apenas a seção problemática das instruções
+para corrigir o ponto identificado, mantendo o restante intacto.</div>
+
+  <!-- ENTREGÁVEL -->
+  <p class="subsec">Entregável da Aula</p>
+  <div class="checklist">
+    <div class="check-item"><span class="ci-icon">✓</span><div><strong>Skill 1 configurada e testada:</strong> Análise de Entrevista com Cliente — funcionando com pelo menos uma transcrição</div></div>
+    <div class="check-item"><span class="ci-icon">✓</span><div><strong>Skill 2 configurada e testada:</strong> Avaliação de Proposta de Valor — funcionando com pelo menos uma versão da proposta do grupo</div></div>
+  </div>
+
+  <div class="next-teaser">
+    <strong>Próxima aula →</strong> Claude Cowork. Você vai aprender a processar arquivos locais automaticamente — analisar entrevistas em lote, consolidar relatórios e configurar tarefas agendadas sem precisar estar presente.
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
+    <button class="nav-btn primary" onclick="goHome()">↑ Início</button>
+  </div>
+</div>
+
+</div><!-- /main -->
 
 <!-- RIGHT SIDEBAR -->
 <div class="right-sidebar">
-  <div class="rs-section-title">Regra prática</div>
+  <div class="rs-section-title">3 Campos da Skill</div>
   <table class="rs-table">
-    <tr><td colspan="2" style="font-size:0.68rem;color:var(--accent-text);font-weight:600;font-style:italic">Usou o prompt 2x? Vira Skill.</td></tr>
+    <tr><td>Nome</td><td>Identificação interna</td></tr>
+    <tr><td>Gatilho</td><td>Condição de disparo</td></tr>
+    <tr><td>Instruções</td><td>O que o Claude faz</td></tr>
   </table>
-  <div class="rs-section-title">Anatomia da Skill</div>
+  <div class="rs-section-title">Calibração do Gatilho</div>
   <table class="rs-table">
-    <tr><td>Nome</td><td>Claro e descritivo</td></tr>
-    <tr><td>Gatilho</td><td>"Use quando..."</td></tr>
-    <tr><td>Instruções</td><td>Seções e formato</td></tr>
+    <tr><td>Vago</td><td>Dispara quando não deve</td></tr>
+    <tr><td>Específico demais</td><td>Nunca generaliza</td></tr>
+    <tr><td>✅ Calibrado</td><td>Funciona em casos futuros</td></tr>
   </table>
-  <div class="rs-section-title">Como criar</div>
+  <div class="rs-section-title">Skills desta aula</div>
   <table class="rs-table">
-    <tr><td>A</td><td>Pelo painel de Skills</td></tr>
-    <tr><td>B</td><td>Claude cria a partir do seu prompt</td></tr>
+    <tr><td>Skill 1</td><td>Análise de entrevista</td></tr>
+    <tr><td>Skill 2</td><td>Proposta de valor</td></tr>
   </table>
-  <div class="rs-section-title">Demos desta aula</div>
+  <div class="rs-section-title">Demos</div>
   <table class="rs-table">
-    <tr><td>Demo 1</td><td>Criar Skill ao vivo</td></tr>
+    <tr><td>Demo 1</td><td>Skill 1 em ação</td></tr>
     <tr><td>Demo 2</td><td>Com vs. sem Skill</td></tr>
-    <tr><td>Demo 3</td><td>Claude cria a Skill</td></tr>
-    <tr><td>Demo 4</td><td>Testar e ajustar</td></tr>
+    <tr><td>Demo 3</td><td>Criar Skill 2 + generalização</td></tr>
   </table>
   <div class="rs-section-title">Entregáveis</div>
   <table class="rs-table">
-    <tr><td>✅</td><td>Skill análise entrevista</td></tr>
-    <tr><td>✅</td><td>Skill proposta de valor</td></tr>
-    <tr><td>✅</td><td>Skill adicional</td></tr>
-    <tr><td>✅</td><td>1 Skill ajustada</td></tr>
+    <tr><td>✅</td><td>Skill 1 configurada</td></tr>
+    <tr><td>✅</td><td>Skill 2 configurada</td></tr>
   </table>
 </div>
 
-</div>
+</div><!-- /layout -->
 
 <script>
 const stepToFlow = {
   'sec-home':  'home',
-  'sec-step1': 'skill',
-  'sec-step2': 'anatomia',
-  'sec-step3': 'prep',
-  'sec-step4': 'demo1',
-  'sec-step5': 'demo2',
-  'sec-step6': 'demo3',
-  'sec-step7': 'demo4',
+  'sec-step1': 'conceito',
+  'sec-step2': 'quando',
+  'sec-step3': 'anatomia',
+  'sec-step4': 'criacao',
+  'sec-step5': 'skill1',
+  'sec-step6': 'skill2',
+  'sec-step7': 'dados',
   'sec-step8': 'pratica'
 }
-const flowOrder = ['home','skill','anatomia','prep','demo1','demo2','demo3','demo4','pratica']
+const flowOrder = ['home','conceito','quando','anatomia','criacao','skill1','skill2','dados','pratica']
 const visited = new Set(['sec-home'])
 const completedFlows = new Set()
 

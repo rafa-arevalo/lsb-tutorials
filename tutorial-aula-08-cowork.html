@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial — Cowork no OdontoFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #F5F3EE;
+  --white: #ffffff;
+  --accent: #C8A84B;
+  --accent2: #B09040;
+  --accent-light: #F8F2E0;
+  --accent-lighter: #FBF8F0;
+  --accent-border: #DEC878;
+  --accent-text: #8B6F28;
+  --green: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+  --green-text: #065F46;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --orange-border: #FED7AA;
+  --orange-text: #9A3412;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+  --text: #1A1A18;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --text4: #CBCAC7;
+  --border: #E5E1D8;
+  --border2: #D8D4CB;
+  --surface2: #F5F3EE;
+  --shadow-xs: 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-sm: 0 1px 3px rgba(26,26,24,0.06), 0 1px 2px rgba(26,26,24,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(26,26,24,0.07), 0 2px 4px -2px rgba(26,26,24,0.05);
+}
+
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ===== STEPPER ===== */
+.stepper-header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:center;height:52px;padding:0 24px;gap:0;overflow-x:auto}
+.stepper-header::-webkit-scrollbar{height:0}
+.back-btn{display:flex;align-items:center;gap:5px;padding:0 12px 0 0;text-decoration:none;color:var(--text3);font-size:0.72rem;font-weight:600;white-space:nowrap;border-right:1px solid var(--border);margin-right:12px;flex-shrink:0;transition:color 0.15s}
+.back-btn:hover{color:var(--accent)}
+.back-btn .back-arrow{font-size:0.8rem;line-height:1}
+.stepper-node{display:flex;align-items:center;gap:5px;padding:0 4px;cursor:pointer;position:relative;white-space:nowrap;transition:color 0.2s}
+.stepper-node .sn-label{font-size:0.72rem;font-weight:600;letter-spacing:-0.01em;padding:6px 0;position:relative;transition:color 0.2s}
+.stepper-node.future .sn-label{color:var(--text4)}
+.stepper-node.completed .sn-label{color:var(--text)}
+.stepper-node.active .sn-label{color:var(--accent)}
+.stepper-node.active .sn-label::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0}
+.stepper-node .sn-check{display:none;font-size:0.6rem;color:var(--green)}
+.stepper-node.completed .sn-check{display:inline}
+.stepper-arrow{color:var(--text4);font-size:0.65rem;padding:0 6px;flex-shrink:0}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:calc(100vh - 52px)}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.sidebar-header p{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-top:2px}
+.nav-group{padding:12px 0 4px}
+.nav-group-title{padding:2px 16px 6px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 16px;cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:450;border-left:2px solid transparent;margin:0}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-lighter);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni-num{font-size:0.62rem;font-weight:600;color:var(--text3);min-width:17px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-num{color:var(--accent)}
+.nav-item .ni-check{margin-left:auto;font-size:0.62rem;color:var(--green);opacity:0;transition:opacity 0.2s;flex-shrink:0}
+.nav-item.completed .ni-check{opacity:1}
+.sidebar-progress{padding:14px 16px;border-top:1px solid var(--border);margin-top:auto}
+.sp-label{font-size:0.62rem;color:var(--text3);font-weight:500;margin-bottom:6px}
+.sp-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;width:0%}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:20px 36px 40px;max-width:700px}
+.section{display:none;animation:fadeIn 0.25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1.2;margin-bottom:3px}
+.sec-title .snum{color:var(--accent)}
+.sec-desc{font-size:0.78rem;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+.overview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-xs)}
+.oc-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px}
+.oc-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px}
+.oc-label{font-size:0.7rem;font-weight:600;color:var(--text3);min-width:90px}
+.oc-value{font-size:0.78rem;color:var(--text);font-weight:450}
+
+.intro-text{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.intro-text strong{color:var(--text);font-weight:600}
+.subsec{font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin:18px 0 8px}
+
+.instructions{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.inst{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;padding:10px 13px;background:var(--white);border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-xs);transition:box-shadow 0.15s}
+.inst:hover{box-shadow:var(--shadow-sm)}
+.inst-num{font-size:0.56rem;font-weight:700;color:#fff;background:var(--accent);min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.inst-text{font-size:0.76rem;color:var(--text);line-height:1.5;flex:1;min-width:0}
+.inst-text strong{font-weight:600}
+.inst-text em{color:var(--text2);font-style:italic}
+.inst-text code{font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.68rem;background:#F3F2EE;padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+
+.content-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:0.75rem}
+.content-table th{text-align:left;padding:8px 10px;background:var(--accent-lighter);color:var(--accent-text);font-weight:600;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--accent-border)}
+.content-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--text)}
+.content-table tr:last-child td{border-bottom:none}
+.content-table tr:hover td{background:var(--surface2)}
+.content-table td strong{font-weight:600}
+.content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
+
+/* Folder tree */
+.folder-tree{background:#F3F2EE;border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.72rem;color:var(--text);line-height:1.8;margin:10px 0 14px;white-space:pre;overflow-x:auto}
+.folder-tree .dir{color:var(--accent-text);font-weight:600}
+.folder-tree .empty{color:var(--text3);font-style:italic}
+
+/* Anatomy card */
+.anatomy-card{background:var(--white);border:1px solid var(--accent-border);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.anatomy-part{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.anatomy-part:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.anatomy-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-text);margin-bottom:3px}
+.anatomy-text{font-size:0.75rem;color:var(--text);line-height:1.5}
+.anatomy-text em{color:var(--text2);font-style:italic}
+
+/* Prep block */
+.prep-block{background:#F8F6F2;border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.prep-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.prep-badge{font-size:0.6rem;font-weight:700;color:#fff;background:var(--text3);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em}
+.prep-title{font-size:0.8rem;font-weight:700;color:var(--text)}
+.prep-file{margin-bottom:14px}
+.prep-file:last-child{margin-bottom:0}
+.prep-file-name{font-size:0.68rem;font-weight:700;color:var(--text2);margin-bottom:4px;font-family:'SF Mono','JetBrains Mono',monospace}
+
+/* Demo blocks */
+.demo-block{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
+.demo-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.demo-num{font-size:0.62rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0}
+.demo-title{font-size:0.82rem;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.demo-time{font-size:0.65rem;color:var(--text3);margin-left:auto;flex-shrink:0;font-weight:500}
+.demo-step{font-size:0.76rem;font-weight:700;color:var(--text);margin:12px 0 5px}
+
+/* Copy block */
+.copy-block{position:relative;background:#F3F2EE;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin:8px 0;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.7rem;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy-block .label{font-family:'Inter',system-ui,sans-serif;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;display:block}
+.copy-btn{position:absolute;top:8px;right:8px;font-size:0.62rem;font-weight:600;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:var(--white);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Inter',system-ui,sans-serif}
+.copy-btn:hover{background:var(--accent-light);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* Callout boxes */
+.tip-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--green-text);line-height:1.5}
+.tip-box strong{font-weight:600}
+.warning-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--red);line-height:1.5}
+.warning-box strong{font-weight:600}
+.speaker-box{background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--orange-text);line-height:1.5}
+.speaker-box strong{font-weight:600}
+.note-box{background:var(--accent-lighter);border:1px solid var(--accent-border);border-radius:8px;padding:10px 13px;margin:10px 0;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.note-box strong{font-weight:600}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--text);line-height:1.5}
+.check-item .ci-icon{color:var(--green);font-size:0.82rem;flex-shrink:0;margin-top:2px}
+.check-item strong{font-weight:600}
+
+.next-teaser{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:0.76rem;color:var(--accent-text);line-height:1.5}
+.next-teaser strong{font-weight:700}
+
+/* Nav buttons */
+.nav-buttons{display:flex;gap:8px;margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.nav-btn{padding:8px 16px;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:1px solid transparent;font-family:'Inter',system-ui,sans-serif}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn.secondary{background:var(--white);color:var(--text2);border-color:var(--border2)}
+.nav-btn.secondary:hover{background:var(--bg);color:var(--text)}
+
+/* ===== RIGHT SIDEBAR ===== */
+.right-sidebar{width:210px;min-width:210px;padding:20px 16px;border-left:1px solid var(--border);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.rs-section-title{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.rs-section-title:first-child{margin-top:0}
+.rs-table{width:100%;border-collapse:collapse;margin-bottom:12px}
+.rs-table td{padding:5px 6px;font-size:0.68rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--text2)}
+.rs-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap;padding-right:8px}
+.rs-table tr:last-child td{border-bottom:none}
+
+@media(max-width:1024px){.right-sidebar{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px 20px 32px;max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- STEPPER -->
+<div class="stepper-header">
+  <a class="back-btn" href="index.html"><span class="back-arrow">←</span>Índice</a>
+  <div class="stepper-node active" onclick="showSection('sec-home')" id="sn-home">
+    <span class="sn-check">✓</span><span class="sn-label">Visão Geral</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step1')" id="sn-step1">
+    <span class="sn-check">✓</span><span class="sn-label">Objetivo</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
+    <span class="sn-check">✓</span><span class="sn-label">Conceito Cowork</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
+    <span class="sn-check">✓</span><span class="sn-label">O que vai ver</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
+    <span class="sn-check">✓</span><span class="sn-label">Prompt da demo</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
+    <span class="sn-check">✓</span><span class="sn-label">Observar</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
+    <span class="sn-check">✓</span><span class="sn-label">Sua tarefa</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
+    <span class="sn-check">✓</span><span class="sn-label">Seu prompt</span>
+  </div>
+  <span class="stepper-arrow">›</span>
+  <div class="stepper-node future" onclick="showSection('sec-step8')" id="sn-step8">
+    <span class="sn-check">✓</span><span class="sn-label">Output</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Cowork no OdontoFlow</h2>
+    <p>A08 · Link School of Business</p>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Início</div>
+      <div class="nav-item active" onclick="showSection('sec-home')" data-section="sec-home">
+        <span class="ni-num">00</span>Visão Geral<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Introdução</div>
+      <div class="nav-item" onclick="showSection('sec-step1')" data-section="sec-step1">
+        <span class="ni-num">01</span>Objetivo de aprendizagem<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
+        <span class="ni-num">02</span>Conceito — Cowork<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Demonstração</div>
+      <div class="nav-item" onclick="showSection('sec-step3')" data-section="sec-step3">
+        <span class="ni-num">03</span>O que você vai ver<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
+        <span class="ni-num">04</span>Prompt da demonstração<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
+        <span class="ni-num">05</span>O que observar<span class="ni-check">✓</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Atividade Prática</div>
+      <div class="nav-item" onclick="showSection('sec-step6')" data-section="sec-step6">
+        <span class="ni-num">06</span>O que você vai fazer<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step7')" data-section="sec-step7">
+        <span class="ni-num">07</span>Prompt para você usar<span class="ni-check">✓</span>
+      </div>
+      <div class="nav-item" onclick="showSection('sec-step8')" data-section="sec-step8">
+        <span class="ni-num">08</span>O que fazer com o output<span class="ni-check">✓</span>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-progress">
+    <div class="sp-label">Progresso — <span id="pct">0</span>%</div>
+    <div class="sp-bar"><div class="sp-fill" id="sp-fill"></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- 00 VISÃO GERAL -->
+  <div class="section active" id="sec-home">
+    <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
+    <div class="sec-desc">Claude Cowork · OdontoFlow · AI for Business</div>
+    <div class="overview-card">
+      <div class="oc-title">Sobre esta atividade</div>
+      <div class="oc-row"><span class="oc-label">Tipo</span><span class="oc-value">Demonstração + Atividade Prática</span></div>
+      <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">35 minutos</span></div>
+      <div class="oc-row"><span class="oc-label">Bloco</span><span class="oc-value">Aula final · Terceira atividade</span></div>
+      <div class="oc-row"><span class="oc-label">Técnica</span><span class="oc-value">Agente operando arquivos locais</span></div>
+      <div class="oc-row"><span class="oc-label">Ferramenta</span><span class="oc-value">Claude Cowork (com fallback: Chat + Code Execution)</span></div>
+      <div class="oc-row"><span class="oc-label">Apoio</span><span class="oc-value">base_pacientes_odontoflow.csv</span></div>
+      <div class="oc-row"><span class="oc-label">Pano de fundo</span><span class="oc-value">OdontoFlow — MicroSaaS de atendimento odontológico</span></div>
+    </div>
+    <p class="intro-text">Terceira atividade prática da aula final. Você vai aprender a usar o <strong>Claude Cowork</strong> — o Claude que opera no seu desktop com permissão para ler arquivos, executar tarefas e gerar outputs prontos para uso. Tudo a partir de um único arquivo CSV de pacientes do OdontoFlow.</p>
+
+    <div class="subsec">Objetivos de aprendizagem</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que é o <strong>Cowork</strong> e quando faz sentido usá-lo</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Apontar o Cowork para uma <strong>pasta com um CSV real</strong> e dar uma instrução clara</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Gerar um output <strong>usável sem edição</strong> pela recepcionista ou pelo dentista</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Identificar quais <strong>tarefas operacionais</strong> do projeto se beneficiam de automação com Cowork</span></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step1')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 01 OBJETIVO -->
+  <div class="section" id="sec-step1">
+    <div class="sec-title"><span class="snum">01.</span> Objetivo de aprendizagem</div>
+    <div class="sec-desc">Automatizar uma tarefa real do OdontoFlow a partir de um único CSV</div>
+
+    <p class="intro-text">Usar o <strong>Claude Cowork</strong> para automatizar uma tarefa operacional real do <strong>OdontoFlow</strong> — partindo de um único arquivo CSV de pacientes — e gerar um output que poderia ser usado <strong>sem edição</strong> pela recepcionista ou pelo dentista da clínica.</p>
+
+    <div class="tip-box"><strong>💡 Critério de sucesso:</strong> se o profissional que vai usar o output (recepcionista, dentista) precisaria editar antes de enviar, o prompt ainda não está bom — itere mais uma vez.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step2')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 02 CONCEITO COWORK -->
+  <div class="section" id="sec-step2">
+    <div class="sec-title"><span class="snum">02.</span> Conceito — Cowork</div>
+    <div class="sec-desc">O Claude que opera no seu desktop — e executa o trabalho</div>
+
+    <p class="intro-text">Cowork é um Claude que <strong>opera no seu desktop</strong>. Ele tem permissão para abrir arquivos, ler conteúdo, executar tarefas e criar novos arquivos. A diferença para o Claude no chat é simples mas grande: lá você pergunta e copia a resposta; aqui ele <strong>executa</strong> o trabalho.</p>
+
+    <p class="intro-text">Essa é a resposta direta a uma das maiores demandas de quem usa IA em negócios: parar de copiar e colar entre o chat e a ferramenta de trabalho. O Cowork remove esse intermediário.</p>
+
+    <table class="content-table">
+      <thead>
+        <tr><th>Quando faz sentido</th><th>Quando NÃO faz sentido</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Tarefas <strong>repetitivas</strong> com regras claras</td><td>Tarefas que exigem <strong>julgamento crítico humano</strong></td></tr>
+        <tr><td><strong>Arquivos locais</strong> (planilhas, documentos, pastas)</td><td><strong>Sistemas críticos</strong> sem revisão prévia</td></tr>
+        <tr><td>Output que precisa ser <strong>revisado</strong> mas não construído do zero</td><td>Tarefas que <strong>mudam a cada execução</strong></td></tr>
+      </tbody>
+    </table>
+
+    <div class="warning-box"><strong>⚠️ Cuidados obrigatórios:</strong> sempre teste em <strong>pasta isolada</strong> antes de soltar em pasta de produção. Não dê acesso a arquivos com dados sensíveis sem revisar antes. Comece simples e aumente o escopo aos poucos.</div>
+
+    <div class="note-box"><strong>📌 Insight:</strong> Cowork não substitui pessoa em decisão. Substitui pessoa em <strong>execução repetitiva</strong>. Quem manda continua sendo você — quem rola a tarefa é o Claude.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step3')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 03 O QUE VAI VER (DEMO) -->
+  <div class="section" id="sec-step3">
+    <div class="sec-title"><span class="snum">03.</span> O que você vai ver</div>
+    <div class="sec-desc">CSV de pacientes → mensagens de WhatsApp personalizadas, sem intervenção no meio</div>
+
+    <p class="intro-text">O professor vai usar <strong>um único arquivo CSV</strong> com 35 pacientes fictícios do OdontoFlow para mostrar uma automação completa: a partir do CSV, o Cowork vai filtrar pacientes com valor pendente, gerar uma <strong>mensagem de WhatsApp personalizada</strong> para cada um (citando nome, procedimento e valor) e salvar tudo em um arquivo de texto pronto para a recepcionista colar e enviar.</p>
+
+    <p class="intro-text">Cenário do mundo real: a recepcionista da clínica gastaria <strong>1 a 2 horas</strong> fazendo isso na mão. O Cowork faz em minutos — e com personalização melhor do que humano cansado faria.</p>
+
+    <div class="speaker-box"><strong>🗣️ Ponto central da demo:</strong> não é o Cowork "respondendo". É o Cowork <strong>lendo o CSV, filtrando os pacientes certos, gerando mensagens diferentes para cada um e salvando o arquivo</strong> — sem você intervir no meio.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step4')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 04 PROMPT DA DEMONSTRAÇÃO -->
+  <div class="section" id="sec-step4">
+    <div class="sec-title"><span class="snum">04.</span> Prompt da demonstração</div>
+    <div class="sec-desc">O professor aponta o Cowork para a pasta do CSV e roda este comando</div>
+
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo</span>
+        <span class="demo-title">Mensagens de cobrança via WhatsApp</span>
+      </div>
+
+      <p class="intro-text" style="margin-bottom:6px">O professor vai apontar o Cowork para a pasta onde está o CSV e usar o seguinte comando:</p>
+
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Leia o arquivo base_pacientes_odontoflow.csv que está\nna pasta atual.\n\nFiltre apenas os pacientes que têm valor_pendente\nmaior que zero.\n\nPara cada paciente filtrado, gere uma mensagem de\nWhatsApp curta para enviar amanhã. A mensagem precisa:\n\n- Cumprimentar pelo primeiro nome do paciente\n- Citar o procedimento que foi feito (último_procedimento)\n- Mencionar o valor pendente de forma educada (não rude)\n- Oferecer opção de parcelamento em até 3x sem juros\n- Encerrar com frase amigável e profissional\n- Ter no máximo 4 linhas\n\nO tom precisa ser de clínica que se importa com o\npaciente, não de cobrador. Cada mensagem precisa ser\npersonalizada — nada de texto-padrão idêntico para\ntodo mundo.\n\nSalve todas as mensagens em um arquivo chamado\nmensagens_cobranca.txt, separando cada mensagem com\numa linha em branco e identificando cada uma com o\nnome completo do paciente como cabeçalho.')">Copiar</button><span class="label">Prompt da demo — colar no Cowork</span>Leia o arquivo base_pacientes_odontoflow.csv que está
+na pasta atual.
+
+Filtre apenas os pacientes que têm valor_pendente
+maior que zero.
+
+Para cada paciente filtrado, gere uma mensagem de
+WhatsApp curta para enviar amanhã. A mensagem precisa:
+
+- Cumprimentar pelo primeiro nome do paciente
+- Citar o procedimento que foi feito (último_procedimento)
+- Mencionar o valor pendente de forma educada (não rude)
+- Oferecer opção de parcelamento em até 3x sem juros
+- Encerrar com frase amigável e profissional
+- Ter no máximo 4 linhas
+
+O tom precisa ser de clínica que se importa com o
+paciente, não de cobrador. Cada mensagem precisa ser
+personalizada — nada de texto-padrão idêntico para
+todo mundo.
+
+Salve todas as mensagens em um arquivo chamado
+mensagens_cobranca.txt, separando cada mensagem com
+uma linha em branco e identificando cada uma com o
+nome completo do paciente como cabeçalho.</div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step3')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step5')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 05 O QUE OBSERVAR -->
+  <div class="section" id="sec-step5">
+    <div class="sec-title"><span class="snum">05.</span> O que observar</div>
+    <div class="sec-desc">3 sinais visíveis de que o Cowork está executando — não simulando</div>
+
+    <p class="intro-text">Três coisas que ficam visíveis quando o Cowork está executando:</p>
+
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Leitura real do arquivo.</strong> O Cowork mostra que abriu o CSV, conta quantas linhas leu, identifica as colunas. Não é simulação.</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Filtragem correta.</strong> Só os pacientes com valor pendente entram no output. Os outros são ignorados — sem você precisar pré-processar nada.</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Personalização real.</strong> As mensagens não são copy-paste com o nome trocado. Cada uma reflete o procedimento específico daquele paciente. Texto genérico copiado para todos seria fácil de fazer no Excel — Cowork entrega algo que o Excel não consegue.</span></div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step4')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step6')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 06 SUA TAREFA -->
+  <div class="section" id="sec-step6">
+    <div class="sec-title"><span class="snum">06.</span> O que você vai fazer</div>
+    <div class="sec-desc">Mesmo CSV da demo — tarefa diferente, em duplas</div>
+
+    <p class="intro-text">Você vai usar o <strong>mesmo arquivo CSV</strong> que o professor usou na demonstração (já compartilhado com a turma) para automatizar <strong>uma tarefa diferente</strong> do OdontoFlow.</p>
+
+    <div class="subsec">Passos</div>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Baixe o arquivo</strong> <em>(1 min)</em> — <code>base_pacientes_odontoflow.csv</code> da sala virtual. Salve em pasta acessível para o Cowork.</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Escolha sua tarefa</strong> <em>(1 min)</em> — em duplas, cada dupla escolhe uma diferente entre A, B, C ou D abaixo.</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Escreva o prompt</strong> <em>(4 min)</em> — use o molde da próxima seção e adapte.</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text"><strong>Execute e revise</strong> <em>(5 min)</em> — aponte o Cowork para a pasta e rode. Avalie: o output está usável <strong>sem edição</strong>?</span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text"><strong>Itere se necessário</strong> <em>(1 min)</em> — se saiu genérico ou com erro, ajuste o prompt e rode de novo.</span></div>
+    </div>
+
+    <div class="subsec">As 4 tarefas — escolha uma</div>
+    <table class="content-table">
+      <thead><tr><th style="width:22%">Tarefa</th><th style="width:38%">O que filtrar</th><th>O que gerar</th></tr></thead>
+      <tbody>
+        <tr><td><strong>A — Aniversariantes</strong></td><td>Pacientes que aniversariam neste mês</td><td>Mensagem personalizada usando o último procedimento como gancho de retorno à clínica</td></tr>
+        <tr><td><strong>B — Reativação</strong></td><td>Status inativo OU última consulta há mais de 6 meses</td><td>Mensagem de reativação personalizada por procedimento</td></tr>
+        <tr><td><strong>C — Follow-up</strong></td><td>Limpeza, canal ou extração nas últimas 4 semanas</td><td>Mensagem de follow-up apropriada para cada procedimento</td></tr>
+        <tr><td><strong>D — Análise gerencial</strong></td><td>Todos os pacientes</td><td>Receita pendente total, ticket médio por procedimento, top 5 pendentes e distribuição de status</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note-box"><strong>📌 Sem Claude Pro?</strong> Use o <strong>Claude no chat (gratuito)</strong> com upload do CSV e <strong>Code Execution</strong> ativado. O resultado é equivalente para o aprendizado do conceito — só não fica salvo no seu desktop.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step7')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 07 SEU PROMPT -->
+  <div class="section" id="sec-step7">
+    <div class="sec-title"><span class="snum">07.</span> Prompt para você usar</div>
+    <div class="sec-desc">Molde para adaptar à sua tarefa escolhida (A, B, C ou D)</div>
+
+    <p class="intro-text">Adapte este molde para a sua tarefa escolhida:</p>
+
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Leia o arquivo base_pacientes_odontoflow.csv que está\nna pasta atual.\n\nFILTRO QUE EU PRECISO\n[Descreva qual subgrupo de pacientes interessa para\na sua tarefa. Exemplos:\n- &quot;Pacientes que aniversariam no mês corrente&quot;\n- &quot;Pacientes com status inativo OU última consulta\n   há mais de 180 dias&quot;\n- &quot;Pacientes cujo último procedimento foi limpeza,\n   canal ou extração E última consulta foi nos\n   últimos 28 dias&quot;\n- &quot;Todos os pacientes — quero análise consolidada&quot;]\n\nO QUE VOCÊ DEVE GERAR\n[Descreva o output desejado. Exemplos:\n- &quot;Uma mensagem de WhatsApp personalizada por paciente,\n   com no máximo 4 linhas, citando [campos relevantes]&quot;\n- &quot;Um relatório resumido em texto estruturado, com\n   números reais extraídos do CSV&quot;]\n\nREGRAS DE TOM\n[Profissional / amigável / direto / informal]\n- O que evitar: [frases vazias, tom de cobrança,\n  urgência artificial, etc.]\n- Personalização real é obrigatória: nada de\n  texto-padrão idêntico com nome trocado.\n\nARQUIVO DE SAÍDA\nSalve em [nome_arquivo.txt ou nome_arquivo.csv],\nseparando cada item com [...].')">Copiar</button><span class="label">Molde de prompt — adaptar à sua tarefa</span>Leia o arquivo base_pacientes_odontoflow.csv que está
+na pasta atual.
+
+FILTRO QUE EU PRECISO
+[Descreva qual subgrupo de pacientes interessa para
+a sua tarefa. Exemplos:
+- "Pacientes que aniversariam no mês corrente"
+- "Pacientes com status inativo OU última consulta
+   há mais de 180 dias"
+- "Pacientes cujo último procedimento foi limpeza,
+   canal ou extração E última consulta foi nos
+   últimos 28 dias"
+- "Todos os pacientes — quero análise consolidada"]
+
+O QUE VOCÊ DEVE GERAR
+[Descreva o output desejado. Exemplos:
+- "Uma mensagem de WhatsApp personalizada por paciente,
+   com no máximo 4 linhas, citando [campos relevantes]"
+- "Um relatório resumido em texto estruturado, com
+   números reais extraídos do CSV"]
+
+REGRAS DE TOM
+[Profissional / amigável / direto / informal]
+- O que evitar: [frases vazias, tom de cobrança,
+  urgência artificial, etc.]
+- Personalização real é obrigatória: nada de
+  texto-padrão idêntico com nome trocado.
+
+ARQUIVO DE SAÍDA
+Salve em [nome_arquivo.txt ou nome_arquivo.csv],
+separando cada item com [...].</div>
+
+    <div class="tip-box"><strong>💡 Critério de qualidade:</strong> o output saiu <strong>usável de verdade</strong> ou ficou genérico? Se a recepcionista ou o dentista da clínica precisaria editar antes de usar, o prompt ainda não está bom. Itere mais uma vez.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
+      <button class="nav-btn primary" onclick="showSection('sec-step8')">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- 08 OUTPUT -->
+  <div class="section" id="sec-step8">
+    <div class="sec-title"><span class="snum">08.</span> O que fazer com o output</div>
+    <div class="sec-desc">3 perguntas que validam o uso real da automação</div>
+
+    <p class="intro-text">O arquivo gerado pelo Cowork é o que mostra que a automação funciona — não a tela do Cowork rodando.</p>
+
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Abra o arquivo de saída.</strong> Leia pelo menos <strong>3 itens</strong> (3 mensagens, 3 linhas do relatório) e avalie se você usaria sem editar.</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Estime o tempo economizado.</strong> Se essa tarefa rodasse na clínica de verdade toda semana, quanto tempo de recepcionista ela liberaria por mês? Esse cálculo é o que justifica o investimento em IA para qualquer negócio.</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Pense em outras tarefas que esse mesmo CSV resolveria.</strong> "O que mais esse arquivo me permite automatizar?" é o pulo do gato. Dado bom é dado <strong>reutilizável</strong>. Você não precisa de cinco planilhas para cinco automações; precisa de uma planilha bem estruturada.</span></div>
+    </div>
+
+    <div class="warning-box"><strong>⚠️ Importante:</strong> antes de rodar Cowork em arquivos do seu negócio real, <strong>sempre teste em pasta isolada com dados fictícios primeiro</strong>. Cowork mexe em arquivos de verdade, e arquivo deletado por engano não volta. A regra é: testou, funcionou, então parta para os dados reais — nunca o contrário.</div>
+
+    <div class="subsec">Entregável da aula</div>
+    <div class="checklist">
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Pasta dedicada</strong> criada e apontada para o Cowork</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>CSV de pacientes</strong> baixado e salvo na pasta</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Tarefa A, B, C ou D</strong> escolhida em dupla</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Prompt adaptado</strong> a partir do molde</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Output gerado</strong> e avaliado: usável sem edição?</span></div>
+    </div>
+
+    <div class="next-teaser"><strong>Próxima aula — A09: Claude Code</strong><br>Você acabou de ver os pilares do Claude que vão acompanhar o seu projeto até o fim do semestre: <strong>Projects</strong> (contexto persistente), <strong>Skills</strong> (especialistas de domínio), <strong>Design</strong> (gerar interface) e <strong>Cowork</strong> (operar arquivos). Na próxima aula vamos para Claude Code — onde você sai do mockup e parte para o produto rodando de verdade.</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
+      <button class="nav-btn primary" onclick="goHome()">↩ Recomeçar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="right-sidebar">
+  <div class="rs-section-title">Cowork em uma frase</div>
+  <table class="rs-table">
+    <tr><td>Chat</td><td>você pergunta</td></tr>
+    <tr><td>Cowork</td><td>ele executa</td></tr>
+  </table>
+  <div class="rs-section-title">Quando usar</div>
+  <table class="rs-table">
+    <tr><td>Sim</td><td>repetitivo + arquivo local</td></tr>
+    <tr><td>Sim</td><td>output revisado, não criado</td></tr>
+    <tr><td>Não</td><td>julgamento crítico</td></tr>
+    <tr><td>Não</td><td>tarefa que muda sempre</td></tr>
+  </table>
+  <div class="rs-section-title">As 4 tarefas</div>
+  <table class="rs-table">
+    <tr><td>A</td><td>Aniversariantes</td></tr>
+    <tr><td>B</td><td>Reativação inativos</td></tr>
+    <tr><td>C</td><td>Follow-up procedimento</td></tr>
+    <tr><td>D</td><td>Análise gerencial</td></tr>
+  </table>
+  <div class="rs-section-title">3 sinais do Cowork</div>
+  <table class="rs-table">
+    <tr><td>1</td><td>Lê o arquivo</td></tr>
+    <tr><td>2</td><td>Filtra correto</td></tr>
+    <tr><td>3</td><td>Personaliza real</td></tr>
+  </table>
+  <div class="rs-section-title">Critério final</div>
+  <table class="rs-table">
+    <tr><td>✓</td><td>Usável sem editar</td></tr>
+    <tr><td>✗</td><td>Precisa retoque</td></tr>
+  </table>
+</div>
+
+</div>
+
+<script>
+const stepToFlow = {
+  'sec-home':  'home',
+  'sec-step1': 'objetivo',
+  'sec-step2': 'conceito',
+  'sec-step3': 'oque',
+  'sec-step4': 'prompt',
+  'sec-step5': 'observar',
+  'sec-step6': 'tarefa',
+  'sec-step7': 'molde',
+  'sec-step8': 'output'
+}
+const flowOrder = ['home','objetivo','conceito','oque','prompt','observar','tarefa','molde','output']
+const visited = new Set(['sec-home'])
+const completedFlows = new Set()
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+  document.getElementById(id)?.classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.section === id)
+    if (visited.has(n.dataset.section)) n.classList.add('completed')
+  })
+  visited.add(id)
+  const flow = stepToFlow[id]
+  if (flow) {
+    const idx = flowOrder.indexOf(flow)
+    if (idx > 0) completedFlows.add(flowOrder[idx-1])
+  }
+  updateStepper(flow)
+  updateProgress()
+  window.scrollTo({top:0,behavior:'smooth'})
+}
+
+function updateStepper(activeFlow) {
+  document.querySelectorAll('.stepper-node').forEach(n => {
+    const f = n.id.replace('sn-','')
+    const idx = flowOrder.indexOf(f)
+    const activeIdx = flowOrder.indexOf(activeFlow)
+    n.classList.remove('active','completed','future')
+    if (f === activeFlow) n.classList.add('active')
+    else if (completedFlows.has(f) || idx < activeIdx) n.classList.add('completed')
+    else n.classList.add('future')
+  })
+}
+
+function updateProgress() {
+  const pct = Math.round((visited.size / document.querySelectorAll('.section').length) * 100)
+  document.getElementById('pct').textContent = pct
+  document.getElementById('sp-fill').style.width = pct + '%'
+}
+
+function goHome() { showSection('sec-home') }
+
+function copyText(btn, text) {
+  navigator.clipboard?.writeText(text).then(() => {
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  }).catch(() => {
+    const ta = document.createElement('textarea')
+    ta.value = text; document.body.appendChild(ta)
+    ta.select(); document.execCommand('copy')
+    document.body.removeChild(ta)
+    btn.textContent = 'Copiado!'
+    setTimeout(() => btn.textContent = 'Copiar', 1800)
+  })
+}
+
+updateStepper('home')
+updateProgress()
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tutorial — Cowork no OdontoFlow</title>
+<title>Tutorial — Design system extraído</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -120,11 +120,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .content-table td strong{font-weight:600}
 .content-table td em{font-style:italic;color:var(--text2);font-size:0.72rem}
 
-/* Folder tree */
-.folder-tree{background:#F3F2EE;border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'SF Mono','JetBrains Mono',monospace;font-size:0.72rem;color:var(--text);line-height:1.8;margin:10px 0 14px;white-space:pre;overflow-x:auto}
-.folder-tree .dir{color:var(--accent-text);font-weight:600}
-.folder-tree .empty{color:var(--text3);font-style:italic}
-
 /* Anatomy card */
 .anatomy-card{background:var(--white);border:1px solid var(--accent-border);border-radius:10px;padding:14px 16px;margin-bottom:14px}
 .anatomy-part{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
@@ -132,15 +127,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .anatomy-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-text);margin-bottom:3px}
 .anatomy-text{font-size:0.75rem;color:var(--text);line-height:1.5}
 .anatomy-text em{color:var(--text2);font-style:italic}
-
-/* Prep block */
-.prep-block{background:#F8F6F2;border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:16px}
-.prep-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.prep-badge{font-size:0.6rem;font-weight:700;color:#fff;background:var(--text3);padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.06em}
-.prep-title{font-size:0.8rem;font-weight:700;color:var(--text)}
-.prep-file{margin-bottom:14px}
-.prep-file:last-child{margin-bottom:0}
-.prep-file-name{font-size:0.68rem;font-weight:700;color:var(--text2);margin-bottom:4px;font-family:'SF Mono','JetBrains Mono',monospace}
 
 /* Demo blocks */
 .demo-block{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-xs)}
@@ -210,7 +196,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step2')" id="sn-step2">
-    <span class="sn-check">✓</span><span class="sn-label">Conceito Cowork</span>
+    <span class="sn-check">✓</span><span class="sn-label">Conceito</span>
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step3')" id="sn-step3">
@@ -218,7 +204,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step4')" id="sn-step4">
-    <span class="sn-check">✓</span><span class="sn-label">Prompt da demo</span>
+    <span class="sn-check">✓</span><span class="sn-label">Prompts da demo</span>
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step5')" id="sn-step5">
@@ -226,7 +212,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step6')" id="sn-step6">
-    <span class="sn-check">✓</span><span class="sn-label">Sua tarefa</span>
+    <span class="sn-check">✓</span><span class="sn-label">Sua tela</span>
   </div>
   <span class="stepper-arrow">›</span>
   <div class="stepper-node future" onclick="showSection('sec-step7')" id="sn-step7">
@@ -243,7 +229,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-header">
-    <h2>Cowork no OdontoFlow</h2>
+    <h2>Design system extraído</h2>
     <p>A07 · Link School of Business</p>
   </div>
   <nav>
@@ -259,7 +245,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
         <span class="ni-num">01</span>Objetivo de aprendizagem<span class="ni-check">✓</span>
       </div>
       <div class="nav-item" onclick="showSection('sec-step2')" data-section="sec-step2">
-        <span class="ni-num">02</span>Conceito — Cowork<span class="ni-check">✓</span>
+        <span class="ni-num">02</span>Conceito — Design System<span class="ni-check">✓</span>
       </div>
     </div>
     <div class="nav-group">
@@ -268,7 +254,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
         <span class="ni-num">03</span>O que você vai ver<span class="ni-check">✓</span>
       </div>
       <div class="nav-item" onclick="showSection('sec-step4')" data-section="sec-step4">
-        <span class="ni-num">04</span>Prompt da demonstração<span class="ni-check">✓</span>
+        <span class="ni-num">04</span>Prompts da demonstração<span class="ni-check">✓</span>
       </div>
       <div class="nav-item" onclick="showSection('sec-step5')" data-section="sec-step5">
         <span class="ni-num">05</span>O que observar<span class="ni-check">✓</span>
@@ -299,25 +285,24 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   <!-- 00 VISÃO GERAL -->
   <div class="section active" id="sec-home">
     <div class="sec-title"><span class="snum">00.</span> Visão Geral</div>
-    <div class="sec-desc">Claude Cowork · OdontoFlow · AI for Business</div>
+    <div class="sec-desc">Claude Design · OdontoFlow · AI for Business</div>
     <div class="overview-card">
       <div class="oc-title">Sobre esta atividade</div>
       <div class="oc-row"><span class="oc-label">Tipo</span><span class="oc-value">Demonstração + Atividade Prática</span></div>
       <div class="oc-row"><span class="oc-label">Duração</span><span class="oc-value">35 minutos</span></div>
-      <div class="oc-row"><span class="oc-label">Bloco</span><span class="oc-value">Aula final · Terceira atividade</span></div>
-      <div class="oc-row"><span class="oc-label">Técnica</span><span class="oc-value">Agente operando arquivos locais</span></div>
-      <div class="oc-row"><span class="oc-label">Ferramenta</span><span class="oc-value">Claude Cowork (com fallback: Chat + Code Execution)</span></div>
-      <div class="oc-row"><span class="oc-label">Apoio</span><span class="oc-value">base_pacientes_odontoflow.csv</span></div>
+      <div class="oc-row"><span class="oc-label">Bloco</span><span class="oc-value">Aula final · Segunda atividade</span></div>
+      <div class="oc-row"><span class="oc-label">Técnica</span><span class="oc-value">Visão computacional + geração de artefatos HTML</span></div>
+      <div class="oc-row"><span class="oc-label">Ferramenta</span><span class="oc-value">Claude (visão + artifacts)</span></div>
       <div class="oc-row"><span class="oc-label">Pano de fundo</span><span class="oc-value">OdontoFlow — MicroSaaS de atendimento odontológico</span></div>
     </div>
-    <p class="intro-text">Terceira atividade prática da aula final. Você vai aprender a usar o <strong>Claude Cowork</strong> — o Claude que opera no seu desktop com permissão para ler arquivos, executar tarefas e gerar outputs prontos para uso. Tudo a partir de um único arquivo CSV de pacientes do OdontoFlow.</p>
+    <p class="intro-text">Segunda atividade prática da aula final. Você vai aprender a <strong>extrair um design system</strong> de um site de referência usando a visão do Claude e depois <strong>reaproveitar esse design system</strong> para gerar telas novas do OdontoFlow em formato de artefato HTML navegável — sem precisar de designer.</p>
 
     <div class="subsec">Objetivos de aprendizagem</div>
     <div class="instructions">
-      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Entender o que é o <strong>Cowork</strong> e quando faz sentido usá-lo</span></div>
-      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Apontar o Cowork para uma <strong>pasta com um CSV real</strong> e dar uma instrução clara</span></div>
-      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Gerar um output <strong>usável sem edição</strong> pela recepcionista ou pelo dentista</span></div>
-      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Identificar quais <strong>tarefas operacionais</strong> do projeto se beneficiam de automação com Cowork</span></div>
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Usar a <strong>visão do Claude</strong> para descrever cores, tipografia e estilo a partir de prints</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text">Gerar um <strong>design system documentado</strong> que pode ser colado em qualquer prompt futuro</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Aplicar esse design system para criar uma <strong>tela do OdontoFlow em HTML</strong> respeitando a identidade visual</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Aprender a <strong>iterar</strong> sobre artefatos HTML em segundos quando algo precisa de ajuste</span></div>
     </div>
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="goHome()">↩ Início</button>
@@ -328,11 +313,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
   <!-- 01 OBJETIVO -->
   <div class="section" id="sec-step1">
     <div class="sec-title"><span class="snum">01.</span> Objetivo de aprendizagem</div>
-    <div class="sec-desc">Automatizar uma tarefa real do OdontoFlow a partir de um único CSV</div>
+    <div class="sec-desc">Do print do site de referência à tela do seu produto, passando pelo design system</div>
 
-    <p class="intro-text">Usar o <strong>Claude Cowork</strong> para automatizar uma tarefa operacional real do <strong>OdontoFlow</strong> — partindo de um único arquivo CSV de pacientes — e gerar um output que poderia ser usado <strong>sem edição</strong> pela recepcionista ou pelo dentista da clínica.</p>
+    <p class="intro-text">Pegar prints de um site de referência profissional, usar o Claude para <strong>extrair o design system</strong> completo daquele site (cores, tipografia, espaçamentos, estilo de botões e cards) e em seguida <strong>gerar uma tela do OdontoFlow</strong> em artefato HTML que respeite esse design system.</p>
 
-    <div class="tip-box"><strong>💡 Critério de sucesso:</strong> se o profissional que vai usar o output (recepcionista, dentista) precisaria editar antes de enviar, o prompt ainda não está bom — itere mais uma vez.</div>
+    <div class="tip-box"><strong>💡 Critério de sucesso:</strong> a tela gerada precisa parecer que poderia estar no site de referência — mesma família visual, sem ser cópia. Se ficou genérica ou destoante, o problema está no design system extraído ou na descrição da tela — não no Claude.</div>
 
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-home')">← Anterior</button>
@@ -340,29 +325,24 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
     </div>
   </div>
 
-  <!-- 02 CONCEITO COWORK -->
+  <!-- 02 CONCEITO -->
   <div class="section" id="sec-step2">
-    <div class="sec-title"><span class="snum">02.</span> Conceito — Cowork</div>
-    <div class="sec-desc">O Claude que opera no seu desktop — e executa o trabalho</div>
+    <div class="sec-title"><span class="snum">02.</span> Conceito — Design System extraído</div>
+    <div class="sec-desc">O que faz um site parecer coerente — e como o Claude extrai isso de imagens</div>
 
-    <p class="intro-text">Cowork é um Claude que <strong>opera no seu desktop</strong>. Ele tem permissão para abrir arquivos, ler conteúdo, executar tarefas e criar novos arquivos. A diferença para o Claude no chat é simples mas grande: lá você pergunta e copia a resposta; aqui ele <strong>executa</strong> o trabalho.</p>
+    <p class="intro-text">Quando você vê um site bem feito de uma empresa que admira, sente que algo é bonito mas não consegue traduzir em palavras o que faz aquele site funcionar. Isso acontece porque o que está por trás é um <strong>design system</strong> — um manual visual com cores, tipografia, espaçamento, estilo de botões e cards que toda tela do produto obedece. É o que faz a marca parecer coerente.</p>
 
-    <p class="intro-text">Essa é a resposta direta a uma das maiores demandas de quem usa IA em negócios: parar de copiar e colar entre o chat e a ferramenta de trabalho. O Cowork remove esse intermediário.</p>
+    <p class="intro-text">A boa notícia: você não precisa criar um design system do zero. O Claude tem visão. Ele consegue <strong>olhar imagens</strong> e descrever em palavras o que está vendo. Isso permite uma manobra poderosa:</p>
 
-    <table class="content-table">
-      <thead>
-        <tr><th>Quando faz sentido</th><th>Quando NÃO faz sentido</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Tarefas <strong>repetitivas</strong> com regras claras</td><td>Tarefas que exigem <strong>julgamento crítico humano</strong></td></tr>
-        <tr><td><strong>Arquivos locais</strong> (planilhas, documentos, pastas)</td><td><strong>Sistemas críticos</strong> sem revisão prévia</td></tr>
-        <tr><td>Output que precisa ser <strong>revisado</strong> mas não construído do zero</td><td>Tarefas que <strong>mudam a cada execução</strong></td></tr>
-      </tbody>
-    </table>
+    <div class="instructions">
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text">Você <strong>escolhe um site</strong> cujo visual admira</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Tira prints</strong> dele</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text">Pede ao Claude para <strong>extrair o design system</strong> a partir dos prints</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text">Ganha um <strong>documento estruturado</strong> com cores, fontes e estilos</span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text">Usa esse documento em <strong>qualquer prompt futuro</strong> para gerar telas no mesmo padrão</span></div>
+    </div>
 
-    <div class="warning-box"><strong>⚠️ Cuidados obrigatórios:</strong> sempre teste em <strong>pasta isolada</strong> antes de soltar em pasta de produção. Não dê acesso a arquivos com dados sensíveis sem revisar antes. Comece simples e aumente o escopo aos poucos.</div>
-
-    <div class="note-box"><strong>📌 Insight:</strong> Cowork não substitui pessoa em decisão. Substitui pessoa em <strong>execução repetitiva</strong>. Quem manda continua sendo você — quem rola a tarefa é o Claude.</div>
+    <div class="note-box"><strong>📌 Insight:</strong> design system é um arquivo de texto. Você cria uma vez, salva, e cola em qualquer prompt futuro para que o Claude gere qualquer tela do seu produto respeitando o mesmo padrão visual. É <strong>inspiração estruturada, não cópia</strong>.</div>
 
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step1')">← Anterior</button>
@@ -370,16 +350,27 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
     </div>
   </div>
 
-  <!-- 03 O QUE VAI VER (DEMO) -->
+  <!-- 03 O QUE VAI VER -->
   <div class="section" id="sec-step3">
     <div class="sec-title"><span class="snum">03.</span> O que você vai ver</div>
-    <div class="sec-desc">CSV de pacientes → mensagens de WhatsApp personalizadas, sem intervenção no meio</div>
+    <div class="sec-desc">Duas etapas ao vivo: extração do design system + aplicação na tela do OdontoFlow</div>
 
-    <p class="intro-text">O professor vai usar <strong>um único arquivo CSV</strong> com 35 pacientes fictícios do OdontoFlow para mostrar uma automação completa: a partir do CSV, o Cowork vai filtrar pacientes com valor pendente, gerar uma <strong>mensagem de WhatsApp personalizada</strong> para cada um (citando nome, procedimento e valor) e salvar tudo em um arquivo de texto pronto para a recepcionista colar e enviar.</p>
+    <p class="intro-text">O professor vai fazer <strong>duas etapas</strong> ao vivo:</p>
 
-    <p class="intro-text">Cenário do mundo real: a recepcionista da clínica gastaria <strong>1 a 2 horas</strong> fazendo isso na mão. O Cowork faz em minutos — e com personalização melhor do que humano cansado faria.</p>
+    <div class="anatomy-card">
+      <div class="anatomy-part">
+        <div class="anatomy-label">Etapa 1 — Extração</div>
+        <div class="anatomy-text">O professor sobe <strong>3 a 4 prints de um site de referência</strong> (escolhido antes da aula — algo limpo e profissional como Linear, Notion, Calendly, Stripe ou similar) e pede ao Claude para extrair o design system completo.</div>
+      </div>
+      <div class="anatomy-part">
+        <div class="anatomy-label">Etapa 2 — Aplicação</div>
+        <div class="anatomy-text">O professor cola o design system extraído no início de um novo prompt e pede para gerar a <strong>tela de dashboard principal do OdontoFlow</strong> como artefato HTML, respeitando o design system.</div>
+      </div>
+    </div>
 
-    <div class="speaker-box"><strong>🗣️ Ponto central da demo:</strong> não é o Cowork "respondendo". É o Cowork <strong>lendo o CSV, filtrando os pacientes certos, gerando mensagens diferentes para cada um e salvando o arquivo</strong> — sem você intervir no meio.</div>
+    <p class="intro-text">Você vai ver duas coisas que parecem mágica mas não são: o Claude descrevendo cores e tipografia que ele só viu em imagem; e a tela do OdontoFlow nascendo com a cara do site de referência sem ser cópia.</p>
+
+    <div class="speaker-box"><strong>🗣️ Ponto central da demo:</strong> a tela do OdontoFlow gerada na Etapa 2 deve parecer que <strong>poderia estar no site de referência</strong> — mesma família visual, sem ser cópia. Repare como o design system documentado virou o "tradutor" entre os dois.</div>
 
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step2')">← Anterior</button>
@@ -387,44 +378,87 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
     </div>
   </div>
 
-  <!-- 04 PROMPT DA DEMONSTRAÇÃO -->
+  <!-- 04 PROMPTS DA DEMO -->
   <div class="section" id="sec-step4">
-    <div class="sec-title"><span class="snum">04.</span> Prompt da demonstração</div>
-    <div class="sec-desc">O professor aponta o Cowork para a pasta do CSV e roda este comando</div>
+    <div class="sec-title"><span class="snum">04.</span> Prompts da demonstração</div>
+    <div class="sec-desc">Etapa 1 (extração) com prints anexados · Etapa 2 (aplicação) colando o design system</div>
 
     <div class="demo-block">
       <div class="demo-header">
-        <span class="demo-num">Demo</span>
-        <span class="demo-title">Mensagens de cobrança via WhatsApp</span>
+        <span class="demo-num">Etapa 1</span>
+        <span class="demo-title">Extração do design system a partir dos prints</span>
       </div>
 
-      <p class="intro-text" style="margin-bottom:6px">O professor vai apontar o Cowork para a pasta onde está o CSV e usar o seguinte comando:</p>
+      <p class="intro-text" style="margin-bottom:6px">Anexar 3 a 4 prints do site de referência e colar este prompt:</p>
 
-      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Leia o arquivo base_pacientes_odontoflow.csv que está\nna pasta atual.\n\nFiltre apenas os pacientes que têm valor_pendente\nmaior que zero.\n\nPara cada paciente filtrado, gere uma mensagem de\nWhatsApp curta para enviar amanhã. A mensagem precisa:\n\n- Cumprimentar pelo primeiro nome do paciente\n- Citar o procedimento que foi feito (último_procedimento)\n- Mencionar o valor pendente de forma educada (não rude)\n- Oferecer opção de parcelamento em até 3x sem juros\n- Encerrar com frase amigável e profissional\n- Ter no máximo 4 linhas\n\nO tom precisa ser de clínica que se importa com o\npaciente, não de cobrador. Cada mensagem precisa ser\npersonalizada — nada de texto-padrão idêntico para\ntodo mundo.\n\nSalve todas as mensagens em um arquivo chamado\nmensagens_cobranca.txt, separando cada mensagem com\numa linha em branco e identificando cada uma com o\nnome completo do paciente como cabeçalho.')">Copiar</button><span class="label">Prompt da demo — colar no Cowork</span>Leia o arquivo base_pacientes_odontoflow.csv que está
-na pasta atual.
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Estou analisando esses prints do site [NOME DO SITE\nDE REFERÊNCIA] como inspiração visual. Quero que você\nextraia um design system completo a partir do que está\nvendo nessas imagens.\n\nInclua:\n\nPALETA DE CORES\n- Cor primária (com código hex aproximado)\n- Cor secundária (hex)\n- Cores neutras de background e texto (hex)\n- Cores de estado (sucesso, erro, alerta) se identificáveis\n\nTIPOGRAFIA\n- Família de fonte para títulos\n- Família de fonte para corpo de texto\n- Tamanhos aproximados para H1, H2, H3 e corpo\n- Peso (regular, medium, bold) por uso\n\nESPAÇAMENTO\n- Espaçamento base (em pixels) que parece ser o padrão\n- Padding interno típico de cards e seções\n\nESTILO DE COMPONENTES\n- Botão primário (cor, raio de borda, padding)\n- Botão secundário (idem)\n- Cards (sombra, raio de borda, padding interno)\n- Inputs (borda, padding, foco)\n\nSENSAÇÃO GERAL\n- Em 2 a 3 frases: que sensação esse design transmite\n  (confiável, jovem, técnico, premium, etc.)\n\nEntregue como documento estruturado em markdown que eu\npossa colar em qualquer prompt futuro.')">Copiar</button><span class="label">Etapa 1 — anexar prints + colar este prompt</span>Estou analisando esses prints do site [NOME DO SITE
+DE REFERÊNCIA] como inspiração visual. Quero que você
+extraia um design system completo a partir do que está
+vendo nessas imagens.
 
-Filtre apenas os pacientes que têm valor_pendente
-maior que zero.
+Inclua:
 
-Para cada paciente filtrado, gere uma mensagem de
-WhatsApp curta para enviar amanhã. A mensagem precisa:
+PALETA DE CORES
+- Cor primária (com código hex aproximado)
+- Cor secundária (hex)
+- Cores neutras de background e texto (hex)
+- Cores de estado (sucesso, erro, alerta) se identificáveis
 
-- Cumprimentar pelo primeiro nome do paciente
-- Citar o procedimento que foi feito (último_procedimento)
-- Mencionar o valor pendente de forma educada (não rude)
-- Oferecer opção de parcelamento em até 3x sem juros
-- Encerrar com frase amigável e profissional
-- Ter no máximo 4 linhas
+TIPOGRAFIA
+- Família de fonte para títulos
+- Família de fonte para corpo de texto
+- Tamanhos aproximados para H1, H2, H3 e corpo
+- Peso (regular, medium, bold) por uso
 
-O tom precisa ser de clínica que se importa com o
-paciente, não de cobrador. Cada mensagem precisa ser
-personalizada — nada de texto-padrão idêntico para
-todo mundo.
+ESPAÇAMENTO
+- Espaçamento base (em pixels) que parece ser o padrão
+- Padding interno típico de cards e seções
 
-Salve todas as mensagens em um arquivo chamado
-mensagens_cobranca.txt, separando cada mensagem com
-uma linha em branco e identificando cada uma com o
-nome completo do paciente como cabeçalho.</div>
+ESTILO DE COMPONENTES
+- Botão primário (cor, raio de borda, padding)
+- Botão secundário (idem)
+- Cards (sombra, raio de borda, padding interno)
+- Inputs (borda, padding, foco)
+
+SENSAÇÃO GERAL
+- Em 2 a 3 frases: que sensação esse design transmite
+  (confiável, jovem, técnico, premium, etc.)
+
+Entregue como documento estruturado em markdown que eu
+possa colar em qualquer prompt futuro.</div>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Etapa 2</span>
+        <span class="demo-title">Aplicação do design system na tela do OdontoFlow</span>
+      </div>
+
+      <p class="intro-text" style="margin-bottom:6px">Em uma <strong>nova conversa</strong>, colar o design system gerado na Etapa 1 no lugar indicado e pedir a tela:</p>
+
+      <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '[COLAR AQUI O DESIGN SYSTEM EXTRAÍDO NA ETAPA 1]\n\n---\n\nUsando rigorosamente o design system acima, crie um\nartefato HTML completo da tela de dashboard principal\ndo OdontoFlow, MicroSaaS de atendimento odontológico\npara clínicas.\n\nA tela precisa ter:\n\n- Header com logo &quot;OdontoFlow&quot; e navegação\n  (Agenda, Pacientes, Financeiro, Configurações)\n- Seção &quot;Agendamentos de hoje&quot; com 4 cards horizontais\n  (nome do paciente, horário, tipo de procedimento)\n- Gráfico simples de ocupação semanal (barras)\n- Lista de &quot;Mensagens não lidas do WhatsApp&quot;\n  com 3 itens (nome do paciente + preview da mensagem)\n- Botão grande de &quot;Novo agendamento&quot; em destaque\n\nRespeite as cores, tipografia, espaçamento e estilo de\ncomponentes do design system. A tela precisa parecer da\nmesma família visual do site que serviu de referência.')">Copiar</button><span class="label">Etapa 2 — colar design system + pedir a tela</span>[COLAR AQUI O DESIGN SYSTEM EXTRAÍDO NA ETAPA 1]
+
+---
+
+Usando rigorosamente o design system acima, crie um
+artefato HTML completo da tela de dashboard principal
+do OdontoFlow, MicroSaaS de atendimento odontológico
+para clínicas.
+
+A tela precisa ter:
+
+- Header com logo "OdontoFlow" e navegação
+  (Agenda, Pacientes, Financeiro, Configurações)
+- Seção "Agendamentos de hoje" com 4 cards horizontais
+  (nome do paciente, horário, tipo de procedimento)
+- Gráfico simples de ocupação semanal (barras)
+- Lista de "Mensagens não lidas do WhatsApp"
+  com 3 itens (nome do paciente + preview da mensagem)
+- Botão grande de "Novo agendamento" em destaque
+
+Respeite as cores, tipografia, espaçamento e estilo de
+componentes do design system. A tela precisa parecer da
+mesma família visual do site que serviu de referência.</div>
     </div>
 
     <div class="nav-buttons">
@@ -436,14 +470,14 @@ nome completo do paciente como cabeçalho.</div>
   <!-- 05 O QUE OBSERVAR -->
   <div class="section" id="sec-step5">
     <div class="sec-title"><span class="snum">05.</span> O que observar</div>
-    <div class="sec-desc">3 sinais visíveis de que o Cowork está executando — não simulando</div>
+    <div class="sec-desc">3 coisas para reparar enquanto a tela é gerada ao vivo</div>
 
-    <p class="intro-text">Três coisas que ficam visíveis quando o Cowork está executando:</p>
+    <p class="intro-text">Três coisas para reparar enquanto a tela é gerada:</p>
 
     <div class="instructions">
-      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Leitura real do arquivo.</strong> O Cowork mostra que abriu o CSV, conta quantas linhas leu, identifica as colunas. Não é simulação.</span></div>
-      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Filtragem correta.</strong> Só os pacientes com valor pendente entram no output. Os outros são ignorados — sem você precisar pré-processar nada.</span></div>
-      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Personalização real.</strong> As mensagens não são copy-paste com o nome trocado. Cada uma reflete o procedimento específico daquele paciente. Texto genérico copiado para todos seria fácil de fazer no Excel — Cowork entrega algo que o Excel não consegue.</span></div>
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Visão funciona.</strong> O Claude descreveu cores e fontes que ele só viu em imagem — não estavam escritas em lugar nenhum.</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Reaproveitamento.</strong> O design system virou um arquivo. Esse arquivo pode ser colado em quantos prompts quiser, e toda tela vai sair coerente.</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Iteração rápida.</strong> Se algo não ficar bom (uma cor errada, um espaçamento esquisito), basta ajustar o design system ou pedir uma iteração — em segundos a tela se atualiza.</span></div>
     </div>
 
     <div class="nav-buttons">
@@ -452,34 +486,36 @@ nome completo do paciente como cabeçalho.</div>
     </div>
   </div>
 
-  <!-- 06 SUA TAREFA -->
+  <!-- 06 SUA TELA -->
   <div class="section" id="sec-step6">
     <div class="sec-title"><span class="snum">06.</span> O que você vai fazer</div>
-    <div class="sec-desc">Mesmo CSV da demo — tarefa diferente, em duplas</div>
+    <div class="sec-desc">Mesmo design system da demo — tela diferente, em duplas</div>
 
-    <p class="intro-text">Você vai usar o <strong>mesmo arquivo CSV</strong> que o professor usou na demonstração (já compartilhado com a turma) para automatizar <strong>uma tarefa diferente</strong> do OdontoFlow.</p>
+    <p class="intro-text">Você vai usar o <strong>mesmo design system</strong> que foi extraído na demonstração (o professor compartilhou o arquivo com a turma) para gerar <strong>uma tela diferente</strong> do OdontoFlow em artefato HTML.</p>
 
     <div class="subsec">Passos</div>
     <div class="instructions">
-      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Baixe o arquivo</strong> <em>(1 min)</em> — <code>base_pacientes_odontoflow.csv</code> da sala virtual. Salve em pasta acessível para o Cowork.</span></div>
-      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Escolha sua tarefa</strong> <em>(1 min)</em> — em duplas, cada dupla escolhe uma diferente entre A, B, C ou D abaixo.</span></div>
-      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Escreva o prompt</strong> <em>(4 min)</em> — use o molde da próxima seção e adapte.</span></div>
-      <div class="inst"><span class="inst-num">4</span><span class="inst-text"><strong>Execute e revise</strong> <em>(5 min)</em> — aponte o Cowork para a pasta e rode. Avalie: o output está usável <strong>sem edição</strong>?</span></div>
-      <div class="inst"><span class="inst-num">5</span><span class="inst-text"><strong>Itere se necessário</strong> <em>(1 min)</em> — se saiu genérico ou com erro, ajuste o prompt e rode de novo.</span></div>
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Pegue o design system compartilhado</strong> <em>(1 min)</em> — o professor já distribuiu o arquivo na sala virtual. Abra e copie o conteúdo inteiro.</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Escolha sua tela</strong> <em>(1 min)</em> — em duplas. Cada dupla pega uma tela diferente para evitar repetição (ver lista abaixo).</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Monte o prompt</strong> <em>(3 min)</em> — cole o design system no início e descreva a sua tela com riqueza de detalhes (elementos, hierarquia, ações principais).</span></div>
+      <div class="inst"><span class="inst-num">4</span><span class="inst-text"><strong>Gere e itere</strong> <em>(6 min)</em> — avalie o artefato HTML que sair. Itere pelo menos uma vez para melhorar (ajustar layout, corrigir cores, adicionar elemento que faltou).</span></div>
+      <div class="inst"><span class="inst-num">5</span><span class="inst-text"><strong>Compare com a tela da demo</strong> <em>(1 min)</em> — coloque a sua tela ao lado do dashboard principal da demonstração. As duas precisam parecer do mesmo produto.</span></div>
     </div>
 
-    <div class="subsec">As 4 tarefas — escolha uma</div>
+    <div class="subsec">As 6 telas — escolha uma</div>
     <table class="content-table">
-      <thead><tr><th style="width:22%">Tarefa</th><th style="width:38%">O que filtrar</th><th>O que gerar</th></tr></thead>
+      <thead><tr><th style="width:38%">Tela</th><th>Para que serve</th></tr></thead>
       <tbody>
-        <tr><td><strong>A — Aniversariantes</strong></td><td>Pacientes que aniversariam neste mês</td><td>Mensagem personalizada usando o último procedimento como gancho de retorno à clínica</td></tr>
-        <tr><td><strong>B — Reativação</strong></td><td>Status inativo OU última consulta há mais de 6 meses</td><td>Mensagem de reativação personalizada por procedimento</td></tr>
-        <tr><td><strong>C — Follow-up</strong></td><td>Limpeza, canal ou extração nas últimas 4 semanas</td><td>Mensagem de follow-up apropriada para cada procedimento</td></tr>
-        <tr><td><strong>D — Análise gerencial</strong></td><td>Todos os pacientes</td><td>Receita pendente total, ticket médio por procedimento, top 5 pendentes e distribuição de status</td></tr>
+        <tr><td><strong>Agendamento do paciente</strong></td><td>Marcar consulta nova: escolher dentista, procedimento, data e horário</td></tr>
+        <tr><td><strong>Prontuário digital</strong></td><td>Histórico clínico do paciente: procedimentos, anotações, exames</td></tr>
+        <tr><td><strong>Conversa do bot no WhatsApp</strong></td><td>Tela de chat mostrando o bot do OdontoFlow conversando com paciente</td></tr>
+        <tr><td><strong>Tela financeira da clínica</strong></td><td>Receita, contas a receber, ticket médio, gráfico de evolução</td></tr>
+        <tr><td><strong>Onboarding do dentista</strong></td><td>Primeiro acesso: passos para configurar agenda, equipe e identidade</td></tr>
+        <tr><td><strong>Relatório mensal de performance</strong></td><td>Indicadores do mês: consultas realizadas, NPS, top procedimentos</td></tr>
       </tbody>
     </table>
 
-    <div class="note-box"><strong>📌 Sem Claude Pro?</strong> Use o <strong>Claude no chat (gratuito)</strong> com upload do CSV e <strong>Code Execution</strong> ativado. O resultado é equivalente para o aprendizado do conceito — só não fica salvo no seu desktop.</div>
+    <div class="note-box"><strong>📌 Dica:</strong> descrição vaga gera tela genérica. Quanto mais você descrever <strong>quem é o usuário e qual a dor que a tela resolve</strong>, melhor o output. Pense menos em "como a tela deve ficar" e mais em "o que o usuário precisa fazer aqui".</div>
 
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step5')">← Anterior</button>
@@ -490,43 +526,40 @@ nome completo do paciente como cabeçalho.</div>
   <!-- 07 SEU PROMPT -->
   <div class="section" id="sec-step7">
     <div class="sec-title"><span class="snum">07.</span> Prompt para você usar</div>
-    <div class="sec-desc">Molde para adaptar à sua tarefa escolhida (A, B, C ou D)</div>
+    <div class="sec-desc">Cole o design system no início e adapte a descrição para a sua tela</div>
 
-    <p class="intro-text">Adapte este molde para a sua tarefa escolhida:</p>
+    <p class="intro-text">Cole o design system compartilhado no lugar indicado e adapte a descrição para a sua tela:</p>
 
-    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, 'Leia o arquivo base_pacientes_odontoflow.csv que está\nna pasta atual.\n\nFILTRO QUE EU PRECISO\n[Descreva qual subgrupo de pacientes interessa para\na sua tarefa. Exemplos:\n- &quot;Pacientes que aniversariam no mês corrente&quot;\n- &quot;Pacientes com status inativo OU última consulta\n   há mais de 180 dias&quot;\n- &quot;Pacientes cujo último procedimento foi limpeza,\n   canal ou extração E última consulta foi nos\n   últimos 28 dias&quot;\n- &quot;Todos os pacientes — quero análise consolidada&quot;]\n\nO QUE VOCÊ DEVE GERAR\n[Descreva o output desejado. Exemplos:\n- &quot;Uma mensagem de WhatsApp personalizada por paciente,\n   com no máximo 4 linhas, citando [campos relevantes]&quot;\n- &quot;Um relatório resumido em texto estruturado, com\n   números reais extraídos do CSV&quot;]\n\nREGRAS DE TOM\n[Profissional / amigável / direto / informal]\n- O que evitar: [frases vazias, tom de cobrança,\n  urgência artificial, etc.]\n- Personalização real é obrigatória: nada de\n  texto-padrão idêntico com nome trocado.\n\nARQUIVO DE SAÍDA\nSalve em [nome_arquivo.txt ou nome_arquivo.csv],\nseparando cada item com [...].')">Copiar</button><span class="label">Molde de prompt — adaptar à sua tarefa</span>Leia o arquivo base_pacientes_odontoflow.csv que está
-na pasta atual.
+    <div class="copy-block"><button class="copy-btn" onclick="copyText(this, '[COLAR AQUI O DESIGN SYSTEM COMPARTILHADO PELO PROFESSOR]\n\n---\n\nUsando rigorosamente o design system acima, crie um\nartefato HTML completo da [NOME DA SUA TELA] do\nOdontoFlow, MicroSaaS de atendimento odontológico\npara clínicas.\n\nContexto da tela:\n- Quem usa: [DENTISTA / RECEPCIONISTA / PACIENTE]\n- Para que serve: [OBJETIVO PRINCIPAL DA TELA]\n- Ações principais que o usuário precisa fazer aqui:\n  [LISTAR 2 OU 3 AÇÕES]\n\nElementos que precisam aparecer na tela:\n- [ELEMENTO 1]\n- [ELEMENTO 2]\n- [ELEMENTO 3]\n- [ELEMENTO 4]\n\nA tela precisa respeitar cores, tipografia, espaçamento\ne estilo de componentes do design system acima — e\nparecer da mesma família visual da tela de dashboard\ngerada na demonstração da aula.\n\nPelo menos um elemento da tela deve ser clicável\n(botão ou link funcional).')">Copiar</button><span class="label">Molde de prompt — adaptar à sua tela escolhida</span>[COLAR AQUI O DESIGN SYSTEM COMPARTILHADO PELO PROFESSOR]
 
-FILTRO QUE EU PRECISO
-[Descreva qual subgrupo de pacientes interessa para
-a sua tarefa. Exemplos:
-- "Pacientes que aniversariam no mês corrente"
-- "Pacientes com status inativo OU última consulta
-   há mais de 180 dias"
-- "Pacientes cujo último procedimento foi limpeza,
-   canal ou extração E última consulta foi nos
-   últimos 28 dias"
-- "Todos os pacientes — quero análise consolidada"]
+---
 
-O QUE VOCÊ DEVE GERAR
-[Descreva o output desejado. Exemplos:
-- "Uma mensagem de WhatsApp personalizada por paciente,
-   com no máximo 4 linhas, citando [campos relevantes]"
-- "Um relatório resumido em texto estruturado, com
-   números reais extraídos do CSV"]
+Usando rigorosamente o design system acima, crie um
+artefato HTML completo da [NOME DA SUA TELA] do
+OdontoFlow, MicroSaaS de atendimento odontológico
+para clínicas.
 
-REGRAS DE TOM
-[Profissional / amigável / direto / informal]
-- O que evitar: [frases vazias, tom de cobrança,
-  urgência artificial, etc.]
-- Personalização real é obrigatória: nada de
-  texto-padrão idêntico com nome trocado.
+Contexto da tela:
+- Quem usa: [DENTISTA / RECEPCIONISTA / PACIENTE]
+- Para que serve: [OBJETIVO PRINCIPAL DA TELA]
+- Ações principais que o usuário precisa fazer aqui:
+  [LISTAR 2 OU 3 AÇÕES]
 
-ARQUIVO DE SAÍDA
-Salve em [nome_arquivo.txt ou nome_arquivo.csv],
-separando cada item com [...].</div>
+Elementos que precisam aparecer na tela:
+- [ELEMENTO 1]
+- [ELEMENTO 2]
+- [ELEMENTO 3]
+- [ELEMENTO 4]
 
-    <div class="tip-box"><strong>💡 Critério de qualidade:</strong> o output saiu <strong>usável de verdade</strong> ou ficou genérico? Se a recepcionista ou o dentista da clínica precisaria editar antes de usar, o prompt ainda não está bom. Itere mais uma vez.</div>
+A tela precisa respeitar cores, tipografia, espaçamento
+e estilo de componentes do design system acima — e
+parecer da mesma família visual da tela de dashboard
+gerada na demonstração da aula.
+
+Pelo menos um elemento da tela deve ser clicável
+(botão ou link funcional).</div>
+
+    <div class="tip-box"><strong>💡 Dica:</strong> descrição vaga gera tela genérica. Quanto mais você descrever <strong>quem é o usuário e qual a dor que a tela resolve</strong>, melhor o output. Pense menos em "como a tela deve ficar" e mais em "o que o usuário precisa fazer aqui".</div>
 
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step6')">← Anterior</button>
@@ -537,28 +570,28 @@ separando cada item com [...].</div>
   <!-- 08 OUTPUT -->
   <div class="section" id="sec-step8">
     <div class="sec-title"><span class="snum">08.</span> O que fazer com o output</div>
-    <div class="sec-desc">3 perguntas que validam o uso real da automação</div>
+    <div class="sec-desc">A tela que você gerou não é desenho de papel — é código rodando</div>
 
-    <p class="intro-text">O arquivo gerado pelo Cowork é o que mostra que a automação funciona — não a tela do Cowork rodando.</p>
+    <p class="intro-text">A tela que você gerou não é desenho de papel. É código rodando.</p>
 
     <div class="instructions">
-      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Abra o arquivo de saída.</strong> Leia pelo menos <strong>3 itens</strong> (3 mensagens, 3 linhas do relatório) e avalie se você usaria sem editar.</span></div>
-      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Estime o tempo economizado.</strong> Se essa tarefa rodasse na clínica de verdade toda semana, quanto tempo de recepcionista ela liberaria por mês? Esse cálculo é o que justifica o investimento em IA para qualquer negócio.</span></div>
-      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Pense em outras tarefas que esse mesmo CSV resolveria.</strong> "O que mais esse arquivo me permite automatizar?" é o pulo do gato. Dado bom é dado <strong>reutilizável</strong>. Você não precisa de cinco planilhas para cinco automações; precisa de uma planilha bem estruturada.</span></div>
+      <div class="inst"><span class="inst-num">1</span><span class="inst-text"><strong>Salve o artefato HTML.</strong> Você pode usar essa tela para validar com cliente real, mostrar para sócio, levar para reunião de produto. Funciona como <strong>mockup navegável</strong>.</span></div>
+      <div class="inst"><span class="inst-num">2</span><span class="inst-text"><strong>Anote o que ajustaria no design system.</strong> Se você precisou "lutar" com o design system para conseguir alguma coisa específica da sua tela, isso é insumo para refinar o sistema na próxima vez.</span></div>
+      <div class="inst"><span class="inst-num">3</span><span class="inst-text"><strong>Guarde o design system para o projeto final.</strong> Esse arquivo (design system extraído) é insumo direto do seu projeto final do semestre. Vai usar de novo.</span></div>
     </div>
 
-    <div class="warning-box"><strong>⚠️ Importante:</strong> antes de rodar Cowork em arquivos do seu negócio real, <strong>sempre teste em pasta isolada com dados fictícios primeiro</strong>. Cowork mexe em arquivos de verdade, e arquivo deletado por engano não volta. A regra é: testou, funcionou, então parta para os dados reais — nunca o contrário.</div>
+    <div class="warning-box"><strong>⚠️ Importante:</strong> o design system não é só decorativo. É o que vai permitir que <strong>qualquer tela</strong> do seu projeto final pareça profissional. Sem ele, cada tela vira uma decisão nova e o produto fica visualmente caótico.</div>
 
     <div class="subsec">Entregável da aula</div>
     <div class="checklist">
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Pasta dedicada</strong> criada e apontada para o Cowork</span></div>
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>CSV de pacientes</strong> baixado e salvo na pasta</span></div>
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Tarefa A, B, C ou D</strong> escolhida em dupla</span></div>
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Prompt adaptado</strong> a partir do molde</span></div>
-      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Output gerado</strong> e avaliado: usável sem edição?</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Design system compartilhado</strong> baixado e salvo</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Tela escolhida</strong> em dupla (sem repetir com outras duplas)</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Prompt montado</strong> com design system colado + descrição rica da tela</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Artefato HTML gerado</strong> e iterado pelo menos uma vez</span></div>
+      <div class="check-item"><span class="ci-icon">✅</span><span><strong>Comparação visual</strong> com a tela de dashboard da demo: parecem do mesmo produto?</span></div>
     </div>
 
-    <div class="next-teaser"><strong>Próxima aula — A08: Claude Code</strong><br>Você acabou de ver os três modos do Claude que vão acompanhar o seu projeto até o fim do semestre: <strong>Projects</strong> (contexto persistente), <strong>Skills</strong> (especialistas de domínio) e <strong>Cowork</strong> (operar arquivos). Na próxima aula vamos para Claude Code — onde você sai do mockup e parte para o produto rodando de verdade.</div>
+    <div class="next-teaser"><strong>Próxima aula — A08: Claude Cowork</strong><br>Você vai sair do "Claude que pensa e desenha" para o "Claude que <strong>executa tarefas reais no seu computador</strong>" — operando arquivos locais, lendo planilhas e gerando outputs prontos para uso pela operação da clínica.</div>
 
     <div class="nav-buttons">
       <button class="nav-btn secondary" onclick="showSection('sec-step7')">← Anterior</button>
@@ -570,35 +603,40 @@ separando cada item com [...].</div>
 
 <!-- RIGHT SIDEBAR -->
 <div class="right-sidebar">
-  <div class="rs-section-title">Cowork em uma frase</div>
+  <div class="rs-section-title">Design System em uma frase</div>
   <table class="rs-table">
-    <tr><td>Chat</td><td>você pergunta</td></tr>
-    <tr><td>Cowork</td><td>ele executa</td></tr>
+    <tr><td>O que é</td><td>arquivo de texto</td></tr>
+    <tr><td>Para quê</td><td>colar em prompts futuros</td></tr>
   </table>
-  <div class="rs-section-title">Quando usar</div>
+  <div class="rs-section-title">5 passos</div>
   <table class="rs-table">
-    <tr><td>Sim</td><td>repetitivo + arquivo local</td></tr>
-    <tr><td>Sim</td><td>output revisado, não criado</td></tr>
-    <tr><td>Não</td><td>julgamento crítico</td></tr>
-    <tr><td>Não</td><td>tarefa que muda sempre</td></tr>
+    <tr><td>1</td><td>Escolhe site referência</td></tr>
+    <tr><td>2</td><td>Tira prints</td></tr>
+    <tr><td>3</td><td>Claude extrai design system</td></tr>
+    <tr><td>4</td><td>Salva o documento</td></tr>
+    <tr><td>5</td><td>Reusa em novos prompts</td></tr>
   </table>
-  <div class="rs-section-title">As 4 tarefas</div>
+  <div class="rs-section-title">O que extrair</div>
   <table class="rs-table">
-    <tr><td>A</td><td>Aniversariantes</td></tr>
-    <tr><td>B</td><td>Reativação inativos</td></tr>
-    <tr><td>C</td><td>Follow-up procedimento</td></tr>
-    <tr><td>D</td><td>Análise gerencial</td></tr>
+    <tr><td>Cores</td><td>primária, neutras, estado</td></tr>
+    <tr><td>Tipo</td><td>família, tamanho, peso</td></tr>
+    <tr><td>Espaço</td><td>base + padding cards</td></tr>
+    <tr><td>Componentes</td><td>botões, cards, inputs</td></tr>
+    <tr><td>Sensação</td><td>2 a 3 frases</td></tr>
   </table>
-  <div class="rs-section-title">3 sinais do Cowork</div>
+  <div class="rs-section-title">As 6 telas (dupla)</div>
   <table class="rs-table">
-    <tr><td>1</td><td>Lê o arquivo</td></tr>
-    <tr><td>2</td><td>Filtra correto</td></tr>
-    <tr><td>3</td><td>Personaliza real</td></tr>
+    <tr><td>1</td><td>Agendamento</td></tr>
+    <tr><td>2</td><td>Prontuário</td></tr>
+    <tr><td>3</td><td>Bot WhatsApp</td></tr>
+    <tr><td>4</td><td>Financeiro</td></tr>
+    <tr><td>5</td><td>Onboarding</td></tr>
+    <tr><td>6</td><td>Relatório mensal</td></tr>
   </table>
   <div class="rs-section-title">Critério final</div>
   <table class="rs-table">
-    <tr><td>✓</td><td>Usável sem editar</td></tr>
-    <tr><td>✗</td><td>Precisa retoque</td></tr>
+    <tr><td>✓</td><td>Mesma família do site</td></tr>
+    <tr><td>✗</td><td>Cópia ou genérica</td></tr>
   </table>
 </div>
 
@@ -610,13 +648,13 @@ const stepToFlow = {
   'sec-step1': 'objetivo',
   'sec-step2': 'conceito',
   'sec-step3': 'oque',
-  'sec-step4': 'prompt',
+  'sec-step4': 'prompts',
   'sec-step5': 'observar',
-  'sec-step6': 'tarefa',
+  'sec-step6': 'tela',
   'sec-step7': 'molde',
   'sec-step8': 'output'
 }
-const flowOrder = ['home','objetivo','conceito','oque','prompt','observar','tarefa','molde','output']
+const flowOrder = ['home','objetivo','conceito','oque','prompts','observar','tela','molde','output']
 const visited = new Set(['sec-home'])
 const completedFlows = new Set()
 
